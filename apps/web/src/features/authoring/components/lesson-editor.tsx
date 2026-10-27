@@ -76,7 +76,9 @@ export function LessonEditor({
   const [isPreview, setIsPreview] = React.useState(lesson.isPreview);
   const [isPublished, setIsPublished] = React.useState(lesson.isPublished);
   const [completionRule, setCompletionRule] = React.useState<CompletionRule>(lesson.completionRule);
-  const [requiredWatchPercent, setRequiredWatchPercent] = React.useState(lesson.requiredWatchPercent);
+  const [requiredWatchPercent, setRequiredWatchPercent] = React.useState(
+    lesson.requiredWatchPercent,
+  );
 
   // Release state
   const [releaseType, setReleaseType] = React.useState<
@@ -91,7 +93,8 @@ export function LessonEditor({
     lesson.release.availableUntil ? lesson.release.availableUntil.slice(0, 16) : '',
   );
   const [offsetDays, setOffsetDays] = React.useState<number>(
-    lesson.release.releaseType === 'ENROLLMENT_OFFSET' || lesson.release.releaseType === 'COHORT_OFFSET'
+    lesson.release.releaseType === 'ENROLLMENT_OFFSET' ||
+      lesson.release.releaseType === 'COHORT_OFFSET'
       ? lesson.release.releaseOffsetDays
       : 0,
   );
@@ -99,7 +102,7 @@ export function LessonEditor({
   // Payload state
   const [lessonType, setLessonType] = React.useState<LessonType>(lesson.payload.type);
   const [videoDuration, setVideoDuration] = React.useState<number>(
-    lesson.payload.type === 'VIDEO' ? lesson.payload.body.durationSeconds ?? 0 : 0,
+    lesson.payload.type === 'VIDEO' ? (lesson.payload.body.durationSeconds ?? 0) : 0,
   );
   const [richTextBody, setRichTextBody] = React.useState(
     lesson.payload.type === 'TEXT' ? lesson.payload.body : undefined,
@@ -107,9 +110,9 @@ export function LessonEditor({
   const [embedUrl, setEmbedUrl] = React.useState<string>(
     lesson.payload.type === 'INTERACTIVE' ? lesson.payload.body.embedUrl : '',
   );
-  const [sandboxOptions, setSandboxOptions] = React.useState<('allow-scripts' | 'allow-same-origin' | 'allow-presentation')[]>(
-    lesson.payload.type === 'INTERACTIVE' ? lesson.payload.body.sandbox : ['allow-scripts'],
-  );
+  const [sandboxOptions, setSandboxOptions] = React.useState<
+    ('allow-scripts' | 'allow-same-origin' | 'allow-presentation')[]
+  >(lesson.payload.type === 'INTERACTIVE' ? lesson.payload.body.sandbox : ['allow-scripts']);
 
   // Live session modal
   const [isLiveModalOpen, setIsLiveModalOpen] = React.useState(false);
@@ -118,7 +121,11 @@ export function LessonEditor({
   const [attachedAssets, setAttachedAssets] = React.useState<
     Array<{ id: string; assetId: string; purpose: AssetPurpose; position: number }>
   >(
-    (lesson as { assets?: Array<{ id: string; assetId: string; purpose: AssetPurpose; position: number }> }).assets ?? [],
+    (
+      lesson as {
+        assets?: Array<{ id: string; assetId: string; purpose: AssetPurpose; position: number }>;
+      }
+    ).assets ?? [],
   );
 
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -139,7 +146,10 @@ export function LessonEditor({
       // keep current or allow watch percent
     } else if (lessonType !== 'VIDEO' && completionRule === 'WATCH_PERCENT') {
       setCompletionRule('VIEW');
-    } else if (!['QUIZ', 'ASSIGNMENT', 'EXAM'].includes(lessonType) && completionRule === 'ASSESSMENT_PASS') {
+    } else if (
+      !['QUIZ', 'ASSIGNMENT', 'EXAM'].includes(lessonType) &&
+      completionRule === 'ASSESSMENT_PASS'
+    ) {
       setCompletionRule('VIEW');
     } else if (lessonType !== 'LIVE_SESSION' && completionRule === 'ATTENDANCE') {
       setCompletionRule('VIEW');
@@ -179,7 +189,9 @@ export function LessonEditor({
     }
 
     if (isProtectedActivity && isPreview) {
-      setFormError('Protected activities (Quiz, Assignment, Exam, Live Session) cannot be marked as previews');
+      setFormError(
+        'Protected activities (Quiz, Assignment, Exam, Live Session) cannot be marked as previews',
+      );
       return;
     }
 
@@ -288,18 +300,25 @@ export function LessonEditor({
           role="status"
           className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-900 dark:text-amber-200"
         >
-          Teaching Assistant Mode (Read-Only). You do not have permission to modify lesson parameters.
+          Teaching Assistant Mode (Read-Only). You do not have permission to modify lesson
+          parameters.
         </div>
       )}
 
       {formError && (
-        <div role="alert" className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive">
+        <div
+          role="alert"
+          className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive"
+        >
           {formError}
         </div>
       )}
 
       {successNotice && (
-        <div role="status" className="rounded-md bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-800 dark:text-emerald-300">
+        <div
+          role="status"
+          className="rounded-md bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-800 dark:text-emerald-300"
+        >
           {successNotice}
         </div>
       )}
@@ -310,8 +329,12 @@ export function LessonEditor({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase text-muted-foreground">Lesson Configuration</span>
-                <Badge variant="outline" className="text-[11px] font-mono">v{lesson.version}</Badge>
+                <span className="text-xs font-semibold uppercase text-muted-foreground">
+                  Lesson Configuration
+                </span>
+                <Badge variant="outline" className="text-[11px] font-mono">
+                  v{lesson.version}
+                </Badge>
               </div>
               <h3 className="text-base font-semibold">{title || 'Untitled Lesson'}</h3>
             </div>
@@ -334,7 +357,9 @@ export function LessonEditor({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div className="space-y-1.5">
-              <Label htmlFor="lesson-title" className="text-xs font-medium">Lesson Title</Label>
+              <Label htmlFor="lesson-title" className="text-xs font-medium">
+                Lesson Title
+              </Label>
               <Input
                 id="lesson-title"
                 value={title}
@@ -345,7 +370,9 @@ export function LessonEditor({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="lesson-type" className="text-xs font-medium">Lesson Format / Type</Label>
+              <Label htmlFor="lesson-type" className="text-xs font-medium">
+                Lesson Format / Type
+              </Label>
               <Select
                 value={lessonType}
                 disabled={isReadOnly}
@@ -370,7 +397,9 @@ export function LessonEditor({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
             <div className="space-y-1.5">
-              <Label htmlFor="lesson-duration" className="text-xs font-medium">Est. Minutes</Label>
+              <Label htmlFor="lesson-duration" className="text-xs font-medium">
+                Est. Minutes
+              </Label>
               <Input
                 id="lesson-duration"
                 type="number"
@@ -444,7 +473,9 @@ export function LessonEditor({
             </h4>
 
             <div className="space-y-1.5">
-              <Label htmlFor="completion-rule" className="text-xs font-medium">Completion Rule</Label>
+              <Label htmlFor="completion-rule" className="text-xs font-medium">
+                Completion Rule
+              </Label>
               <Select
                 value={completionRule}
                 disabled={isReadOnly}
@@ -455,7 +486,9 @@ export function LessonEditor({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="VIEW">View (Auto complete on open)</SelectItem>
-                  <SelectItem value="ACKNOWLEDGE">Acknowledge (Learner manually confirms)</SelectItem>
+                  <SelectItem value="ACKNOWLEDGE">
+                    Acknowledge (Learner manually confirms)
+                  </SelectItem>
                   <SelectItem value="WATCH_PERCENT" disabled={lessonType !== 'VIDEO'}>
                     Watch Percent (Video only)
                   </SelectItem>
@@ -496,12 +529,16 @@ export function LessonEditor({
             </h4>
 
             <div className="space-y-1.5">
-              <Label htmlFor="release-type" className="text-xs font-medium">Release Type</Label>
+              <Label htmlFor="release-type" className="text-xs font-medium">
+                Release Type
+              </Label>
               <Select
                 value={releaseType}
                 disabled={isReadOnly}
                 onValueChange={(v) =>
-                  setReleaseType(v as 'IMMEDIATE' | 'ABSOLUTE' | 'ENROLLMENT_OFFSET' | 'COHORT_OFFSET')
+                  setReleaseType(
+                    v as 'IMMEDIATE' | 'ABSOLUTE' | 'ENROLLMENT_OFFSET' | 'COHORT_OFFSET',
+                  )
                 }
               >
                 <SelectTrigger id="release-type">
@@ -518,7 +555,9 @@ export function LessonEditor({
 
             {releaseType === 'ABSOLUTE' && (
               <div className="space-y-1.5">
-                <Label htmlFor="release-at" className="text-xs font-medium">Unlock Date & Time</Label>
+                <Label htmlFor="release-at" className="text-xs font-medium">
+                  Unlock Date & Time
+                </Label>
                 <Input
                   id="release-at"
                   type="datetime-local"
@@ -532,7 +571,9 @@ export function LessonEditor({
 
             {(releaseType === 'ENROLLMENT_OFFSET' || releaseType === 'COHORT_OFFSET') && (
               <div className="space-y-1.5">
-                <Label htmlFor="offset-days" className="text-xs font-medium">Offset Days (e.g. 7 for week 2)</Label>
+                <Label htmlFor="offset-days" className="text-xs font-medium">
+                  Offset Days (e.g. 7 for week 2)
+                </Label>
                 <Input
                   id="offset-days"
                   type="number"
@@ -545,7 +586,9 @@ export function LessonEditor({
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="available-until" className="text-xs font-medium">Available Until (Optional Expiry)</Label>
+              <Label htmlFor="available-until" className="text-xs font-medium">
+                Available Until (Optional Expiry)
+              </Label>
               <Input
                 id="available-until"
                 type="datetime-local"
@@ -561,13 +604,17 @@ export function LessonEditor({
         <div className="rounded-lg border bg-card p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider flex items-center gap-2">
             <span>Lesson Content & Media</span>
-            <Badge variant="secondary" className="text-[10px]">{lessonType}</Badge>
+            <Badge variant="secondary" className="text-[10px]">
+              {lessonType}
+            </Badge>
           </h4>
 
           {lessonType === 'VIDEO' && (
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="video-duration" className="text-xs font-medium">Duration (Seconds)</Label>
+                <Label htmlFor="video-duration" className="text-xs font-medium">
+                  Duration (Seconds)
+                </Label>
                 <Input
                   id="video-duration"
                   type="number"
@@ -628,7 +675,9 @@ export function LessonEditor({
           {lessonType === 'INTERACTIVE' && (
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <Label htmlFor="embed-url" className="text-xs font-medium">Embed URL (HTTPS only)</Label>
+                <Label htmlFor="embed-url" className="text-xs font-medium">
+                  Embed URL (HTTPS only)
+                </Label>
                 <Input
                   id="embed-url"
                   type="url"
@@ -643,24 +692,26 @@ export function LessonEditor({
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">Iframe Sandbox Permissions</Label>
                 <div className="flex flex-wrap gap-4 text-xs">
-                  {(['allow-scripts', 'allow-same-origin', 'allow-presentation'] as const).map((opt) => (
-                    <label key={opt} className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        disabled={isReadOnly}
-                        checked={sandboxOptions.includes(opt)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSandboxOptions((prev) => [...prev, opt]);
-                          } else {
-                            setSandboxOptions((prev) => prev.filter((x) => x !== opt));
-                          }
-                        }}
-                        className="h-4 w-4 rounded border-gray-300"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
+                  {(['allow-scripts', 'allow-same-origin', 'allow-presentation'] as const).map(
+                    (opt) => (
+                      <label key={opt} className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          disabled={isReadOnly}
+                          checked={sandboxOptions.includes(opt)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSandboxOptions((prev) => [...prev, opt]);
+                            } else {
+                              setSandboxOptions((prev) => prev.filter((x) => x !== opt));
+                            }
+                          }}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ),
+                  )}
                 </div>
               </div>
             </div>
@@ -676,7 +727,9 @@ export function LessonEditor({
                     Assessment Authoring & Question Banks
                   </p>
                   <p className="text-muted-foreground leading-relaxed">
-                    Per design criteria, assessment question types, rubrics, accommodations, and manual grading queues are managed inside the dedicated Assessment Studio rather than duplicating forms here.
+                    Per design criteria, assessment question types, rubrics, accommodations, and
+                    manual grading queues are managed inside the dedicated Assessment Studio rather
+                    than duplicating forms here.
                   </p>
                 </div>
               </div>
@@ -705,7 +758,8 @@ export function LessonEditor({
           {lessonType === 'LIVE_SESSION' && (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                Schedule a live webinar or interactive session. Learners receive short-lived capability tokens to join.
+                Schedule a live webinar or interactive session. Learners receive short-lived
+                capability tokens to join.
               </p>
               {!isReadOnly && (
                 <Button
@@ -762,7 +816,9 @@ export function LessonEditor({
               ))}
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground italic">No assets attached to this lesson.</p>
+            <p className="text-xs text-muted-foreground italic">
+              No assets attached to this lesson.
+            </p>
           )}
 
           {!isReadOnly && (

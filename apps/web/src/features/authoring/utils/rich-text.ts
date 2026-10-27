@@ -80,7 +80,8 @@ export function plainTextToRichText(input: string): RichText {
 
   const doc: RichText = {
     type: 'doc',
-    content: content.length > 0 ? content : [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }],
+    content:
+      content.length > 0 ? content : [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }],
   };
 
   const parsed = richTextSchema.safeParse(doc);

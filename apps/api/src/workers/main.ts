@@ -32,7 +32,11 @@ import {
   AnalyticsExportTask,
   AnalyticsAggregateTask,
 } from '../modules/analytics';
-import { FulfillmentModule, FulfillmentConsumer, FulfillmentReconcileTask } from '../modules/fulfillment';
+import {
+  FulfillmentModule,
+  FulfillmentConsumer,
+  FulfillmentReconcileTask,
+} from '../modules/fulfillment';
 import { bootstrapWorker } from './bootstrap';
 import type { WorkerBootstrapOptions } from './worker-app.module';
 

@@ -36,10 +36,7 @@ export function AuditLogsTable({ workspaceId }: AuditLogsTableProps) {
     };
   }, [actionFilter, resourceTypeFilter, fromDate, toDate]);
 
-  const { data, isLoading, isError, error, refetch } = useAuditLogsQuery(
-    workspaceId,
-    queryParams,
-  );
+  const { data, isLoading, isError, error, refetch } = useAuditLogsQuery(workspaceId, queryParams);
 
   return (
     <div className="space-y-4">
@@ -140,7 +137,9 @@ export function AuditLogsTable({ workspaceId }: AuditLogsTableProps) {
                 <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
                   <ShieldCheck className="h-8 w-8 mx-auto mb-2 text-muted-foreground/60" />
                   <p className="font-medium">No audit events match your filters.</p>
-                  <p className="text-xs">Immutable audit events will appear here as state changes occur.</p>
+                  <p className="text-xs">
+                    Immutable audit events will appear here as state changes occur.
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -156,15 +155,24 @@ export function AuditLogsTable({ workspaceId }: AuditLogsTableProps) {
                   </TableCell>
                   <TableCell>
                     <div className="font-medium text-xs text-foreground">{log.resourceType}</div>
-                    <div className="font-mono text-[10px] text-muted-foreground truncate max-w-[140px]" title={log.resourceId}>
+                    <div
+                      className="font-mono text-[10px] text-muted-foreground truncate max-w-[140px]"
+                      title={log.resourceId}
+                    >
                       {log.resourceId}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-xs text-muted-foreground font-mono truncate max-w-[120px]" title={log.actorId ?? 'System'}>
+                    <div
+                      className="text-xs text-muted-foreground font-mono truncate max-w-[120px]"
+                      title={log.actorId ?? 'System'}
+                    >
                       {log.actorId ? `Actor: ${log.actorId.slice(0, 8)}...` : 'System'}
                     </div>
-                    <div className="text-[10px] text-muted-foreground/80 font-mono truncate max-w-[120px]" title={log.requestId}>
+                    <div
+                      className="text-[10px] text-muted-foreground/80 font-mono truncate max-w-[120px]"
+                      title={log.requestId}
+                    >
                       req: {log.requestId.slice(0, 8)}...
                     </div>
                   </TableCell>

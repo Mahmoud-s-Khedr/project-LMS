@@ -105,9 +105,7 @@ describe('CertificateCard Component', () => {
     fireEvent.click(downloadBtn);
 
     await waitFor(() => {
-      expect(postSpy).toHaveBeenCalledWith(
-        `/me/certificates/${mockValidCertificate.id}/download`,
-      );
+      expect(postSpy).toHaveBeenCalledWith(`/me/certificates/${mockValidCertificate.id}/download`);
       expect(windowOpenSpy).toHaveBeenCalledWith(
         'https://minio.test/signed-certificate.pdf',
         '_blank',
@@ -178,9 +176,7 @@ describe('PublicCertificateVerifier Component', () => {
   it('handles certificate verification failure / 404', async () => {
     vi.spyOn(api, 'get').mockRejectedValueOnce(new Error('Certificate not found'));
 
-    renderWithClient(
-      <PublicCertificateVerifier initialCode="INVALID-CODE-00000000000000000000" />,
-    );
+    renderWithClient(<PublicCertificateVerifier initialCode="INVALID-CODE-00000000000000000000" />);
 
     expect(await screen.findByText(/Certificate Not Verified/i)).toBeTruthy();
   });

@@ -70,11 +70,7 @@ export function PlayerNavigation({
           >
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span>
-              {isCompleted
-                ? 'Completed'
-                : isMarkingComplete
-                  ? 'Saving...'
-                  : 'Mark as Complete'}
+              {isCompleted ? 'Completed' : isMarkingComplete ? 'Saving...' : 'Mark as Complete'}
             </span>
           </Button>
         )}

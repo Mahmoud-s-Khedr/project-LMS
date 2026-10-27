@@ -11,13 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  CheckCircle2,
-  AlertCircle,
-  AlertTriangle,
-  Loader2,
-  Rocket,
-} from 'lucide-react';
+import { CheckCircle2, AlertCircle, AlertTriangle, Loader2, Rocket } from 'lucide-react';
 import { validateCourseForPublish } from '../utils/publish-validation';
 import type { Course, SectionWithLessons } from '../types';
 

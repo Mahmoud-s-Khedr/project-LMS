@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { buildCspHeader, generateNonce } from '@/lib/security/csp';
 
 const PROTECTED_PREFIXES = ['/student', '/instructor', '/admin'] as const;
 
@@ -19,9 +20,35 @@ export function middleware(request: NextRequest): NextResponse {
     loginUrl.searchParams.set('redirect', `${pathname}${search}`);
     return NextResponse.redirect(loginUrl);
   }
-  return NextResponse.next();
+
+  const nonce = generateNonce();
+  const csp = buildCspHeader({
+    nonce,
+    isDev: process.env.NODE_ENV === 'development',
+  });
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', csp);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+  response.headers.set('Content-Security-Policy', csp);
+
+  return response;
 }
 
 export const config = {
-  matcher: ['/student/:path*', '/instructor/:path*', '/admin/:path*'],
+  matcher: [
+    {
+      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
+  ],
 };

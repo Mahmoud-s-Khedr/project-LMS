@@ -103,10 +103,10 @@ describe('Authoring API Client', () => {
       version: 1,
     });
 
-    expect(patchSpy).toHaveBeenCalledWith(
-      `/workspaces/${workspaceId}/courses/${courseId}`,
-      { title: 'Updated Systems', version: 1 },
-    );
+    expect(patchSpy).toHaveBeenCalledWith(`/workspaces/${workspaceId}/courses/${courseId}`, {
+      title: 'Updated Systems',
+      version: 1,
+    });
     expect(result.version).toBe(2);
   });
 
@@ -162,9 +162,8 @@ describe('Authoring API Client', () => {
     });
 
     await authoringApi.publishCourse(workspaceId, courseId, 2);
-    expect(postSpy).toHaveBeenCalledWith(
-      `/workspaces/${workspaceId}/courses/${courseId}/publish`,
-      { version: 2 },
-    );
+    expect(postSpy).toHaveBeenCalledWith(`/workspaces/${workspaceId}/courses/${courseId}/publish`, {
+      version: 2,
+    });
   });
 });

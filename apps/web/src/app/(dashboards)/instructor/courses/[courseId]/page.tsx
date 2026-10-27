@@ -61,10 +61,10 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     refetch: refetchCourse,
   } = useCourseQuery(activeWorkspaceId ?? '', courseId);
 
-  const {
-    data: rawSections,
-    refetch: refetchSections,
-  } = useCourseSectionsQuery(activeWorkspaceId ?? '', courseId);
+  const { data: rawSections, refetch: refetchSections } = useCourseSectionsQuery(
+    activeWorkspaceId ?? '',
+    courseId,
+  );
 
   const sections: SectionWithLessons[] = React.useMemo(() => {
     if (!rawSections) return [];
@@ -89,10 +89,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     courseId,
     setConflictState,
   );
-  const submitReviewMutation = useSubmitCourseReviewMutation(
-    activeWorkspaceId ?? '',
-    courseId,
-  );
+  const submitReviewMutation = useSubmitCourseReviewMutation(activeWorkspaceId ?? '', courseId);
   const publishMutation = usePublishCourseMutation(activeWorkspaceId ?? '', courseId);
   const archiveMutation = useArchiveCourseMutation(activeWorkspaceId ?? '', courseId);
 
@@ -107,11 +104,15 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 
   if (courseError || !course) {
     return (
-      <div role="alert" className="max-w-md mx-auto my-12 p-6 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-center">
+      <div
+        role="alert"
+        className="max-w-md mx-auto my-12 p-6 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-center"
+      >
         <AlertCircle className="h-8 w-8 mx-auto mb-2" />
         <h3 className="font-semibold text-base">Course Not Found</h3>
         <p className="text-xs text-muted-foreground mt-1">
-          Unable to locate this course in the active workspace. It may have been archived or deleted.
+          Unable to locate this course in the active workspace. It may have been archived or
+          deleted.
         </p>
         <Button asChild variant="outline" size="sm" className="mt-4">
           <Link href="/instructor/courses">Return to Courses</Link>
@@ -134,7 +135,11 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   };
 
   const handleArchive = async () => {
-    if (confirm('Archive this course? New sales will stop, but enrolled students retain delivery access.')) {
+    if (
+      confirm(
+        'Archive this course? New sales will stop, but enrolled students retain delivery access.',
+      )
+    ) {
       await archiveMutation.mutateAsync(course.version);
       void refetchCourse();
     }
@@ -286,10 +291,19 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                 <div className="rounded-lg border bg-card p-5 space-y-4">
                   <div className="flex items-center justify-between pb-2 border-b">
                     <div>
-                      <h3 className="font-semibold text-sm">Editing Lesson: {selectedLesson.title}</h3>
-                      <p className="text-[11px] text-muted-foreground">Configure content, media attachments, and completion rules.</p>
+                      <h3 className="font-semibold text-sm">
+                        Editing Lesson: {selectedLesson.title}
+                      </h3>
+                      <p className="text-[11px] text-muted-foreground">
+                        Configure content, media attachments, and completion rules.
+                      </p>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => setSelectedLesson(null)} className="text-xs">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedLesson(null)}
+                      className="text-xs"
+                    >
                       Close Editor
                     </Button>
                   </div>

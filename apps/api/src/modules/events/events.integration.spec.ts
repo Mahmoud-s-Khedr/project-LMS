@@ -66,6 +66,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
   const testDbUrl = buildDatabaseUrl(BASE_DB_URL, testDbName);
   const testRedisUrl = buildRedisDbUrl(BASE_REDIS_URL, 11);
 
+  const redisPrefix = `lms_p1e_${randomUUID().replaceAll('-', '').slice(0, 12)}`;
   let prisma: PrismaService;
   let redisCleanup: Redis;
   let userAId: string;
@@ -117,7 +118,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     prisma = client as unknown as PrismaService;
 
     redisCleanup = new Redis(testRedisUrl);
-    await redisCleanup.flushdb();
+    await clearTestKeys();
 
     // Seed baseline user and two tenant workspaces for foreign-key integrity
     const userA = await prisma.user.create({
@@ -152,13 +153,15 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
   });
 
   afterEach(async () => {
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "_TestDomainEffect", "EventReceipt", "OutboxEvent", "AuditLog" RESTART IDENTITY CASCADE`);
-    await redisCleanup.flushdb();
+    await prisma.$executeRawUnsafe(
+      `TRUNCATE TABLE "_TestDomainEffect", "EventReceipt", "OutboxEvent", "AuditLog" RESTART IDENTITY CASCADE`,
+    );
+    await clearTestKeys();
   });
 
   afterAll(async () => {
     if (redisCleanup) {
-      await redisCleanup.flushdb().catch(() => undefined);
+      await clearTestKeys().catch(() => undefined);
       await redisCleanup.quit().catch(() => undefined);
     }
     if (prisma) {
@@ -172,6 +175,21 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
       await adminClient.end();
     }
   });
+
+  async function clearTestKeys() {
+    let cursor = '0';
+    do {
+      const [next, keys] = await redisCleanup.scan(
+        cursor,
+        'MATCH',
+        `${redisPrefix}_*`,
+        'COUNT',
+        100,
+      );
+      cursor = next;
+      if (keys.length) await redisCleanup.del(...keys);
+    } while (cursor !== '0');
+  }
 
   async function countEffects(eventId: string, consumer?: string): Promise<number> {
     const rows = consumer
@@ -200,7 +218,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
           consumers,
           options: {
             redisUrl: testRedisUrl,
-            queuePrefix: `lms_p1e_${process.pid}_${prefixSuffix}`,
+            queuePrefix: `${redisPrefix}_${prefixSuffix}`,
             autoStart: false,
             leaseMs: 1_000,
             publishTimeoutMs: 2_000,
@@ -327,9 +345,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     expect(await countEffects(appended.id, consumer.name)).toBe(1);
 
     // Scrub mail capability inside a transaction and verify it is removed while envelope still validates
-    const scrubbed = await prisma.$transaction((tx) =>
-      outbox.scrubMailCapability(tx, appended.id),
-    );
+    const scrubbed = await prisma.$transaction((tx) => outbox.scrubMailCapability(tx, appended.id));
     expect(scrubbed).toBe(true);
     const updatedEvent = await prisma.outboxEvent.findUniqueOrThrow({
       where: { id: appended.id },
@@ -505,9 +521,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     expect(d1.leased + d2.leased + d3.leased).toBe(13);
 
     await waitFor(async () => {
-      const counts = await Promise.all(
-        batchEvents.map((e) => countEffects(e.id, consumer.name)),
-      );
+      const counts = await Promise.all(batchEvents.map((e) => countEffects(e.id, consumer.name)));
       return counts.every((c) => c === 1);
     });
 
@@ -620,9 +634,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     const parsedOps = operationsEventsResponseSchema.parse(opsProjected);
     expect(parsedOps.data).toHaveLength(1);
     expect(parsedOps.data[0]?.id).toBe(appended.id);
-    expect(parsedOps.data[0]?.errorCode).toBe(
-      'CONSUMER_FAILED:notifications.enrollment-welcome',
-    );
+    expect(parsedOps.data[0]?.errorCode).toBe('CONSUMER_FAILED:notifications.enrollment-welcome');
     expect('payload' in (parsedOps.data[0] ?? {})).toBe(false);
 
     // 3. Cross-tenant replay attempt returns 404 NotFoundException
@@ -741,6 +753,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     };
 
     const mod = await createModule([consumer], 'redis_recovery', {
+      reconcileBatchSize: 1,
       reconcileGraceMs: 100,
       dispatchBackoffMs: 20,
       dispatchBackoffMaxMs: 50,
@@ -787,6 +800,18 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     expect(recoveredCycle.published).toBe(1);
 
     await waitFor(async () => (await countEffects(event1.id, consumer.name)) === 1);
+    const completedId = randomUUID();
+    const completed = await prisma.$transaction((tx) =>
+      outbox.append(tx, {
+        type: 'certificate.issued.v1',
+        workspaceId: workspaceAId,
+        aggregateType: 'Certificate',
+        aggregateId: completedId,
+        payload: { certificateId: completedId },
+      }),
+    );
+    await dispatcher.dispatchOnce();
+    await waitFor(async () => (await countEffects(completed.id, consumer.name)) === 1);
 
     // Part B: Event is published to Redis and marked PUBLISHED in DB, then Redis loses ALL keys before worker runs!
     await worker.stop();
@@ -806,7 +831,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     expect(publishedRow.status).toBe('PUBLISHED');
 
     // Simulate total Redis memory loss (FLUSHDB) while worker was stopped
-    await redisCleanup.flushdb();
+    await clearTestKeys();
 
     // OutboxReconcilerService detects that event2 is PUBLISHED > reconcileGraceMs ago with no EventReceipt
     const reconcileTime = new Date(Date.now() + 500);
@@ -845,14 +870,11 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     const prevDbUrl = process.env.DATABASE_URL;
     process.env.DATABASE_URL = testDbUrl;
     process.env.S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? 'lms_minio';
-    process.env.S3_SECRET_ACCESS_KEY =
-      process.env.S3_SECRET_ACCESS_KEY ?? 'lms_minio_dev_password';
+    process.env.S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY ?? 'lms_minio_dev_password';
     process.env.JWT_ACCESS_SECRET =
-      process.env.JWT_ACCESS_SECRET ??
-      'test-jwt-access-secret-at-least-32-characters-long';
+      process.env.JWT_ACCESS_SECRET ?? 'test-jwt-access-secret-at-least-32-characters-long';
     process.env.JWT_REFRESH_SECRET =
-      process.env.JWT_REFRESH_SECRET ??
-      'test-jwt-refresh-secret-at-least-32-characters-long';
+      process.env.JWT_REFRESH_SECRET ?? 'test-jwt-refresh-secret-at-least-32-characters-long';
 
     let workerCtx;
     try {
@@ -870,7 +892,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
         ],
         options: {
           redisUrl: testRedisUrl,
-          queuePrefix: `lms_p1e_${process.pid}_standalone`,
+          queuePrefix: `${redisPrefix}_standalone`,
           autoStart: false,
           consumerAttempts: 5,
           consumerBackoffMs: 30,
@@ -921,9 +943,7 @@ describe('P1-E Durable Event Bus & Audit Integration (Real PostgreSQL + Real Red
     expect(scheduled.jobId).toBe(`task__assessments.attempt-deadline__attempt_c_${attemptId}`);
 
     await waitFor(async () => executedTasks.length === 1);
-    expect(executedTasks[0]).toBe(
-      `assessments.attempt-deadline:attempt:${attemptId}:${attemptId}`,
-    );
+    expect(executedTasks[0]).toBe(`assessments.attempt-deadline:attempt:${attemptId}:${attemptId}`);
 
     await workerCtx.close();
   });

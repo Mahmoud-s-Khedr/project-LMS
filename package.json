@@ -21,6 +21,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "pnpm --filter @lms/shared build",
+    "test:db": "node scripts/test-postgres.mjs",
     "test:security": "node scripts/test-http.mjs security",
     "test:e2e": "node scripts/test-http.mjs e2e",
     "test:load": "node tests/load/autocannon-benchmarks.js",
@@ -40,5 +41,12 @@
     "turbo": "2.11.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.72.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "next>postcss": "8.5.23",
+      "@nestjs/platform-express>multer": "2.5.0",
+      "@nestjs/swagger>js-yaml": "5.4.1"
+    }
   }
 }

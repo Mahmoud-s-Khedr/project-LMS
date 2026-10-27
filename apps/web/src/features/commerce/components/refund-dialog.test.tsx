@@ -4,10 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RefundDialog } from './refund-dialog';
 import * as commerceApi from '../api';
-import {
-  mockPaidOrder,
-  COMMERCE_FIXTURE_IDS,
-} from '../testing/fixtures';
+import { mockPaidOrder, COMMERCE_FIXTURE_IDS } from '../testing/fixtures';
 
 function renderWithClient(ui: React.ReactElement) {
   const queryClient = new QueryClient({

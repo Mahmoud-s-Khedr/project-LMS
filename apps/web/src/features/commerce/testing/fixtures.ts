@@ -41,7 +41,9 @@ export const mockProduct: Product = productSchema.parse({
   name: 'Deep Learning Mastery',
   description: {
     type: 'doc',
-    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Master modern deep learning.' }] }],
+    content: [
+      { type: 'paragraph', content: [{ type: 'text', text: 'Master modern deep learning.' }] },
+    ],
   },
   accessDurationDays: 365,
   courseIds: [COMMERCE_FIXTURE_IDS.course],

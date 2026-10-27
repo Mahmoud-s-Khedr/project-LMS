@@ -29,10 +29,17 @@ import {
   conflict,
   allocate,
   lock,
-  idempotent,
+  beginIdempotent,
+  completeIdempotent,
   hash,
 } from './commerce.core';
 import { supportedCurrency } from './commerce-admin.service';
+
+export const CHECKOUT_INTENT_WINDOW_MS = 15 * 60 * 1000;
+let checkoutIntentWindowMs = CHECKOUT_INTENT_WINDOW_MS;
+export function setCheckoutIntentWindowForTests(ms: number) {
+  checkoutIntentWindowMs = ms;
+}
 
 @Injectable()
 export class CheckoutService {
@@ -224,23 +231,28 @@ export class CheckoutService {
     requestId: string,
   ) {
     if (!actor.emailVerifiedAt) throw new ForbiddenException('Verify email before checkout');
-    return this.db.$transaction(
-      async (tx) =>
-        idempotent(tx, w, actor.id, 'checkout', key, input, 201, async () => {
+    const stripeScope = hash({ w, u: actor.id, key });
+    const orderId = uuidFromHash(stripeScope);
+    const phase = await this.db.$transaction(
+      async (tx) => {
+        const intent = await beginIdempotent(tx, w, actor.id, 'checkout', key, input);
+        if (intent.kind === 'completed') return { done: true as const, response: intent.response };
+        if (intent.kind === 'new') {
           const resolved = await this.resolve(tx, w, actor.id, input);
           const { quote, rows, selections, coupon, recurring } = resolved;
           if ((quote.grandTotal > 0 || recurring) && !this.provider.enabled)
             throw new ServiceUnavailableException('Payments disabled');
           // Stable IDs bridge provider success followed by DB rollback or process loss.
-          const scope = hash({ w, u: actor.id, key });
-          const orderId = uuidFromHash(scope);
-          const expiresAt = new Date(Date.now() + 24 * 60 * 60000);
+          const expiresAt = new Date(
+            Date.now() +
+              (quote.grandTotal > 0 || recurring ? checkoutIntentWindowMs : 24 * 60 * 60000),
+          );
           await tx.order.create({
             data: {
               id: orderId,
               workspaceId: w,
               userId: actor.id,
-              number: `LMS-${scope.slice(0, 24)}`,
+              number: `LMS-${stripeScope.slice(0, 24)}`,
               currency: quote.currency,
               subtotal: quote.subtotal,
               discountTotal: quote.discountTotal,
@@ -259,6 +271,10 @@ export class CheckoutService {
                     id: p.productId,
                     name: p.product.name,
                     type: p.product.type,
+                    interval: p.interval,
+                    intervalCount: p.intervalCount,
+                    trialDays: p.trialDays,
+                    position: i,
                   }),
                   entitlementSnapshot: json({ courses: selections[i] }),
                   orderItemCourses: { create: selections[i]!.map((c) => ({ ...c })) },
@@ -278,7 +294,6 @@ export class CheckoutService {
                 reservedUntil: expiresAt,
               },
             });
-          let response;
           if (!quote.grandTotal && !recurring) {
             const paidAt = new Date();
             await tx.order.update({
@@ -296,67 +311,118 @@ export class CheckoutService {
               aggregateId: orderId,
               payload: { orderId },
             });
-            response = { data: { orderId, checkoutUrl: null, expiresAt: null } };
-          } else {
-            const customer = await this.customer(tx, w, actor);
-            const lineItems: Record<string, unknown>[] = [];
-            for (const [i, p] of rows.entries()) {
-              // Inline price_data freezes exact server-resolved one-time economics.
-              const priceData: Record<string, unknown> = {
-                currency: p.currency,
-                unit_amount: recurring ? p.amount : quote.items[i]!.totalAmount,
-                product_data: { name: p.product.name },
-              };
-              if (recurring)
-                priceData.recurring = {
-                  interval: p.interval!.toLowerCase(),
-                  interval_count: p.intervalCount,
-                };
-              lineItems.push({ price_data: priceData, quantity: 1 });
-            }
-            let discount: Record<string, unknown> | undefined;
-            if (recurring && quote.discountTotal && !rows[0]!.trialDays) {
-              const c = await this.provider.call(
-                'coupons',
-                'create',
-                { duration: 'once', amount_off: quote.discountTotal, currency: quote.currency },
-                `coupon-${scope}`,
-              );
-              discount = { coupon: c.id };
-            }
-            const session = await this.provider.call(
-              'checkout.sessions',
-              'create',
-              {
-                mode: recurring ? 'subscription' : 'payment',
-                customer: customer.stripeCustomerId,
-                line_items: lineItems,
-                success_url: this.url(input.successPath),
-                cancel_url: this.url(input.cancelPath),
-                ...(discount ? { discounts: [discount] } : {}),
-                ...(recurring && rows[0]!.trialDays
-                  ? { subscription_data: { trial_period_days: rows[0]!.trialDays } }
-                  : {}),
-              },
-              `checkout-${scope}`,
-            );
-            if (typeof session.url !== 'string' || typeof session.expires_at !== 'number')
-              throw new Error('Invalid checkout response');
-            await tx.order.update({
-              where: { id: orderId },
-              data: {
-                stripeCheckoutSessionId: session.id,
-                expiresAt: new Date(session.expires_at * 1000),
-              },
+            const response = { data: { orderId, checkoutUrl: null, expiresAt: null } };
+            await this.audit.append(tx, {
+              workspaceId: w,
+              actorId: actor.id,
+              requestId,
+              action: 'commerce.checkout.created',
+              resourceType: 'Order',
+              resourceId: orderId,
+              changes: { amount: quote.grandTotal, currency: quote.currency },
             });
-            response = {
-              data: {
-                orderId,
-                checkoutUrl: session.url,
-                expiresAt: new Date(session.expires_at * 1000).toISOString(),
-              },
+            return {
+              done: true as const,
+              response: await completeIdempotent(tx, intent.scope, 201, response),
             };
           }
+        }
+        const order = await tx.order.findUniqueOrThrow({
+          where: { id: orderId },
+          include: { orderItems: true },
+        });
+        if (order.status !== 'PENDING') conflict('Order is no longer pending');
+        return { done: false as const, order, scope: intent.scope };
+      },
+      { timeout: 10000, maxWait: 10000 },
+    );
+    if (phase.done) return phase.response;
+    const { order, scope } = phase;
+    const customer = await this.customer(w, actor);
+    const items = order.orderItems
+      .map((item) => ({
+        item,
+        snapshot: item.productSnapshot as {
+          name: string;
+          type: string;
+          interval: string | null;
+          intervalCount: number;
+          trialDays: number;
+          position: number;
+        },
+      }))
+      .sort((a, b) => a.snapshot.position - b.snapshot.position);
+    const recurring = items[0]!.snapshot.type === 'SUBSCRIPTION_PLAN';
+    const trialDays = items[0]!.snapshot.trialDays;
+    const lineItems = items.map(({ item, snapshot }) => ({
+      price_data: {
+        currency: order.currency,
+        unit_amount: recurring ? item.unitAmount : item.totalAmount,
+        product_data: { name: snapshot.name },
+        ...(recurring
+          ? {
+              recurring: {
+                interval: snapshot.interval!.toLowerCase(),
+                interval_count: snapshot.intervalCount,
+              },
+            }
+          : {}),
+      },
+      quantity: 1,
+    }));
+    let discount: Record<string, unknown> | undefined;
+    if (recurring && order.discountTotal && !trialDays) {
+      const c = await this.provider.call(
+        'coupons',
+        'create',
+        { duration: 'once', amount_off: order.discountTotal, currency: order.currency },
+        `coupon-${stripeScope}`,
+      );
+      discount = { coupon: c.id };
+    }
+    const session = await this.provider.call(
+      'checkout.sessions',
+      'create',
+      {
+        mode: recurring ? 'subscription' : 'payment',
+        customer: customer.stripeCustomerId,
+        line_items: lineItems,
+        success_url: this.url(input.successPath),
+        cancel_url: this.url(input.cancelPath),
+        ...(discount ? { discounts: [discount] } : {}),
+        ...(recurring && trialDays ? { subscription_data: { trial_period_days: trialDays } } : {}),
+      },
+      `checkout-${stripeScope}`,
+    );
+    if (typeof session.url !== 'string' || typeof session.expires_at !== 'number')
+      throw new Error('Invalid checkout response');
+    const response = {
+      data: {
+        orderId,
+        checkoutUrl: session.url,
+        expiresAt: new Date(session.expires_at * 1000).toISOString(),
+      },
+    };
+    checkoutSessionSchema.parse(response.data);
+    return this.db.$transaction(
+      async (tx) => {
+        await lock(tx, `order:${orderId}`);
+        const updated = await tx.order.updateMany({
+          where: { id: orderId, status: 'PENDING', stripeCheckoutSessionId: null },
+          data: {
+            stripeCheckoutSessionId: session.id,
+            expiresAt: new Date((session.expires_at as number) * 1000),
+          },
+        });
+        if (!updated.count) {
+          const current = await tx.order.findUniqueOrThrow({ where: { id: orderId } });
+          if (current.status !== 'PENDING' || current.stripeCheckoutSessionId !== session.id)
+            conflict('Order changed during checkout');
+        } else {
+          await tx.couponRedemption.updateMany({
+            where: { orderId, redeemedAt: null, releasedAt: null },
+            data: { reservedUntil: new Date((session.expires_at as number) * 1000) },
+          });
           await this.audit.append(tx, {
             workspaceId: w,
             actorId: actor.id,
@@ -364,19 +430,17 @@ export class CheckoutService {
             action: 'commerce.checkout.created',
             resourceType: 'Order',
             resourceId: orderId,
-            changes: { amount: quote.grandTotal, currency: quote.currency },
+            changes: { amount: order.grandTotal, currency: order.currency },
           });
-          checkoutSessionSchema.parse(response.data);
-          return response;
-        }),
-      { timeout: 60000, maxWait: 10000 },
+        }
+        return completeIdempotent(tx, scope, 201, response);
+      },
+      { timeout: 10000 },
     );
   }
-  async customer(tx: Tx, w: string, a: AuthenticatedUser) {
-    await lock(tx, `customer:${w}:${a.id}`);
-    const existing = await tx.billingCustomer.findUnique({
-      where: { workspaceId_userId: { workspaceId: w, userId: a.id } },
-    });
+  async customer(w: string, a: AuthenticatedUser) {
+    const where = { workspaceId_userId: { workspaceId: w, userId: a.id } };
+    const existing = await this.db.billingCustomer.findUnique({ where });
     if (existing) return existing;
     const remote = await this.provider.call(
       'customers',
@@ -384,9 +448,11 @@ export class CheckoutService {
       { metadata: { local_billing_scope: hash({ w, u: a.id }) } },
       `customer-${hash({ w, u: a.id })}`,
     );
-    return tx.billingCustomer.create({
+    await this.db.billingCustomer.createMany({
       data: { workspaceId: w, userId: a.id, stripeCustomerId: remote.id },
+      skipDuplicates: true,
     });
+    return this.db.billingCustomer.findUniqueOrThrow({ where });
   }
   url(path: string) {
     applicationPathSchema.parse(path);

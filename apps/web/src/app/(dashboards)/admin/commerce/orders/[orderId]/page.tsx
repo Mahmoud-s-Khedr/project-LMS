@@ -12,10 +12,7 @@ export default function AdminOrderPage() {
 
   return (
     <div className="container max-w-5xl py-8">
-      <AdminOrderDetailView
-        workspaceId={activeWorkspaceId ?? ''}
-        orderId={orderId}
-      />
+      <AdminOrderDetailView workspaceId={activeWorkspaceId ?? ''} orderId={orderId} />
     </div>
   );
 }

@@ -76,7 +76,10 @@ export class OutboxService {
     return { id: created.id, type: input.type, sequence: created.sequence.toString() };
   }
 
-  async appendMany(tx: OutboxWriter, inputs: readonly AppendEventInput[]): Promise<AppendedEvent[]> {
+  async appendMany(
+    tx: OutboxWriter,
+    inputs: readonly AppendEventInput[],
+  ): Promise<AppendedEvent[]> {
     const appended: AppendedEvent[] = [];
     for (const input of inputs) appended.push(await this.append(tx, input));
     return appended;
@@ -86,7 +89,10 @@ export class OutboxService {
    * Removes the envelope-encrypted mail capability from an event payload. The mail consumer calls this in its
    * receipt transaction after the message is handed to the delivery pipeline.
    */
-  async scrubMailCapability(tx: Pick<Prisma.TransactionClient, '$executeRaw'>, eventId: string): Promise<boolean> {
+  async scrubMailCapability(
+    tx: Pick<Prisma.TransactionClient, '$executeRaw'>,
+    eventId: string,
+  ): Promise<boolean> {
     const count = await tx.$executeRaw`
       UPDATE "OutboxEvent"
       SET "payload" = "payload" - ${MAIL_CAPABILITY_KEY}::text, "updatedAt" = now()
@@ -97,10 +103,13 @@ export class OutboxService {
   /** Validates type, scope, size, plaintext-secret absence and the full shared envelope. */
   private validate(id: string, input: AppendEventInput): Prisma.InputJsonValue {
     const { type, workspaceId } = input as { type: string; workspaceId: string | null };
-    if (!this.contracts.isKnownType(type)) throw new EventContractViolation(`Unknown event type ${type}`);
+    if (!this.contracts.isKnownType(type))
+      throw new EventContractViolation(`Unknown event type ${type}`);
     const global = this.contracts.isGlobalScope(type);
     if (global && workspaceId !== null) {
-      throw new EventContractViolation(`Global identity/security event ${type} must not carry a workspace`);
+      throw new EventContractViolation(
+        `Global identity/security event ${type} must not carry a workspace`,
+      );
     }
     if (!global && workspaceId === null) {
       throw new EventContractViolation(`Business event ${type} requires a workspaceId`);
@@ -130,7 +139,8 @@ export class OutboxService {
       timestamp: new Date().toISOString(),
       payload: input.payload,
     });
-    if (!result.ok) throw new EventContractViolation(`Event ${type} violates its contract`, result.issues);
+    if (!result.ok)
+      throw new EventContractViolation(`Event ${type} violates its contract`, result.issues);
     return result.event.payload as Prisma.InputJsonValue;
   }
 }

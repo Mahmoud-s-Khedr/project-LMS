@@ -28,7 +28,8 @@ export default function AdminOperationsPage() {
           Operations & Failure Recovery
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Monitor transactional outbox projections and Stripe webhook inbox health. Trigger audited replays of stalled tasks.
+          Monitor transactional outbox projections and Stripe webhook inbox health. Trigger audited
+          replays of stalled tasks.
         </p>
       </div>
 

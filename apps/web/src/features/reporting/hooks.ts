@@ -94,13 +94,8 @@ export function useRevenueAnalyticsQuery(
 export function useTriggerExportMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      workspaceId,
-      input,
-    }: {
-      workspaceId: string;
-      input: ExportRequest;
-    }) => triggerExport(workspaceId, input),
+    mutationFn: ({ workspaceId, input }: { workspaceId: string; input: ExportRequest }) =>
+      triggerExport(workspaceId, input),
     onSuccess: (data, variables) => {
       void queryClient.invalidateQueries({
         queryKey: REPORTING_QUERY_KEYS.exportOp(variables.workspaceId, data.operationId),

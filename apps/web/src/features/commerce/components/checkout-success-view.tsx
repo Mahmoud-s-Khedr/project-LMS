@@ -2,14 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  CheckCircle2,
-  Loader2,
-  Receipt,
-  BookOpen,
-  ArrowRight,
-  AlertCircle,
-} from 'lucide-react';
+import { CheckCircle2, Loader2, Receipt, BookOpen, ArrowRight, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/features/marketing/site-config';
@@ -83,17 +76,18 @@ export function CheckoutSuccessView({ orderId }: CheckoutSuccessViewProps) {
           </CardTitle>
           <CardDescription className="text-sm mt-1 max-w-md mx-auto">
             {isPending
-              ? 'Thank you for your enrollment with ' + siteConfig.name + '. We are finalizing your course permissions and cohort enrollment.'
-              : 'Your enrollment in ' + siteConfig.name + ' is confirmed and active. You have full access to your curriculum and resources.'}
+              ? 'Thank you for your enrollment with ' +
+                siteConfig.name +
+                '. We are finalizing your course permissions and cohort enrollment.'
+              : 'Your enrollment in ' +
+                siteConfig.name +
+                ' is confirmed and active. You have full access to your curriculum and resources.'}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="p-8 space-y-6 text-left">
           {/* Live Polling Status Banner */}
-          <OrderPollBanner
-            orderStatus={order.status}
-            fulfillmentStatus={order.fulfillmentStatus}
-          />
+          <OrderPollBanner orderStatus={order.status} fulfillmentStatus={order.fulfillmentStatus} />
 
           {/* Quick Summary */}
           <div className="rounded-lg border border-border bg-card p-5 space-y-3">

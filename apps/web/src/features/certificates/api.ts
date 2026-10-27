@@ -1,10 +1,6 @@
 import { api } from '@/lib/api';
 import type { CursorMeta } from '@lms/shared';
-import type {
-  Certificate,
-  CertificateVerification,
-  CertificatesQueryParams,
-} from './types';
+import type { Certificate, CertificateVerification, CertificatesQueryParams } from './types';
 
 export interface PaginatedCertificatesResponse {
   data: Certificate[];
@@ -38,7 +34,9 @@ export async function fetchCertificate(certificateId: string): Promise<Certifica
   return response.data;
 }
 
-export async function downloadCertificate(certificateId: string): Promise<{ url: string; expiresAt: string }> {
+export async function downloadCertificate(
+  certificateId: string,
+): Promise<{ url: string; expiresAt: string }> {
   const response = await api.post<CertificateDownloadResponse>(
     `/me/certificates/${certificateId}/download`,
   );

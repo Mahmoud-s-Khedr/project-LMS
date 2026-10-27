@@ -74,13 +74,15 @@ export function LessonLockView({ access, onBackToOutline }: LessonLockViewProps)
 
       {access.reason === 'PREREQUISITE_UNMET' && (
         <p className="mt-2 text-xs text-muted-foreground">
-          You must complete the prerequisite lessons in earlier sections before accessing this lesson.
+          You must complete the prerequisite lessons in earlier sections before accessing this
+          lesson.
         </p>
       )}
 
       {access.reason === 'ACCESS_EXPIRED' && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Your enrollment access period has expired. Please contact support or renew your enrollment to continue.
+          Your enrollment access period has expired. Please contact support or renew your enrollment
+          to continue.
         </p>
       )}
 
@@ -91,12 +93,7 @@ export function LessonLockView({ access, onBackToOutline }: LessonLockViewProps)
       )}
 
       {onBackToOutline && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onBackToOutline}
-          className="mt-6 text-xs"
-        >
+        <Button variant="outline" size="sm" onClick={onBackToOutline} className="mt-6 text-xs">
           Return to Course Outline
         </Button>
       )}

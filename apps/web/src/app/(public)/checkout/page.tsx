@@ -67,17 +67,10 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   try {
     const product = await fetchCatalogProductDetail(productId);
     const resolvedWorkspaceId =
-      paramWorkspaceId ||
-      product.prices[0]?.workspaceId ||
-      product.courses[0]?.workspaceId ||
-      '';
+      paramWorkspaceId || product.prices[0]?.workspaceId || product.courses[0]?.workspaceId || '';
 
     return (
-      <CheckoutView
-        product={product}
-        initialPriceId={priceId}
-        workspaceId={resolvedWorkspaceId}
-      />
+      <CheckoutView product={product} initialPriceId={priceId} workspaceId={resolvedWorkspaceId} />
     );
   } catch {
     return (

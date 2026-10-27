@@ -68,7 +68,11 @@ export function InteractiveLessonPlayer({
             onClick={() => void toggleFullscreen()}
             aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           >
-            {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
+            {isFullscreen ? (
+              <Minimize className="h-3.5 w-3.5" />
+            ) : (
+              <Maximize className="h-3.5 w-3.5" />
+            )}
           </Button>
 
           <Button

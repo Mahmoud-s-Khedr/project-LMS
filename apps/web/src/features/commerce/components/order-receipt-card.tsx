@@ -40,10 +40,7 @@ export function OrderReceiptCard({ order, showBackLink = true }: OrderReceiptCar
   return (
     <div className="space-y-6">
       {/* Live Polling Banner for In-Progress Transactions */}
-      <OrderPollBanner
-        orderStatus={order.status}
-        fulfillmentStatus={order.fulfillmentStatus}
-      />
+      <OrderPollBanner orderStatus={order.status} fulfillmentStatus={order.fulfillmentStatus} />
 
       <Card className="overflow-hidden border border-border shadow-sm print:border-none print:shadow-none">
         {/* Printable Invoice Header */}
@@ -239,11 +236,11 @@ export function OrderReceiptCard({ order, showBackLink = true }: OrderReceiptCar
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border print:hidden">
             {showBackLink ? (
               <Button asChild variant="ghost" size="sm">
-                <Link href="/student/orders">
-                  ← Back to My Orders
-                </Link>
+                <Link href="/student/orders">← Back to My Orders</Link>
               </Button>
-            ) : <div />}
+            ) : (
+              <div />
+            )}
 
             {isFulfilled && (
               <Button asChild className="gap-2">

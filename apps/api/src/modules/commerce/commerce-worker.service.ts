@@ -48,30 +48,51 @@ export class CommerceWorkerService {
   }
   async process(id: string) {
     try {
+      const initial = await this.db.stripeWebhook.findUniqueOrThrow({ where: { id } });
+      if (initial.status === 'PROCESSED') return;
+      const resource = object(object(object(initial.payload).data).object);
+      const remoteId = z.string().parse(resource.id);
+      const sessionSnapshot = initial.type.startsWith('checkout.session.')
+        ? await this.sessionSnapshot(remoteId)
+        : undefined;
+      const subscriptionSnapshot = initial.type.startsWith('customer.subscription.')
+        ? await this.subscriptionSnapshot(remoteId)
+        : initial.type.startsWith('invoice.')
+          ? await this.invoiceSnapshot(remoteId)
+          : undefined;
+      let refundSnapshots: Record<string, unknown>[] | undefined;
+      if (initial.type.startsWith('refund.')) {
+        refundSnapshots = [
+          await this.provider.call('refunds', 'retrieve', {}, undefined, remoteId),
+        ];
+      } else if (initial.type === 'charge.refunded') {
+        const charge = await this.provider.call(
+          'charges',
+          'retrieve',
+          { expand: ['refunds'] },
+          undefined,
+          remoteId,
+        );
+        refundSnapshots = [];
+        for (const r of records(object(charge.refunds).data))
+          refundSnapshots.push(
+            await this.provider.call('refunds', 'retrieve', {}, undefined, z.string().parse(r.id)),
+          );
+      }
       await this.db.$transaction(
         async (tx) => {
           await lock(tx, `stripe-event:${id}`);
           const event = await tx.stripeWebhook.findUniqueOrThrow({ where: { id } });
           if (event.status === 'PROCESSED') return;
-          const payload = object(event.payload);
-          const resource = object(object(payload.data).object);
-          const remoteId = z.string().parse(resource.id);
-          if (event.type.startsWith('checkout.session.')) await this.session(tx, remoteId);
+          if (event.type.startsWith('checkout.session.'))
+            await this.session(tx, remoteId, sessionSnapshot!);
           else if (event.type.startsWith('customer.subscription.'))
-            await this.subscription(tx, remoteId);
-          else if (event.type.startsWith('invoice.')) await this.invoice(tx, remoteId);
-          else if (event.type.startsWith('refund.')) await this.refund(tx, remoteId);
-          else if (event.type === 'charge.refunded') {
-            const charge = await this.provider.call(
-              'charges',
-              'retrieve',
-              { expand: ['refunds'] },
-              undefined,
-              remoteId,
-            );
-            for (const r of records(object(charge.refunds).data))
-              await this.refund(tx, z.string().parse(r.id));
-          }
+            await this.subscription(tx, remoteId, subscriptionSnapshot!);
+          else if (event.type.startsWith('invoice.') && subscriptionSnapshot)
+            await this.subscription(tx, subscriptionSnapshot.id, subscriptionSnapshot);
+          else if (refundSnapshots)
+            for (const remote of refundSnapshots)
+              await this.refund(tx, z.string().parse(remote.id), remote);
           await tx.stripeWebhook.update({
             where: { id },
             data: {
@@ -96,14 +117,7 @@ export class CommerceWorkerService {
       throw new Error('Commerce reconciliation failed');
     }
   }
-  async session(tx: Tx, sessionId: string) {
-    const order = await tx.order.findUnique({
-      where: { stripeCheckoutSessionId: sessionId },
-      include: { orderItems: true },
-    });
-    if (!order) throw new Error('Unmapped checkout session');
-    await lock(tx, `commerce-reconcile:${order.workspaceId}`);
-    await lock(tx, `order:${order.id}`);
+  async sessionSnapshot(sessionId: string) {
     const session = await this.provider.call(
       'checkout.sessions',
       'retrieve',
@@ -111,7 +125,42 @@ export class CommerceWorkerService {
       undefined,
       sessionId,
     );
-    if (session.livemode === true) throw new Error('Live payment forbidden');
+    const needsPayment =
+      session.status !== 'expired' &&
+      !stripeId(session.subscription) &&
+      (session.payment_status === 'unpaid' ||
+        (session.status === 'complete' &&
+          ['paid', 'no_payment_required'].includes(String(session.payment_status))));
+    const pi = needsPayment ? stripeId(session.payment_intent) : null;
+    const payment = pi
+      ? await this.provider.call('paymentIntents', 'retrieve', {}, undefined, pi)
+      : null;
+    const chargeId = stripeId(payment?.latest_charge);
+    const charge =
+      chargeId && session.payment_status !== 'unpaid'
+        ? await this.provider.call('charges', 'retrieve', {}, undefined, chargeId)
+        : null;
+    const subscriptionId = stripeId(session.subscription);
+    const subscription = subscriptionId ? await this.subscriptionSnapshot(subscriptionId) : null;
+    return { session, payment, charge, subscription };
+  }
+  async session(
+    tx: Tx,
+    sessionId: string,
+    snapshot: Awaited<ReturnType<CommerceWorkerService['sessionSnapshot']>>,
+  ) {
+    const mapping = await tx.order.findUnique({ where: { stripeCheckoutSessionId: sessionId } });
+    if (!mapping) throw new Error('Unmapped checkout session');
+    await lock(tx, `commerce-reconcile:${mapping.workspaceId}`);
+    await lock(tx, `order:${mapping.id}`);
+    const order = await tx.order.findUniqueOrThrow({
+      where: { id: mapping.id },
+      include: { orderItems: true },
+    });
+    if (order.stripeCheckoutSessionId !== sessionId) throw new Error('Checkout mapping changed');
+    const { session, payment, charge, subscription } = snapshot;
+    if (session.livemode !== (process.env.STRIPE_MODE === 'live'))
+      throw new Error('Payment mode mismatch');
     const customerId = stripeId(session.customer);
     const customer = customerId
       ? await tx.billingCustomer.findUnique({ where: { stripeCustomerId: customerId } })
@@ -151,12 +200,12 @@ export class CommerceWorkerService {
             entitlementSnapshot: json(item.entitlementSnapshot),
           },
         });
-      await this.subscription(tx, subscriptionId);
+      await this.subscription(tx, subscriptionId, subscription!);
     }
     if (!subscriptionId && session.payment_status === 'unpaid') {
       const pi = stripeId(session.payment_intent);
       if (pi) {
-        const intent = await this.provider.call('paymentIntents', 'retrieve', {}, undefined, pi);
+        const intent = payment!;
         if (
           intent.currency !== order.currency ||
           money(intent.amount ?? order.grandTotal) !== order.grandTotal
@@ -205,8 +254,8 @@ export class CommerceWorkerService {
       const pi = stripeId(session.payment_intent);
       if (!pi && order.grandTotal) throw new Error('Missing payment intent');
       if (pi) {
-        const payment = await this.provider.call('paymentIntents', 'retrieve', {}, undefined, pi);
         if (
+          !payment ||
           payment.status !== 'succeeded' ||
           money(payment.amount_received) !== order.grandTotal ||
           payment.currency !== order.currency
@@ -214,8 +263,7 @@ export class CommerceWorkerService {
           throw new Error('Payment not captured');
         const chargeId = stripeId(payment.latest_charge);
         if (chargeId) {
-          const charge = await this.provider.call('charges', 'retrieve', {}, undefined, chargeId);
-          paidAt = seconds(charge.created) ?? paidAt;
+          paidAt = seconds(charge?.created) ?? paidAt;
         }
         await this.payment(tx, {
           workspaceId: order.workspaceId,
@@ -297,7 +345,11 @@ export class CommerceWorkerService {
     }
     return tx.payment.create({ data });
   }
-  async subscription(tx: Tx, id: string) {
+  async subscription(
+    tx: Tx,
+    id: string,
+    snapshot: Awaited<ReturnType<CommerceWorkerService['subscriptionSnapshot']>>,
+  ) {
     const mapping = await tx.subscription.findUnique({
       where: { stripeSubscriptionId: id },
       select: { workspaceId: true },
@@ -310,13 +362,9 @@ export class CommerceWorkerService {
       include: { customer: true, price: true },
     });
     if (!local) throw new Error('Unmapped subscription (checkout must reconcile first)');
-    const remote = await this.provider.call(
-      'subscriptions',
-      'retrieve',
-      { expand: ['latest_invoice'] },
-      undefined,
-      id,
-    );
+    const { remote } = snapshot;
+    if (local.lastSyncedAt?.getTime() !== snapshot.lastSyncedAt?.getTime())
+      throw new Error('Subscription snapshot became stale');
     if (stripeId(remote.customer) !== local.customer.stripeCustomerId)
       throw new Error('Subscription customer mismatch');
     const status = subStatus[String(remote.status)];
@@ -371,7 +419,7 @@ export class CommerceWorkerService {
       cancelAtPeriodEnd: remote.cancel_at_period_end === true,
       canceledAt: seconds(remote.canceled_at),
       endedAt: ended,
-      lastSyncedAt: new Date(),
+      lastSyncedAt: new Date(Math.max(Date.now(), (local.lastSyncedAt?.getTime() ?? 0) + 1)),
     };
     const changed =
       hash({ ...data, lastSyncedAt: undefined }) !==
@@ -393,16 +441,29 @@ export class CommerceWorkerService {
         aggregateId: local.id,
         payload: { subscriptionId: local.id },
       });
-    if (paid && typeof invoice.id === 'string') {
-      const detailed = await this.provider.call(
-        'invoices',
-        'retrieve',
-        { expand: ['payments.data.payment.payment_intent'] },
-        undefined,
-        invoice.id,
+    for (const detailed of snapshot.invoices) await this.invoicePayment(tx, local, detailed);
+  }
+  async subscriptionSnapshot(id: string) {
+    const local = await this.db.subscription.findUnique({ where: { stripeSubscriptionId: id } });
+    const remote = await this.provider.call(
+      'subscriptions',
+      'retrieve',
+      { expand: ['latest_invoice'] },
+      undefined,
+      id,
+    );
+    const invoices: Record<string, unknown>[] = [];
+    const latest = object(remote.latest_invoice);
+    if (latest.status === 'paid' && typeof latest.id === 'string')
+      invoices.push(
+        await this.provider.call(
+          'invoices',
+          'retrieve',
+          { expand: ['payments.data.payment.payment_intent'] },
+          undefined,
+          latest.id,
+        ),
       );
-      await this.invoicePayment(tx, local, detailed);
-    }
     let startingAfter: string | undefined;
     for (let page = 0; page < 10; page++) {
       const history = await this.provider.call('invoices', 'list', {
@@ -412,32 +473,35 @@ export class CommerceWorkerService {
           gte: Math.max(
             0,
             Math.floor(
-              (local.lastSyncedAt?.getTime() ??
+              (local?.lastSyncedAt?.getTime() ??
                 seconds(remote.created)?.getTime() ??
-                local.createdAt.getTime()) / 1000,
+                local?.createdAt.getTime() ??
+                Date.now()) / 1000,
             ) - 86400,
           ),
         },
         ...(startingAfter ? { starting_after: startingAfter } : {}),
       });
-      const invoices = records(history.data);
-      for (const entry of invoices) {
-        if (typeof entry.id !== 'string') throw new Error('Invalid invoice');
-        const detailed = await this.provider.call(
-          'invoices',
-          'retrieve',
-          { expand: ['payments.data.payment.payment_intent'] },
-          undefined,
-          entry.id,
+      const entries = records(history.data);
+      for (const entry of entries) {
+        const invoiceId = z.string().parse(entry.id);
+        invoices.push(
+          await this.provider.call(
+            'invoices',
+            'retrieve',
+            { expand: ['payments.data.payment.payment_intent'] },
+            undefined,
+            invoiceId,
+          ),
         );
-        await this.invoicePayment(tx, local, detailed);
       }
       if (history.has_more !== true) break;
-      startingAfter = z.string().parse(invoices.at(-1)?.id);
+      startingAfter = z.string().parse(entries.at(-1)?.id);
       if (page === 9) throw new Error('Invoice backfill requires operations');
     }
+    return { id, remote, invoices, lastSyncedAt: local?.lastSyncedAt ?? null };
   }
-  async invoice(tx: Tx, id: string) {
+  async invoiceSnapshot(id: string) {
     const invoice = await this.provider.call(
       'invoices',
       'retrieve',
@@ -446,11 +510,10 @@ export class CommerceWorkerService {
       id,
     );
     const subId = stripeId(object(object(invoice.parent).subscription_details).subscription);
-    if (!subId) return;
-    const local = await tx.subscription.findUnique({ where: { stripeSubscriptionId: subId } });
-    if (!local) throw new Error('Unmapped invoice subscription');
-    await this.subscription(tx, subId);
-    await this.invoicePayment(tx, local, invoice);
+    if (!subId) return undefined;
+    const snapshot = await this.subscriptionSnapshot(subId);
+    snapshot.invoices.push(invoice);
+    return snapshot;
   }
   async invoicePayment(
     tx: Tx,
@@ -500,7 +563,7 @@ export class CommerceWorkerService {
       await this.paid(tx, local.initialOrderId, paidAt ?? new Date(), false);
   }
   async submitRefund(id: string) {
-    await this.db.$transaction(
+    const intent = await this.db.$transaction(
       async (tx) => {
         const local = await tx.refund.findUniqueOrThrow({
           where: { id },
@@ -509,24 +572,33 @@ export class CommerceWorkerService {
         await lock(tx, `commerce-reconcile:${local.workspaceId}`);
         await lock(tx, `payment:${local.paymentId}`);
         const current = await tx.refund.findUniqueOrThrow({ where: { id } });
-        if (current.stripeRefundId || current.status !== 'PENDING') return;
-        const remote = await this.provider.call(
-          'refunds',
-          'create',
-          {
-            amount: local.amount,
-            ...(local.payment.stripePaymentIntentId
-              ? { payment_intent: local.payment.stripePaymentIntentId }
-              : { charge: local.payment.stripeChargeId }),
-          },
-          `refund-${local.id}`,
-        );
-        await tx.refund.update({ where: { id }, data: { stripeRefundId: remote.id } });
+        if (current.stripeRefundId || current.status !== 'PENDING') return null;
+        return local;
       },
       { timeout: 60000 },
     );
+    if (!intent) return;
+    const remote = await this.provider.call(
+      'refunds',
+      'create',
+      {
+        amount: intent.amount,
+        ...(intent.payment.stripePaymentIntentId
+          ? { payment_intent: intent.payment.stripePaymentIntentId }
+          : { charge: intent.payment.stripeChargeId }),
+      },
+      `refund-${intent.id}`,
+    );
+    await this.db.$transaction(async (tx) => {
+      await lock(tx, `commerce-reconcile:${intent.workspaceId}`);
+      await lock(tx, `payment:${intent.paymentId}`);
+      await tx.refund.updateMany({
+        where: { id, status: 'PENDING', stripeRefundId: null },
+        data: { stripeRefundId: remote.id },
+      });
+    });
   }
-  async refund(tx: Tx, id: string) {
+  async refund(tx: Tx, id: string, remote: Record<string, unknown>) {
     const local = await tx.refund.findUnique({
       where: { stripeRefundId: id },
       include: { payment: true },
@@ -535,7 +607,6 @@ export class CommerceWorkerService {
     if (!local) throw new Error('Unmapped refund requires operations reconciliation');
     await lock(tx, `commerce-reconcile:${local.workspaceId}`);
     await lock(tx, `payment:${local.paymentId}`);
-    const remote = await this.provider.call('refunds', 'retrieve', {}, undefined, id);
     if (
       money(remote.amount) !== local.amount ||
       remote.currency !== local.currency ||
@@ -555,7 +626,7 @@ export class CommerceWorkerService {
             ? 'CANCELED'
             : 'PENDING';
     const updated = await tx.refund.updateMany({
-      where: { id: local.id, status: { not: 'SUCCEEDED' } },
+      where: { id: local.id, status: 'PENDING' },
       data: { status: state, ...(state === 'SUCCEEDED' ? { completedAt: new Date() } : {}) },
     });
     if (state !== 'SUCCEEDED' || !updated.count) return;
@@ -605,6 +676,32 @@ export class CommerceWorkerService {
       } catch {
         /* Persisted sanitized failure supports operations replay. */
       }
+    const orphaned = await this.db.order.findMany({
+      where: { status: 'PENDING', stripeCheckoutSessionId: null, expiresAt: { lte: new Date() } },
+      take: 25,
+    });
+    for (const order of orphaned) {
+      await this.db.$transaction(
+        async (tx) => {
+          await lock(tx, `order:${order.id}`);
+          const changed = await tx.order.updateMany({
+            where: {
+              id: order.id,
+              status: 'PENDING',
+              stripeCheckoutSessionId: null,
+              expiresAt: { lte: new Date() },
+            },
+            data: { status: 'EXPIRED' },
+          });
+          if (changed.count)
+            await tx.couponRedemption.updateMany({
+              where: { orderId: order.id, redeemedAt: null },
+              data: { releasedAt: new Date(), reservedUntil: null },
+            });
+        },
+        { timeout: 10000 },
+      );
+    }
     const orders = await this.db.order.findMany({
       where: { status: 'PENDING', stripeCheckoutSessionId: { not: null } },
       orderBy: { updatedAt: 'asc' },
@@ -612,7 +709,8 @@ export class CommerceWorkerService {
     });
     for (const o of orders)
       try {
-        await this.db.$transaction((tx) => this.session(tx, o.stripeCheckoutSessionId!), {
+        const snapshot = await this.sessionSnapshot(o.stripeCheckoutSessionId!);
+        await this.db.$transaction((tx) => this.session(tx, o.stripeCheckoutSessionId!, snapshot), {
           timeout: 60000,
         });
       } catch {
@@ -627,9 +725,13 @@ export class CommerceWorkerService {
     });
     for (const s of subs)
       try {
-        await this.db.$transaction((tx) => this.subscription(tx, s.stripeSubscriptionId), {
-          timeout: 60000,
-        });
+        const snapshot = await this.subscriptionSnapshot(s.stripeSubscriptionId);
+        await this.db.$transaction(
+          (tx) => this.subscription(tx, s.stripeSubscriptionId, snapshot),
+          {
+            timeout: 60000,
+          },
+        );
       } catch {
         /* Retried by next scan. */
       } finally {
@@ -644,7 +746,14 @@ export class CommerceWorkerService {
       try {
         await this.submitRefund(r.id);
         const mapped = await this.db.refund.findUniqueOrThrow({ where: { id: r.id } });
-        await this.db.$transaction((tx) => this.refund(tx, mapped.stripeRefundId!), {
+        const remote = await this.provider.call(
+          'refunds',
+          'retrieve',
+          {},
+          undefined,
+          mapped.stripeRefundId!,
+        );
+        await this.db.$transaction((tx) => this.refund(tx, mapped.stripeRefundId!, remote), {
           timeout: 60000,
         });
       } catch {

@@ -209,9 +209,7 @@ describe('Administration Feature', () => {
     };
 
     it('renders members and outstanding invitations', async () => {
-      vi.mocked(api.get)
-        .mockResolvedValueOnce(mockMembers)
-        .mockResolvedValueOnce(mockInvitations);
+      vi.mocked(api.get).mockResolvedValueOnce(mockMembers).mockResolvedValueOnce(mockInvitations);
 
       renderWithClient(<MembersTable workspaceId="ws-1" />);
 
@@ -350,10 +348,19 @@ describe('Administration Feature', () => {
   describe('AdminOverview Component', () => {
     it('renders overview metrics and navigation shortcuts', async () => {
       vi.mocked(api.get)
-        .mockResolvedValueOnce({ data: [], meta: { page: 1, pageSize: 1, total: 42, totalPages: 1 } }) // users
-        .mockResolvedValueOnce({ data: [], meta: { page: 1, pageSize: 1, total: 7, totalPages: 1 } }) // workspaces
+        .mockResolvedValueOnce({
+          data: [],
+          meta: { page: 1, pageSize: 1, total: 42, totalPages: 1 },
+        }) // users
+        .mockResolvedValueOnce({
+          data: [],
+          meta: { page: 1, pageSize: 1, total: 7, totalPages: 1 },
+        }) // workspaces
         .mockResolvedValueOnce({ data: [], meta: { limit: 20, hasMore: false } }) // operations
-        .mockResolvedValueOnce({ data: [], meta: { page: 1, pageSize: 1, total: 0, totalPages: 1 } }) // webhooks
+        .mockResolvedValueOnce({
+          data: [],
+          meta: { page: 1, pageSize: 1, total: 0, totalPages: 1 },
+        }) // webhooks
         .mockResolvedValueOnce({ data: [], meta: { limit: 20, hasMore: false } }); // audit
 
       renderWithClient(<AdminOverview />);

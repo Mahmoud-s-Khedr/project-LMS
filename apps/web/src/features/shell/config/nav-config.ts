@@ -72,45 +72,273 @@ export const INSTRUCTOR_AREA_ROLES: readonly Role[] = [
 export const ADMIN_AREA_ROLES: readonly Role[] = [Role.ADMIN, Role.SUPER_ADMIN] as const;
 
 export const DASHBOARD_NAV_CONFIG: Record<DashboardAreaId, DashboardAreaConfig> = {
-  student: { id: 'student', label: 'Student Workspace', shortLabel: 'Student', basePath: '/student', description: 'Student Workspace', allowedRoles: ALL_ROLES, sections: [
-    { id: 'student-learning', title: 'Learning Studio', items: [
-      { id: 'student-overview', label: 'Overview', href: '/student', iconName: 'overview', roles: ALL_ROLES, exactMatch: true, packageOwner: 'P3-F-STUDENT' },
-      { id: 'student-courses', label: 'My Courses', href: '/student/enrollments', iconName: 'courses', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-STUDENT' },
-      { id: 'student-results', label: 'Grades & Results', href: '/student/results', iconName: 'grading', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-STUDENT' },
-    ] },
-    { id: 'student-records', title: 'Account & Records', items: [
-      { id: 'student-certificates', label: 'Certificates', href: '/student/certificates', iconName: 'certificates', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-STUDENT' },
-      { id: 'student-notifications', label: 'Notifications', href: '/student/notifications', iconName: 'discussions', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-STUDENT' },
-      { id: 'student-orders', label: 'Billing & Orders', href: '/student/orders', iconName: 'orders', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-COMMERCE' },
-      { id: 'student-subscriptions', label: 'Subscriptions', href: '/student/subscriptions', iconName: 'orders', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-COMMERCE' },
-      { id: 'student-settings', label: 'Settings', href: '/student/settings', iconName: 'settings', roles: ALL_ROLES, exactMatch: false, packageOwner: 'P3-F-STUDENT' },
-    ] },
-  ] },
-  instructor: { id: 'instructor', label: 'Instructor Studio', shortLabel: 'Instructor', basePath: '/instructor', description: 'Instructor Studio', allowedRoles: INSTRUCTOR_AREA_ROLES, sections: [
-    { id: 'instructor-teaching', title: 'Curriculum & Delivery', items: [
-      { id: 'instructor-overview', label: 'Studio Overview', href: '/instructor', iconName: 'overview', roles: INSTRUCTOR_AREA_ROLES, exactMatch: true, packageOwner: 'P3-F-ADMIN' },
-      { id: 'instructor-courses', label: 'Course Builder', href: '/instructor/courses', iconName: 'curriculum', roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN], exactMatch: false, packageOwner: 'P2-F-AUTHOR' },
-      { id: 'instructor-question-banks', label: 'Question Banks', href: '/instructor/question-banks', iconName: 'curriculum', roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN], exactMatch: false, packageOwner: 'P2-F-ASSESS' },
-      { id: 'instructor-assessments', label: 'Assessments', href: '/instructor/assessments', iconName: 'assignments', roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN], exactMatch: false, packageOwner: 'P2-F-ASSESS' },
-      { id: 'instructor-grading', label: 'Grading Queue', href: '/instructor/grading', iconName: 'grading', roles: INSTRUCTOR_AREA_ROLES, exactMatch: false, packageOwner: 'P2-F-ASSESS' },
-      { id: 'instructor-learners', label: 'Course Roster', href: '/instructor/learners', iconName: 'cohorts', roles: INSTRUCTOR_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-      { id: 'instructor-analytics', label: 'Studio Analytics', href: '/instructor/analytics', iconName: 'analytics', roles: INSTRUCTOR_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-    ] },
-  ] },
-  admin: { id: 'admin', label: 'Admin Console', shortLabel: 'Admin', basePath: '/admin', description: 'Admin Console', allowedRoles: ADMIN_AREA_ROLES, sections: [
-    { id: 'admin-governance', title: 'Platform Governance', items: [
-      { id: 'admin-overview', label: 'System Overview', href: '/admin', iconName: 'overview', roles: ADMIN_AREA_ROLES, exactMatch: true, packageOwner: 'P3-F-ADMIN' },
-      { id: 'admin-users', label: 'Users', href: '/admin/users', iconName: 'users', roles: [Role.SUPER_ADMIN], exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-      { id: 'admin-workspaces', label: 'Workspaces', href: '/admin/workspaces', iconName: 'settings', roles: [Role.SUPER_ADMIN], exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-      { id: 'admin-members', label: 'Team Members', href: '/admin/members', iconName: 'users', roles: ADMIN_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-    ] },
-    { id: 'admin-ledger', title: 'Compliance & Ledger', items: [
-      { id: 'admin-orders', label: 'Commerce', href: '/admin/commerce', iconName: 'orders', roles: ADMIN_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-COMMERCE' },
-      { id: 'admin-audit', label: 'Audit Logs', href: '/admin/audit', iconName: 'audit', roles: ADMIN_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-      { id: 'admin-operations', label: 'Operations & Outbox', href: '/admin/operations', iconName: 'settings', roles: ADMIN_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-      { id: 'admin-analytics', label: 'Revenue & Reports', href: '/admin/analytics', iconName: 'analytics', roles: ADMIN_AREA_ROLES, exactMatch: false, packageOwner: 'P3-F-ADMIN' },
-    ] },
-  ] },
+  student: {
+    id: 'student',
+    label: 'Student Workspace',
+    shortLabel: 'Student',
+    basePath: '/student',
+    description: 'Student Workspace',
+    allowedRoles: ALL_ROLES,
+    sections: [
+      {
+        id: 'student-learning',
+        title: 'Learning Studio',
+        items: [
+          {
+            id: 'student-overview',
+            label: 'Overview',
+            href: '/student',
+            iconName: 'overview',
+            roles: ALL_ROLES,
+            exactMatch: true,
+            packageOwner: 'P3-F-STUDENT',
+          },
+          {
+            id: 'student-courses',
+            label: 'My Courses',
+            href: '/student/enrollments',
+            iconName: 'courses',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-STUDENT',
+          },
+          {
+            id: 'student-results',
+            label: 'Grades & Results',
+            href: '/student/results',
+            iconName: 'grading',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-STUDENT',
+          },
+        ],
+      },
+      {
+        id: 'student-records',
+        title: 'Account & Records',
+        items: [
+          {
+            id: 'student-certificates',
+            label: 'Certificates',
+            href: '/student/certificates',
+            iconName: 'certificates',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-STUDENT',
+          },
+          {
+            id: 'student-notifications',
+            label: 'Notifications',
+            href: '/student/notifications',
+            iconName: 'discussions',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-STUDENT',
+          },
+          {
+            id: 'student-orders',
+            label: 'Billing & Orders',
+            href: '/student/orders',
+            iconName: 'orders',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-COMMERCE',
+          },
+          {
+            id: 'student-subscriptions',
+            label: 'Subscriptions',
+            href: '/student/subscriptions',
+            iconName: 'orders',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-COMMERCE',
+          },
+          {
+            id: 'student-settings',
+            label: 'Settings',
+            href: '/student/settings',
+            iconName: 'settings',
+            roles: ALL_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-STUDENT',
+          },
+        ],
+      },
+    ],
+  },
+  instructor: {
+    id: 'instructor',
+    label: 'Instructor Studio',
+    shortLabel: 'Instructor',
+    basePath: '/instructor',
+    description: 'Instructor Studio',
+    allowedRoles: INSTRUCTOR_AREA_ROLES,
+    sections: [
+      {
+        id: 'instructor-teaching',
+        title: 'Curriculum & Delivery',
+        items: [
+          {
+            id: 'instructor-overview',
+            label: 'Studio Overview',
+            href: '/instructor',
+            iconName: 'overview',
+            roles: INSTRUCTOR_AREA_ROLES,
+            exactMatch: true,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'instructor-courses',
+            label: 'Course Builder',
+            href: '/instructor/courses',
+            iconName: 'curriculum',
+            roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN],
+            exactMatch: false,
+            packageOwner: 'P2-F-AUTHOR',
+          },
+          {
+            id: 'instructor-question-banks',
+            label: 'Question Banks',
+            href: '/instructor/question-banks',
+            iconName: 'curriculum',
+            roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN],
+            exactMatch: false,
+            packageOwner: 'P2-F-ASSESS',
+          },
+          {
+            id: 'instructor-assessments',
+            label: 'Assessments',
+            href: '/instructor/assessments',
+            iconName: 'assignments',
+            roles: [Role.INSTRUCTOR, Role.ADMIN, Role.SUPER_ADMIN],
+            exactMatch: false,
+            packageOwner: 'P2-F-ASSESS',
+          },
+          {
+            id: 'instructor-grading',
+            label: 'Grading Queue',
+            href: '/instructor/grading',
+            iconName: 'grading',
+            roles: INSTRUCTOR_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P2-F-ASSESS',
+          },
+          {
+            id: 'instructor-learners',
+            label: 'Course Roster',
+            href: '/instructor/learners',
+            iconName: 'cohorts',
+            roles: INSTRUCTOR_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'instructor-analytics',
+            label: 'Studio Analytics',
+            href: '/instructor/analytics',
+            iconName: 'analytics',
+            roles: INSTRUCTOR_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+        ],
+      },
+    ],
+  },
+  admin: {
+    id: 'admin',
+    label: 'Admin Console',
+    shortLabel: 'Admin',
+    basePath: '/admin',
+    description: 'Admin Console',
+    allowedRoles: ADMIN_AREA_ROLES,
+    sections: [
+      {
+        id: 'admin-governance',
+        title: 'Platform Governance',
+        items: [
+          {
+            id: 'admin-overview',
+            label: 'System Overview',
+            href: '/admin',
+            iconName: 'overview',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: true,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'admin-users',
+            label: 'Users',
+            href: '/admin/users',
+            iconName: 'users',
+            roles: [Role.SUPER_ADMIN],
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'admin-workspaces',
+            label: 'Workspaces',
+            href: '/admin/workspaces',
+            iconName: 'settings',
+            roles: [Role.SUPER_ADMIN],
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'admin-members',
+            label: 'Team Members',
+            href: '/admin/members',
+            iconName: 'users',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+        ],
+      },
+      {
+        id: 'admin-ledger',
+        title: 'Compliance & Ledger',
+        items: [
+          {
+            id: 'admin-orders',
+            label: 'Commerce',
+            href: '/admin/commerce',
+            iconName: 'orders',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-COMMERCE',
+          },
+          {
+            id: 'admin-audit',
+            label: 'Audit Logs',
+            href: '/admin/audit',
+            iconName: 'audit',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'admin-operations',
+            label: 'Operations & Outbox',
+            href: '/admin/operations',
+            iconName: 'settings',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+          {
+            id: 'admin-analytics',
+            label: 'Revenue & Reports',
+            href: '/admin/analytics',
+            iconName: 'analytics',
+            roles: ADMIN_AREA_ROLES,
+            exactMatch: false,
+            packageOwner: 'P3-F-ADMIN',
+          },
+        ],
+      },
+    ],
+  },
 };
 const VALID_ROLE_SET = new Set<string>(Object.values(Role));
 
@@ -133,7 +361,11 @@ export function extractEffectiveRoles(user: RoleBearingUser | null | undefined):
 
   if (Array.isArray(user.memberships)) {
     for (const membership of user.memberships) {
-      if (membership && typeof membership.role === 'string' && VALID_ROLE_SET.has(membership.role)) {
+      if (
+        membership &&
+        typeof membership.role === 'string' &&
+        VALID_ROLE_SET.has(membership.role)
+      ) {
         collected.add(membership.role as Role);
       }
     }
@@ -169,9 +401,7 @@ export function getNavSectionsForArea(
     .filter((section) => section.items.length > 0);
 
   if (extraItems && extraItems.length > 0) {
-    const visibleExtra = extraItems.filter((item) =>
-      item.roles.some((r) => userRoles.includes(r)),
-    );
+    const visibleExtra = extraItems.filter((item) => item.roles.some((r) => userRoles.includes(r)));
     if (visibleExtra.length > 0) {
       baseSections.push({
         id: `${area}-extensions`,

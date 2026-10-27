@@ -63,12 +63,10 @@ describe('PreviewLessonModal component', () => {
       ],
     });
 
-    const downloadSpy = vi
-      .spyOn(apiModule, 'requestPreviewAssetDownload')
-      .mockResolvedValueOnce({
-        url: 'https://cdn.local/download?sig=xyz',
-        expiresAt: '2026-10-27T00:00:00.000Z',
-      });
+    const downloadSpy = vi.spyOn(apiModule, 'requestPreviewAssetDownload').mockResolvedValueOnce({
+      url: 'https://cdn.local/download?sig=xyz',
+      expiresAt: '2026-10-27T00:00:00.000Z',
+    });
 
     render(
       <PreviewLessonModal
@@ -84,9 +82,7 @@ describe('PreviewLessonModal component', () => {
     expect(screen.getByText('Introduction to Transactions')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Practice building dependable software.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Practice building dependable software.')).toBeInTheDocument();
     });
 
     expect(screen.getByText('system-cheatsheet.pdf')).toBeInTheDocument();

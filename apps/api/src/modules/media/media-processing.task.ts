@@ -32,7 +32,7 @@ export class ClamAvScanner implements MalwareScanner {
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code === '1' || (e as { code?: number }).code === 1)
         return 'INFECTED';
-      throw new MediaRejected('SCAN_FAILED');
+      throw new Error('SCAN_FAILED');
     }
   }
 }
@@ -77,10 +77,11 @@ export class MediaProcessingTask implements BackgroundTaskHandler {
       },
     });
     if (!claimed.count) return;
-    const dir = await mkdtemp(join(tmpdir(), 'lms-media-'));
-    const path = join(dir, 'source');
+    let dir: string | undefined;
     let verifiedKey: string | undefined;
     try {
+      dir = await mkdtemp(join(tmpdir(), 'lms-media-'));
+      const path = join(dir, 'source');
       const verified = await this.objects.fetchVerified(a.objectKey, path, a.sizeBytes);
       if (verified.sha256 !== a.sha256) throw new MediaRejected('CHECKSUM_MISMATCH');
       if (verified.contentType !== a.mimeType || !sniffMime(verified.prefix, a.mimeType))
@@ -110,15 +111,33 @@ export class MediaProcessingTask implements BackgroundTaskHandler {
       await this.objects.storage.deleteObject(a.objectKey).catch(() => undefined);
     } catch (e) {
       if (verifiedKey) await this.objects.storage.deleteObject(verifiedKey).catch(() => undefined);
-      const code = e instanceof MediaRejected ? e.code : 'SCAN_FAILED';
+      const permanent = e instanceof MediaRejected && e.code !== 'SCAN_FAILED';
+      const code = permanent ? e.code : 'SCAN_FAILED';
+      const attempts = (typeof metadata.scanAttempts === 'number' ? metadata.scanAttempts : 0) + 1;
+      const exhausted = attempts >= 8;
       const current = await this.prisma.asset.findUnique({ where: { id } });
       if (current?.status === 'SCANNING' && assetMetadata(current).lease === lease)
         await this.prisma.asset.updateMany({
           where: { id, workspaceId, status: 'SCANNING', updatedAt: current.updatedAt },
-          data: { status: 'REJECTED', metadata: json({ ...metadata, rejectionCode: code }) },
+          data:
+            permanent || exhausted
+              ? {
+                  status: 'REJECTED',
+                  metadata: json({ ...metadata, scanAttempts: attempts, rejectionCode: code }),
+                }
+              : {
+                  metadata: json({
+                    ...metadata,
+                    scanAttempts: attempts,
+                    lastErrorCode: code,
+                    leaseUntil: new Date(
+                      Date.now() + Math.min(3600000, 10000 * 2 ** (attempts - 1)),
+                    ).toISOString(),
+                  }),
+                },
         });
     } finally {
-      await rm(dir, { recursive: true, force: true });
+      if (dir) await rm(dir, { recursive: true, force: true });
     }
   }
   async probeVideo(path: string, dir: string, workspaceId: string, id: string) {

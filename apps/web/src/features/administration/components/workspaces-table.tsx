@@ -1,7 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { AlertCircle, Building2, ChevronLeft, ChevronRight, Loader2, Search, ShieldAlert } from 'lucide-react';
+import {
+  AlertCircle,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Search,
+  ShieldAlert,
+} from 'lucide-react';
 import type { AdminWorkspace } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -239,8 +247,8 @@ export function WorkspacesTable() {
       {data && data.meta.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground px-1">
           <div>
-            Showing {(page - 1) * pageSize + 1} to{' '}
-            {Math.min(page * pageSize, data.meta.total)} of {data.meta.total} workspaces
+            Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, data.meta.total)} of{' '}
+            {data.meta.total} workspaces
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -276,7 +284,8 @@ export function WorkspacesTable() {
           <DialogHeader>
             <DialogTitle>Workspace Governance</DialogTitle>
             <DialogDescription>
-              Modify tenancy status and access evaluation for {selectedWs?.name} (/{selectedWs?.slug}).
+              Modify tenancy status and access evaluation for {selectedWs?.name} (/
+              {selectedWs?.slug}).
             </DialogDescription>
           </DialogHeader>
 
@@ -300,7 +309,9 @@ export function WorkspacesTable() {
                 className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <option value="ACTIVE">ACTIVE (Normal operational state)</option>
-                <option value="SUSPENDED">SUSPENDED (Access evaluator blocks all tenant operations)</option>
+                <option value="SUSPENDED">
+                  SUSPENDED (Access evaluator blocks all tenant operations)
+                </option>
               </select>
             </div>
 
@@ -308,8 +319,8 @@ export function WorkspacesTable() {
               <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
                 <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>
-                  All content delivery, course enrollment access, and staff actions under this workspace
-                  will be halted immediately until reactivated.
+                  All content delivery, course enrollment access, and staff actions under this
+                  workspace will be halted immediately until reactivated.
                 </span>
               </div>
             )}
@@ -330,7 +341,12 @@ export function WorkspacesTable() {
             </div>
 
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={handleCloseEdit} disabled={updateMutation.isPending}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCloseEdit}
+                disabled={updateMutation.isPending}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>

@@ -31,7 +31,7 @@ export class MediaStorageService implements OnModuleDestroy {
     this.client = new S3Client({
       endpoint: config.getOrThrow<string>('S3_ENDPOINT'),
       region: config.getOrThrow<string>('S3_REGION'),
-      forcePathStyle: true,
+      forcePathStyle: config.get<boolean>('S3_FORCE_PATH_STYLE', true),
       credentials: {
         accessKeyId: config.getOrThrow<string>('S3_ACCESS_KEY_ID'),
         secretAccessKey: config.getOrThrow<string>('S3_SECRET_ACCESS_KEY'),

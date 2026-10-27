@@ -202,6 +202,28 @@ describe('Auth forms (Zod validation + TanStack Query mutations)', () => {
     });
   });
 
+  it('rejects an unsafe login redirect', async () => {
+    vi.spyOn(api, 'post').mockResolvedValueOnce({
+      data: { accessToken: 'token', expiresIn: 600, user: { platformRole: 'STUDENT' } },
+    });
+    vi.spyOn(api, 'get').mockRejectedValueOnce(new Error('offline'));
+    renderWithQueryClient(<LoginForm redirectTo="/\\evil.example" />);
+    fireEvent.change(screen.getByLabelText(/email address/i), {
+      target: { value: 'student@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^password$/i), {
+      target: { value: 'correct-horse-battery-staple' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith('/student'));
+  });
+
+  it('does not propagate an unsafe registration redirect to login', () => {
+    renderWithQueryClient(<RegisterForm redirectTo="/%5Cevil.example" />);
+    const links = screen.getAllByRole('link', { name: /sign in/i });
+    expect(links.every((link) => link.getAttribute('href') === '/login')).toBe(true);
+  });
+
   it('renders an accessible alert banner with requestId when LoginForm encounters an ApiError', async () => {
     vi.spyOn(api, 'post').mockRejectedValueOnce(
       new ApiError(401, {

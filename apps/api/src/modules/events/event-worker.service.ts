@@ -1,13 +1,14 @@
-import { Inject, Injectable, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  type OnApplicationBootstrap,
+  type OnModuleDestroy,
+} from '@nestjs/common';
 import { type Job, UnrecoverableError, Worker } from 'bullmq';
 import { EventConsumerRunnerService } from './event-consumer-runner.service';
 import { type ConsumerOutcome, PermanentEventError } from './event-consumer';
 import type { DomainEventJobData } from './event-queue.service';
-import {
-  DOMAIN_EVENTS_QUEUE,
-  EVENTS_OPTIONS,
-  type EventsOptions,
-} from './events.options';
+import { DOMAIN_EVENTS_QUEUE, EVENTS_OPTIONS, type EventsOptions } from './events.options';
 import { jitteredBackoff, redisConnectionFromUrl } from './redis-connection';
 
 /**

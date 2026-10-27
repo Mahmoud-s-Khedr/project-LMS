@@ -21,7 +21,12 @@ import { OutboxService } from '../events/outbox.service';
 import { SharedEventContracts } from '../events/event-contracts';
 import { AuditService } from '../audit/audit.service';
 import { CommerceAdminService } from './commerce-admin.service';
-import { CheckoutService } from './checkout.service';
+import {
+  CheckoutService,
+  setCheckoutIntentWindowForTests,
+  CHECKOUT_INTENT_WINDOW_MS,
+} from './checkout.service';
+import { canonical, setIdempotencyLeaseForTests } from './commerce.core';
 import { BillingService } from './billing.service';
 import { CommerceWorkerService } from './commerce-worker.service';
 import { CommerceCatalogService } from './commerce-catalog.service';
@@ -85,6 +90,7 @@ class FakeProvider implements PaymentProvider {
     } else if (resource === 'checkout.sessions')
       response = {
         id: `cs_${++this.serial}`,
+        livemode: false,
         status: 'open',
         url: 'https://checkout.stripe.com/c/pay/test',
         expires_at: Math.floor(Date.now() / 1000) + 86400,
@@ -235,7 +241,7 @@ suite('commerce real PostgreSQL invariants', () => {
     );
     db = new PrismaClient({
       adapter: new PrismaPg(
-        { connectionString, options: `-c search_path=${schema}`, max: 12 },
+        { connectionString, options: `-c search_path=${schema}`, max: 10 },
         { schema },
       ),
     });
@@ -323,6 +329,156 @@ suite('commerce real PostgreSQL invariants', () => {
     expect(result.data.courses[0]?.id).toBe(course);
     expect(result.data).not.toHaveProperty('stripeProductId');
   });
+  it('keeps the database responsive during 30 slow concurrent checkouts', async () => {
+    const originalWorkspace = w;
+    const originalCourse = course;
+    const offers: { workspaceId: string; priceId: string }[] = [];
+    try {
+      for (let i = 0; i < 3; i++) {
+        w = (
+          await db.workspace.create({
+            data: {
+              ownerId: owner.id,
+              kind: 'ACADEMY',
+              name: 'Load test',
+              slug: `load-${randomUUID()}`,
+            },
+          })
+        ).id;
+        await db.workspaceMember.create({
+          data: { workspaceId: w, userId: owner.id, role: 'ADMIN' },
+        });
+        course = (
+          await db.course.create({
+            data: {
+              workspaceId: w,
+              createdById: owner.id,
+              slug: `load-${randomUUID()}`,
+              title: 'Load',
+              summary: 'Test',
+              status: 'PUBLISHED',
+              publishedAt: new Date(),
+              description: { type: 'doc', content: [] },
+            },
+          })
+        ).id;
+        offers.push({ workspaceId: w, priceId: (await offer()).price });
+      }
+    } finally {
+      w = originalWorkspace;
+      course = originalCourse;
+    }
+    const buyers = await Promise.all(Array.from({ length: 30 }, () => person()));
+    const realCall = provider.call.bind(provider);
+    let started = 0;
+    let signal!: () => void;
+    const saturated = new Promise<void>((resolve) => {
+      signal = resolve;
+    });
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (++started === 10) signal();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return realCall(...args);
+    };
+    try {
+      const start = performance.now();
+      const checkouts = buyers.map((actor, i) => {
+        const selected = offers[i % offers.length]!;
+        return checkout.session(
+          actor,
+          selected.workspaceId,
+          payload(selected.priceId),
+          randomUUID(),
+          req,
+        );
+      });
+      const resultsPromise = Promise.allSettled(checkouts);
+      await Promise.race([saturated, new Promise<void>((resolve) => setTimeout(resolve, 2000))]);
+      const queryStart = performance.now();
+      await db.$queryRaw`SELECT 1`;
+      const queryMs = performance.now() - queryStart;
+      const results = await resultsPromise;
+      const totalMs = performance.now() - start;
+      console.log(
+        `Checkout load: ${totalMs.toFixed(0)} ms; unrelated query: ${queryMs.toFixed(0)} ms; failed: ${results.filter((r) => r.status === 'rejected').length}`,
+      );
+      expect(results.filter((r) => r.status === 'rejected')).toEqual([]);
+      expect(queryMs).toBeLessThan(1000);
+    } finally {
+      provider.call = realCall;
+    }
+  }, 30000);
+  it('creates Stripe prices without the admin lock and retries provider success safely', async () => {
+    const p = await admin.createProduct(
+      owner,
+      w,
+      {
+        type: 'COURSE',
+        name: 'Retry offer',
+        slug: `retry-${randomUUID()}`,
+        description: { type: 'doc', content: [] },
+        accessDurationDays: 30,
+        courseIds: [course],
+      },
+      req,
+    );
+    const input = {
+      currency: 'usd',
+      amount: 1234,
+      interval: null,
+      intervalCount: 1,
+      trialDays: 0,
+      isActive: true,
+    } as const;
+    const key = randomUUID();
+    const realCall = provider.call.bind(provider);
+    let calls = 0;
+    let loseResponse = true;
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'products' || args[0] === 'prices') {
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          const result = await client.query<{ acquired: boolean }>(
+            'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+            [`commerce:${w}`],
+          );
+          expect(result.rows[0]?.acquired).toBe(true);
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+        calls++;
+      }
+      const response = await realCall(...args);
+      if (args[0] === 'prices' && loseResponse) {
+        loseResponse = false;
+        throw new Error('lost response');
+      }
+      return response;
+    };
+    try {
+      await expect(admin.createPrice(owner, w, p.data.id, input, req, key)).rejects.toThrow(
+        'lost response',
+      );
+      const pending = await db.price.findFirstOrThrow({ where: { productId: p.data.id } });
+      expect(pending.isActive).toBe(false);
+      const result = await admin.createPrice(owner, w, p.data.id, input, req, key);
+      expect(result.data.id).toBe(pending.id);
+      expect(result.data.isActive).toBe(true);
+      expect(await db.price.count({ where: { productId: p.data.id } })).toBe(1);
+      expect([...provider.keys.keys()].filter((k) => k === `price-${pending.id}`)).toHaveLength(1);
+      expect(
+        [...provider.objects.values()].filter((object) => object.unit_amount === 1234),
+      ).toHaveLength(1);
+      expect(calls).toBe(3);
+      await expect(
+        admin.createPrice(owner, w, p.data.id, { ...input, amount: 99 }, req, key),
+      ).rejects.toThrow();
+    } finally {
+      provider.call = realCall;
+    }
+  });
   it('reads only an authorized same-workspace administrative product', async () => {
     expect((await admin.product(owner, w, product)).data.id).toBe(product);
     await expect(admin.product(buyer, w, product)).rejects.toMatchObject({ status: 404 });
@@ -369,6 +525,7 @@ suite('commerce real PostgreSQL invariants', () => {
   });
   it('serializes duplicate checkout keys, replays response, rejects changed bodies', async () => {
     const key = randomUUID();
+    const before = provider.calls.filter((call) => call === 'checkout.sessions.create').length;
     const results = await Promise.allSettled([
       session(payload(), buyer, key),
       session(payload(), buyer, key),
@@ -379,9 +536,206 @@ suite('commerce real PostgreSQL invariants', () => {
     expect(success).toBeDefined();
     expect(await session(payload(), buyer, key)).toEqual(success.value);
     expect(await db.order.count({ where: { id: success.value.orderId } })).toBe(1);
+    expect(
+      provider.calls.filter((call) => call === 'checkout.sessions.create').length - before,
+    ).toBe(1);
     await expect(session({ ...payload(), cancelPath: '/catalog' }, buyer, key)).rejects.toThrow(
       'Key already used',
     );
+  });
+  it('resumes a checkout after provider failure and after a lost provider response', async () => {
+    for (const lostResponse of [false, true]) {
+      const key = randomUUID();
+      const realCall = provider.call.bind(provider);
+      let failed = false;
+      let firstParams = '';
+      let stripeKey = '';
+      provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+        if (args[0] === 'checkout.sessions' && args[1] === 'create') {
+          if (!failed) {
+            failed = true;
+            firstParams = JSON.stringify(args[2]);
+            stripeKey = args[3]!;
+            if (lostResponse) await realCall(...args);
+            throw new Error('simulated provider failure');
+          }
+          expect(JSON.stringify(args[2])).toBe(firstParams);
+          expect(args[3]).toBe(stripeKey);
+        }
+        return realCall(...args);
+      };
+      try {
+        await expect(session(payload(), buyer, key)).rejects.toThrow('simulated provider failure');
+        const intent = await db.idempotencyRecord.findFirstOrThrow({
+          where: { key, route: 'checkout' },
+        });
+        expect(intent.status).toBe('IN_PROGRESS');
+        const pending = await db.order.findFirstOrThrow({
+          where: { number: `LMS-${stripeKey.slice('checkout-'.length, 'checkout-'.length + 24)}` },
+        });
+        expect(pending.status).toBe('PENDING');
+        setIdempotencyLeaseForTests(0);
+        const result = await session(payload(), buyer, key);
+        expect(result.orderId).toBe(pending.id);
+        expect(
+          (await db.idempotencyRecord.findUniqueOrThrow({ where: { id: intent.id } })).status,
+        ).toBe('COMPLETED');
+        expect(await db.order.count({ where: { id: pending.id } })).toBe(1);
+      } finally {
+        setIdempotencyLeaseForTests(30000);
+        provider.call = realCall;
+      }
+    }
+  });
+  it('expires failed checkout reservations and allows a new checkout for the last seat and coupon', async () => {
+    const c = await db.course.create({
+      data: {
+        workspaceId: w,
+        createdById: owner.id,
+        slug: `intent-${randomUUID()}`,
+        title: 'Intent',
+        summary: '',
+        deliveryMode: 'COHORT',
+        status: 'PUBLISHED',
+      },
+    });
+    const o = await offer(1000, 'COURSE', [c.id]);
+    const cohort = await db.cohort.create({
+      data: {
+        workspaceId: w,
+        courseId: c.id,
+        name: 'Last seat',
+        startsAt: new Date(),
+        isPublished: true,
+        capacity: 1,
+      },
+    });
+    const coupon = await admin.createCoupon(
+      owner,
+      w,
+      {
+        code: 'INTENT',
+        kind: 'FIXED',
+        amountOff: 100,
+        currency: 'usd',
+        validFrom: new Date(Date.now() - 10000).toISOString(),
+        validUntil: null,
+        maxRedemptions: 1,
+        maxPerUser: 1,
+        minimumOrderAmount: 0,
+        isActive: true,
+      },
+      req,
+    );
+    const input = {
+      ...payload(o.price),
+      items: [{ priceId: o.price, cohorts: [{ courseId: c.id, cohortId: cohort.id }] }],
+      couponCode: 'INTENT',
+    };
+    const capacityCheckout = new CheckoutService(
+      db as PrismaService,
+      provider,
+      new OutboxService(new SharedEventContracts()),
+      new AuditService(db as PrismaService, { nodeEnv: 'test' }),
+      new CohortCapacityService(),
+    );
+    const realCall = provider.call.bind(provider);
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'checkout.sessions' && args[1] === 'create')
+        throw new Error('provider failed');
+      return realCall(...args);
+    };
+    try {
+      setCheckoutIntentWindowForTests(1000);
+      await expect(capacityCheckout.session(buyer, w, input, randomUUID(), req)).rejects.toThrow(
+        'provider failed',
+      );
+      const redemption = await db.couponRedemption.findFirstOrThrow({
+        where: { couponId: coupon.data.id },
+      });
+      const orphan = await db.order.findUniqueOrThrow({ where: { id: redemption.orderId } });
+      expect(redemption.reservedUntil).toEqual(orphan.expiresAt);
+      await expect(capacityCheckout.session(buyer, w, input, randomUUID(), req)).rejects.toThrow();
+      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await worker.reconcile();
+      expect((await db.order.findUniqueOrThrow({ where: { id: orphan.id } })).status).toBe(
+        'EXPIRED',
+      );
+      const released = await db.couponRedemption.findUniqueOrThrow({
+        where: { id: redemption.id },
+      });
+      expect(released.releasedAt).not.toBeNull();
+      expect(released.reservedUntil).toBeNull();
+      provider.call = realCall;
+      const result = (await capacityCheckout.session(buyer, w, input, randomUUID(), req)) as {
+        data: CheckoutSession;
+      };
+      const order = await db.order.findUniqueOrThrow({ where: { id: result.data.orderId } });
+      const reservation = await db.couponRedemption.findFirstOrThrow({
+        where: { orderId: order.id },
+      });
+      const remote = provider.objects.get(order.stripeCheckoutSessionId!)!;
+      expect(order.expiresAt).toEqual(new Date((remote.expires_at as number) * 1000));
+      expect(reservation.reservedUntil).toEqual(order.expiresAt);
+    } finally {
+      setCheckoutIntentWindowForTests(CHECKOUT_INTENT_WINDOW_MS);
+      provider.call = realCall;
+    }
+  });
+  it('releases checkout and cancellation locks before provider calls and rejects a paid race', async () => {
+    const actor = await person();
+    const key = randomUUID();
+    const realCall = provider.call.bind(provider);
+    let orderId = '';
+    const observed: string[] = [];
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'customers' || args[0] === 'checkout.sessions') {
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          const scope = { workspaceId: w, userId: actor.id, route: 'checkout', key };
+          for (const name of [
+            `idempotency:${canonical(scope)}`,
+            ...(orderId ? [`order:${orderId}`] : []),
+          ]) {
+            const result = await client.query<{ acquired: boolean }>(
+              'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+              [name],
+            );
+            expect(result.rows[0]?.acquired).toBe(true);
+          }
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+        observed.push(`${args[0]}.${args[1]}`);
+      }
+      if (args[0] === 'checkout.sessions' && args[1] === 'expire') {
+        await db.order.update({
+          where: { id: orderId },
+          data: { status: 'PAID', paidAt: new Date() },
+        });
+      }
+      return realCall(...args);
+    };
+    try {
+      const created = await session(payload(), actor, key);
+      orderId = created.orderId;
+      await expect(billing.cancelOrder(actor, w, orderId, randomUUID(), req)).rejects.toThrow(
+        'Order changed',
+      );
+      expect((await db.order.findUniqueOrThrow({ where: { id: orderId } })).status).toBe('PAID');
+      expect(observed).toEqual(
+        expect.arrayContaining([
+          'customers.create',
+          'checkout.sessions.create',
+          'checkout.sessions.retrieve',
+          'checkout.sessions.expire',
+        ]),
+      );
+    } finally {
+      provider.call = realCall;
+    }
   });
   it('rejects missing keys and mixed currencies, duplicate products, and plan baskets', async () => {
     await expect(checkout.session(buyer, w, payload(), undefined, req)).rejects.toThrow(
@@ -626,7 +980,34 @@ suite('commerce real PostgreSQL invariants', () => {
     expect(local.status).toBe('PENDING');
     const remote = provider.objects.get(local.stripeRefundId!)!;
     provider.objects.set(remote.id, { ...remote, status: 'succeeded' });
-    await event('refund.updated', remote.id);
+    const realCall = provider.call.bind(provider);
+    let checkedLookup = false;
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'refunds' && args[1] === 'retrieve') {
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          for (const lockKey of [`commerce-reconcile:${w}`, `payment:${p.id}`]) {
+            const result = await client.query<{ acquired: boolean }>(
+              'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+              [lockKey],
+            );
+            expect(result.rows[0]?.acquired).toBe(true);
+          }
+          checkedLookup = true;
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+      }
+      return realCall(...args);
+    };
+    try {
+      await event('refund.updated', remote.id);
+      expect(checkedLookup).toBe(true);
+    } finally {
+      provider.call = realCall;
+    }
     await event('refund.created', remote.id);
     expect((await db.order.findUniqueOrThrow({ where: { id: r.orderId } })).status).toBe(
       'PARTIALLY_REFUNDED',
@@ -653,6 +1034,34 @@ suite('commerce real PostgreSQL invariants', () => {
       'REFUNDED',
     );
     expect(await db.enrollmentGrant.count()).toBe(0);
+  });
+  it('does not regress a terminal refund when an older pending snapshot arrives', async () => {
+    const r = await session();
+    const f = await capture(r.orderId);
+    await event('checkout.session.completed', f.sessionId);
+    const p = await db.payment.findFirstOrThrow({ where: { orderId: r.orderId } });
+    const item = await db.orderItem.findFirstOrThrow({ where: { orderId: r.orderId } });
+    const operation = (await billing.refund(
+      owner,
+      w,
+      p.id,
+      {
+        amount: 100,
+        reason: 'Stale refund snapshot',
+        revokeAccess: false,
+        items: [{ orderItemId: item.id, amount: 100, revokeAccess: false }],
+      },
+      randomUUID(),
+      req,
+    )) as { data: { operationId: string } };
+    await worker.submitRefund(operation.data.operationId);
+    const local = await db.refund.findUniqueOrThrow({ where: { id: operation.data.operationId } });
+    const remote = provider.objects.get(local.stripeRefundId!)!;
+    provider.objects.set(remote.id, { ...remote, status: 'failed' });
+    await event('refund.updated', remote.id);
+    provider.objects.set(remote.id, { ...remote, status: 'pending' });
+    await event('refund.updated', remote.id);
+    expect((await db.refund.findUniqueOrThrow({ where: { id: local.id } })).status).toBe('FAILED');
   });
   it('rejects foreign and overallocated refunds, replays the original operation', async () => {
     const r = await session();
@@ -750,6 +1159,44 @@ suite('commerce real PostgreSQL invariants', () => {
     const local = await db.subscription.findUniqueOrThrow({
       where: { stripeSubscriptionId: subId },
     });
+    const realCall = provider.call.bind(provider);
+    const checked: string[] = [];
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (['subscriptions', 'invoices'].includes(args[0])) {
+        checked.push(`${args[0]}.${args[1]}`);
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          for (const lockKey of [`commerce-reconcile:${w}`, `subscription:${subId}`]) {
+            const result = await client.query<{ acquired: boolean }>(
+              'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+              [lockKey],
+            );
+            expect(result.rows[0]?.acquired).toBe(true);
+          }
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+      }
+      return realCall(...args);
+    };
+    try {
+      await event('customer.subscription.updated', subId);
+      await event('invoice.paid', invId);
+      await worker.reconcile();
+      expect(checked).toEqual(
+        expect.arrayContaining(['subscriptions.retrieve', 'invoices.list', 'invoices.retrieve']),
+      );
+      const stale = await worker.subscriptionSnapshot(subId);
+      await event('customer.subscription.updated', subId);
+      await expect(db.$transaction((tx) => worker.subscription(tx, subId, stale))).rejects.toThrow(
+        'stale',
+      );
+      expect(await db.payment.count({ where: { stripeInvoiceId: invId } })).toBe(1);
+    } finally {
+      provider.call = realCall;
+    }
     expect(local.currentPeriodEnd?.getTime()).toBe(end * 1000);
     expect(await db.payment.count({ where: { stripeInvoiceId: invId } })).toBe(1);
     expect(
@@ -849,7 +1296,24 @@ suite('commerce real PostgreSQL invariants', () => {
     const overdue = await db.subscription.findUniqueOrThrow({ where: { id: local.id } });
     expect(overdue.status).toBe('PAST_DUE');
     expect(overdue.currentPeriodEnd).toEqual(new Date((end + 2592000) * 1000));
-    await billing.changeSubscription(buyer, local.id, randomUUID(), req, {});
+    const realChangeCall = provider.call.bind(provider);
+    let observedChange = false;
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'subscriptions' && args[1] === 'update') {
+        observedChange = true;
+        const result = await pool.query<{ count: string }>(
+          "SELECT count(*)::text AS count FROM pg_stat_activity WHERE datname = current_database() AND state = 'idle in transaction' AND pid <> pg_backend_pid()",
+        );
+        expect(Number(result.rows[0]!.count)).toBe(0);
+      }
+      return realChangeCall(...args);
+    };
+    try {
+      await billing.changeSubscription(buyer, local.id, randomUUID(), req, {});
+      expect(observedChange).toBe(true);
+    } finally {
+      provider.call = realChangeCall;
+    }
     await event('customer.subscription.updated', subId);
     expect(
       (await db.subscription.findUniqueOrThrow({ where: { id: local.id } })).cancelAtPeriodEnd,
@@ -1085,6 +1549,43 @@ suite('commerce real PostgreSQL invariants', () => {
     expect(local.currentPeriodEnd?.getTime()).toBe(end * 1000);
     expect(await db.payment.count({ where: { orderId: r.orderId } })).toBe(0);
   });
+  it('fetches one-time checkout snapshots without holding reconciliation locks', async () => {
+    const r = await session();
+    const f = await capture(r.orderId);
+    const realCall = provider.call.bind(provider);
+    const lookups: string[] = [];
+    provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (
+        args[1] === 'retrieve' &&
+        ['checkout.sessions', 'paymentIntents', 'charges'].includes(args[0])
+      ) {
+        lookups.push(args[0]);
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          for (const lockKey of [`commerce-reconcile:${w}`, `order:${r.orderId}`]) {
+            const result = await client.query<{ acquired: boolean }>(
+              'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+              [lockKey],
+            );
+            expect(result.rows[0]?.acquired).toBe(true);
+          }
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+      }
+      return realCall(...args);
+    };
+    try {
+      await event('checkout.session.completed', f.sessionId);
+      expect(lookups).toEqual(
+        expect.arrayContaining(['checkout.sessions', 'paymentIntents', 'charges']),
+      );
+    } finally {
+      provider.call = realCall;
+    }
+  });
   it('recovers a refund submission after provider success followed by database rollback', async () => {
     const r = await session();
     const f = await capture(r.orderId);
@@ -1107,6 +1608,22 @@ suite('commerce real PostgreSQL invariants', () => {
     const realCall = provider.call.bind(provider);
     let crash = true;
     provider.call = async (...args: Parameters<FakeProvider['call']>) => {
+      if (args[0] === 'refunds' && args[1] === 'create') {
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          for (const lockKey of [`commerce-reconcile:${w}`, `payment:${p.id}`]) {
+            const result = await client.query<{ acquired: boolean }>(
+              'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+              [lockKey],
+            );
+            expect(result.rows[0]?.acquired).toBe(true);
+          }
+        } finally {
+          await client.query('ROLLBACK');
+          client.release();
+        }
+      }
       const result = await realCall(...args);
       if (crash && args[0] === 'refunds' && args[1] === 'create') {
         crash = false;

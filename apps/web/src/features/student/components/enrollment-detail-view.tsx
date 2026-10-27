@@ -32,10 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  useEnrollmentOutlineQuery,
-  useEnrollmentQuery,
-} from '../hooks';
+import { useEnrollmentOutlineQuery, useEnrollmentQuery } from '../hooks';
 import {
   formatDateString,
   formatDateTimeString,
@@ -114,7 +111,8 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
         <ShieldAlert className="size-10 text-destructive" />
         <h3 className="mt-3 text-lg font-semibold text-destructive">Enrollment Not Found</h3>
         <p className="mt-1 max-w-md text-sm text-muted-foreground">
-          Could not load details for enrollment ID {enrollmentId}. You may not have access to this enrollment.
+          Could not load details for enrollment ID {enrollmentId}. You may not have access to this
+          enrollment.
         </p>
         <div className="mt-5 flex gap-3">
           <Button variant="outline" size="sm" onClick={() => refetchEnrollment()}>
@@ -130,7 +128,10 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
   }
 
   const allowed = isAccessAllowed(enrollment.access);
-  const completionPercent = Math.min(100, Math.max(0, parseFloat(enrollment.completionPercent) || 0));
+  const completionPercent = Math.min(
+    100,
+    Math.max(0, parseFloat(enrollment.completionPercent) || 0),
+  );
 
   return (
     <div className="space-y-8">
@@ -153,13 +154,21 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
                 {enrollment.status}
               </Badge>
               {allowed ? (
-                <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <Badge
+                  variant="outline"
+                  className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                >
                   Active Access
                 </Badge>
               ) : (
-                <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Badge
+                  variant="outline"
+                  className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                >
                   <Lock className="mr-1 size-3" />
-                  {enrollment.access && !enrollment.access.allowed ? formatAccessReason(enrollment.access.reason) : 'Restricted'}
+                  {enrollment.access && !enrollment.access.allowed
+                    ? formatAccessReason(enrollment.access.reason)
+                    : 'Restricted'}
                 </Badge>
               )}
             </div>
@@ -232,17 +241,22 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
                 <div className="space-y-1">
                   <p className="font-semibold text-sm">
                     Access is currently restricted:{' '}
-                    {enrollment.access && !enrollment.access.allowed ? formatAccessReason(enrollment.access.reason) : 'Restricted'}
+                    {enrollment.access && !enrollment.access.allowed
+                      ? formatAccessReason(enrollment.access.reason)
+                      : 'Restricted'}
                   </p>
                   <p className="text-xs text-amber-700 dark:text-amber-300">
                     Your historical grades, completion records, and outline are preserved in full.
-                    Active interactive lesson content and quiz taking require a valid enrollment grant.
+                    Active interactive lesson content and quiz taking require a valid enrollment
+                    grant.
                   </p>
-                  {enrollment.access && !enrollment.access.allowed && enrollment.access.unlockAt && (
-                    <p className="font-medium">
-                      Scheduled unlock date: {formatDateTimeString(enrollment.access.unlockAt)}
-                    </p>
-                  )}
+                  {enrollment.access &&
+                    !enrollment.access.allowed &&
+                    enrollment.access.unlockAt && (
+                      <p className="font-medium">
+                        Scheduled unlock date: {formatDateTimeString(enrollment.access.unlockAt)}
+                      </p>
+                    )}
                 </div>
               </div>
             </div>
@@ -279,15 +293,29 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
                             {formatDateString(grant.startsAt)}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground">
-                            {grant.expiresAt ? formatDateString(grant.expiresAt) : 'Never (Lifetime)'}
+                            {grant.expiresAt
+                              ? formatDateString(grant.expiresAt)
+                              : 'Never (Lifetime)'}
                           </TableCell>
                           <TableCell className="text-xs">
                             {isRevoked ? (
-                              <Badge variant="destructive" className="text-[10px]">Revoked</Badge>
+                              <Badge variant="destructive" className="text-[10px]">
+                                Revoked
+                              </Badge>
                             ) : isExpired ? (
-                              <Badge variant="outline" className="border-amber-500/40 text-amber-600 text-[10px]">Expired</Badge>
+                              <Badge
+                                variant="outline"
+                                className="border-amber-500/40 text-amber-600 text-[10px]"
+                              >
+                                Expired
+                              </Badge>
                             ) : (
-                              <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 text-[10px]">Active</Badge>
+                              <Badge
+                                variant="outline"
+                                className="border-emerald-500/40 text-emerald-600 text-[10px]"
+                              >
+                                Active
+                              </Badge>
                             )}
                           </TableCell>
                         </TableRow>
@@ -295,7 +323,10 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center text-xs text-muted-foreground py-4">
+                      <TableCell
+                        colSpan={4}
+                        className="text-center text-xs text-muted-foreground py-4"
+                      >
                         No explicit grants recorded.
                       </TableCell>
                     </TableRow>
@@ -391,7 +422,10 @@ export function EnrollmentDetailView({ enrollmentId }: EnrollmentDetailViewProps
                                 {lesson.title}
                               </span>
                               {lesson.isRequired && (
-                                <Badge variant="outline" className="text-[10px] py-0 px-1 font-normal">
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] py-0 px-1 font-normal"
+                                >
                                   Required
                                 </Badge>
                               )}

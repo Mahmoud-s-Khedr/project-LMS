@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight,
   ArrowUpRight,
   Award,
   BookOpen,
@@ -23,17 +22,8 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import {
-  formatPriceMinor,
-  useCatalogCoursesQuery,
-  useCatalogProductsQuery,
-  CourseCard,
-} from '@/features/catalog';
-import {
-  FAQ_ITEMS,
-  PRICING_PLANS,
-  VALUE_PROP_GROUPS,
-} from '@/features/marketing/data/mock-data';
+import { useCatalogCoursesQuery, CourseCard } from '@/features/catalog';
+import { FAQ_ITEMS, VALUE_PROP_GROUPS } from '@/features/marketing/data/mock-data';
 import type { ValuePropPersona } from '@/features/marketing/data/types';
 import { siteConfig, type SiteConfig } from '../site-config';
 
@@ -48,7 +38,6 @@ export interface LandingPageProps {
 }
 
 export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
-  const [billingCycle, setBillingCycle] = React.useState<'annual' | 'monthly'>('annual');
   const [openFaqId, setOpenFaqId] = React.useState<string | null>(FAQ_ITEMS[0]?.id ?? null);
 
   // Live queries backed by the real public catalog and product APIs
@@ -59,10 +48,7 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
     refetch: refetchCourses,
   } = useCatalogCoursesQuery({ limit: 4, sort: 'publishedAt' });
 
-  const { data: productsData } = useCatalogProductsQuery({ limit: 3 });
-
   const featuredCourses = catalogData?.data ?? [];
-  const liveProducts = productsData?.data ?? [];
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-12 lg:px-20">
@@ -75,8 +61,8 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
           </div>
 
           <h1 className="max-w-2xl text-4xl leading-[1.07] font-semibold tracking-[-0.045em] text-foreground sm:text-5xl xl:text-6xl">
-            Depth for learners.{' '}
-            <span className="font-serif italic text-primary">Sovereignty</span> for educators.
+            Depth for learners. <span className="font-serif italic text-primary">Sovereignty</span>{' '}
+            for educators.
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -138,7 +124,7 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
               </div>
               <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
                 <Sparkles className="size-3.5" aria-hidden="true" />
-                Multi-Modal · Synced Notes
+                Multi-Modal Learning
               </span>
             </div>
 
@@ -160,11 +146,11 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
               <div className="mt-5 space-y-2.5">
                 <div className="flex items-center gap-2.5 rounded-lg bg-background/40 px-3 py-2 text-xs font-medium backdrop-blur-xs">
                   <BookOpen className="size-3.5 text-primary shrink-0" aria-hidden="true" />
-                  <span className="truncate">Structured Video Lessons &amp; Timestamped Notes</span>
+                  <span className="truncate">Structured Video Lessons</span>
                 </div>
                 <div className="flex items-center gap-2.5 rounded-lg bg-background/40 px-3 py-2 text-xs font-medium backdrop-blur-xs">
                   <Layers className="size-3.5 text-primary shrink-0" aria-hidden="true" />
-                  <span className="truncate">Cohort Checkpoints &amp; Drip Scheduling</span>
+                  <span className="truncate">Cohorts &amp; Release Scheduling</span>
                 </div>
               </div>
             </div>
@@ -176,7 +162,7 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
                   <span>Rubric Lab Submissions</span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Structured assessment criteria with inline instructor feedback.
+                  Structured assessment criteria with instructor feedback.
                 </p>
               </div>
               <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5">
@@ -340,7 +326,8 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
               Upcoming Studio Courses in Preparation
             </h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-lg mx-auto">
-              Our instructors and partner academies are authoring new curriculum modules and cohort schedules. Check back shortly or browse upcoming course categories.
+              Our instructors and partner academies are authoring new curriculum modules and cohort
+              schedules. Check back shortly or browse upcoming course categories.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Button asChild size="sm" variant="default" className="rounded-full">
@@ -358,142 +345,6 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
             ))}
           </div>
         )}
-      </section>
-
-      {/* 4. PRICING & SUBSCRIPTION TEASER */}
-      <section
-        id="pricing"
-        aria-labelledby="pricing-heading"
-        className="scroll-mt-24 border-t border-border py-16 md:py-24"
-      >
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-            Transparent Pricing &amp; Memberships
-          </p>
-          <h2
-            id="pricing-heading"
-            className="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
-          >
-            Learn with an All-Access Pass or launch your own school.
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Purchase individual courses à la carte, unlock the entire self-paced catalog with a
-            membership, or scale your teaching studio.
-          </p>
-
-          <div
-            role="group"
-            aria-label="Billing frequency"
-            className="mt-6 inline-flex items-center gap-1 rounded-full border border-border bg-muted p-1"
-          >
-            <button
-              type="button"
-              onClick={() => setBillingCycle('annual')}
-              aria-pressed={billingCycle === 'annual'}
-              className={cn(
-                'rounded-full px-4 py-1.5 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                billingCycle === 'annual'
-                  ? 'bg-background text-foreground shadow-xs'
-                  : 'text-muted-foreground hover:text-foreground',
-              )}
-            >
-              Annual billing (Save 20%)
-            </button>
-            <button
-              type="button"
-              onClick={() => setBillingCycle('monthly')}
-              aria-pressed={billingCycle === 'monthly'}
-              className={cn(
-                'rounded-full px-4 py-1.5 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                billingCycle === 'monthly'
-                  ? 'bg-background text-foreground shadow-xs'
-                  : 'text-muted-foreground hover:text-foreground',
-              )}
-            >
-              Monthly billing
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-12 grid gap-8 lg:grid-cols-3">
-          {PRICING_PLANS.map((plan) => {
-            const priceMinor =
-              billingCycle === 'annual' ? plan.annualPriceMinor : plan.monthlyPriceMinor;
-            return (
-              <div
-                key={plan.id}
-                className={cn(
-                  'relative flex flex-col justify-between rounded-3xl border bg-card p-7 shadow-sm transition-all sm:p-8',
-                  plan.highlighted
-                    ? 'border-primary ring-2 ring-primary/20 shadow-lg'
-                    : 'border-border',
-                )}
-              >
-                {plan.badge && (
-                  <Badge
-                    className={cn(
-                      'absolute -top-3 right-6 rounded-full px-3 py-0.5 text-xs font-semibold shadow-xs',
-                      plan.highlighted
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground',
-                    )}
-                  >
-                    {plan.badge}
-                  </Badge>
-                )}
-
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight text-foreground">{plan.name}</h3>
-                  <p className="mt-1 text-xs text-muted-foreground">{plan.audience}</p>
-                  <p className="mt-3 text-sm text-muted-foreground">{plan.tagline}</p>
-
-                  <div className="mt-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-                      {formatPriceMinor(priceMinor)}
-                    </span>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      /{billingCycle === 'annual' ? 'yr' : 'mo'}
-                    </span>
-                  </div>
-
-                  <ul className="mt-8 space-y-3 border-t border-border/80 pt-6 text-sm">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2.5">
-                        <Check className="size-4 shrink-0 text-primary mt-0.5" aria-hidden="true" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-8">
-                  <Button
-                    asChild
-                    size="lg"
-                    variant={plan.highlighted ? 'default' : 'outline'}
-                    className="w-full rounded-full"
-                  >
-                    <Link href={plan.ctaHref}>
-                      <span>{plan.ctaLabel}</span>
-                      <ArrowRight className="size-4" aria-hidden="true" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* View all bundles link */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline underline-offset-4"
-          >
-            <Layers className="h-4 w-4" />
-            <span>Explore all course bundles &amp; multi-course passes ({liveProducts.length > 0 ? `${liveProducts.length} active` : 'View plans'}) &rarr;</span>
-          </Link>
-        </div>
       </section>
 
       {/* 5. TESTIMONIALS (rendered only when provided by config) */}
@@ -620,7 +471,8 @@ export function LandingPage({ config = siteConfig }: LandingPageProps = {}) {
           Start learning with dedicated practitioners today.
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Explore studio courses, live cohorts, and comprehensive learning paths designed for real mastery.
+          Explore studio courses, live cohorts, and comprehensive learning paths designed for real
+          mastery.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button asChild size="lg" className="rounded-full px-8">

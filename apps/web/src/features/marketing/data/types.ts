@@ -5,10 +5,7 @@ export type CourseDeliveryMode = 'SELF_PACED' | 'COHORT';
 export type LessonKind = 'VIDEO' | 'ARTICLE' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE_SESSION';
 
 export type CourseCategory =
-  | 'Software Engineering'
-  | 'Design & Creative Systems'
-  | 'Data & AI'
-  | 'Product & Leadership';
+  'Software Engineering' | 'Design & Creative Systems' | 'Data & AI' | 'Product & Leadership';
 
 export type CourseLanguageCode = 'en' | 'es' | 'de' | 'fr';
 

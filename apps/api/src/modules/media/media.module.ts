@@ -21,7 +21,8 @@ import { MediaProcessingTask, ClamAvScanner, MEDIA_SCANNER } from './media-proce
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         if (config.get('MEDIA_SCANNER_MODE') === 'development-bypass') {
-          if (config.get('NODE_ENV') === 'production') throw new Error('Development scanner mode is forbidden in production');
+          if (config.get('NODE_ENV') === 'production')
+            throw new Error('Development scanner mode is forbidden in production');
           return { scan: async () => 'CLEAN' as const };
         }
         return new ClamAvScanner();

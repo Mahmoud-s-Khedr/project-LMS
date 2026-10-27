@@ -56,4 +56,30 @@ describe('Next.js navigation hint middleware', () => {
       expect(fetchSpy).not.toHaveBeenCalled();
     },
   );
+
+  it('attaches Content-Security-Policy with a fresh nonce to page responses', () => {
+    const res1 = middleware(new NextRequest('http://localhost:3100/'));
+    const res2 = middleware(new NextRequest('http://localhost:3100/courses'));
+
+    const csp1 = res1.headers.get('content-security-policy');
+    const csp2 = res2.headers.get('content-security-policy');
+
+    expect(csp1).toBeDefined();
+    expect(csp2).toBeDefined();
+    expect(csp1).toContain("script-src 'self' 'nonce-");
+    expect(csp1).toContain("'strict-dynamic'");
+
+    // Extract nonces
+    const nonceMatch1 = csp1?.match(/'nonce-([^']+)'/);
+    const nonceMatch2 = csp2?.match(/'nonce-([^']+)'/);
+
+    expect(nonceMatch1).toBeTruthy();
+    expect(nonceMatch2).toBeTruthy();
+    expect(nonceMatch1![1]).not.toBe(nonceMatch2![1]);
+
+    // Forwarded request header for App Router layout
+    expect(
+      res1.headers.get('x-middleware-request-x-nonce') || res1.headers.get('x-nonce'),
+    ).toBeTruthy();
+  });
 });

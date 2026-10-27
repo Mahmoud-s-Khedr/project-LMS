@@ -1,15 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AlertCircle,
-  Loader2,
-  Mail,
-  MoreVertical,
-  Search,
-  UserCog,
-  UserX,
-} from 'lucide-react';
+import { AlertCircle, Loader2, Mail, MoreVertical, Search, UserCog, UserX } from 'lucide-react';
 import type { WorkspaceMember, WorkspaceRole } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,9 +62,7 @@ export function MembersTable({ workspaceId }: MembersTableProps) {
       search: debouncedSearch.trim() || undefined,
       role: roleFilter !== 'ALL' ? (roleFilter as WorkspaceRole) : undefined,
       status:
-        statusFilter !== 'ALL'
-          ? (statusFilter as 'ACTIVE' | 'SUSPENDED' | 'LEFT')
-          : undefined,
+        statusFilter !== 'ALL' ? (statusFilter as 'ACTIVE' | 'SUSPENDED' | 'LEFT') : undefined,
     };
   }, [debouncedSearch, roleFilter, statusFilter]);
 
@@ -84,10 +74,10 @@ export function MembersTable({ workspaceId }: MembersTableProps) {
     refetch: refetchMembers,
   } = useWorkspaceMembersQuery(workspaceId, queryParams);
 
-  const {
-    data: invitationsData,
-    isLoading: isLoadingInvitations,
-  } = useWorkspaceInvitationsQuery(workspaceId, { status: 'PENDING' });
+  const { data: invitationsData, isLoading: isLoadingInvitations } = useWorkspaceInvitationsQuery(
+    workspaceId,
+    { status: 'PENDING' },
+  );
 
   // Dialogs
   const [editMember, setEditMember] = React.useState<WorkspaceMember | null>(null);
@@ -236,7 +226,12 @@ export function MembersTable({ workspaceId }: MembersTableProps) {
                     <p className="text-xs text-muted-foreground">
                       {membersError instanceof Error ? membersError.message : 'Error'}
                     </p>
-                    <Button variant="outline" size="sm" onClick={() => refetchMembers()} className="mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => refetchMembers()}
+                      className="mt-2"
+                    >
                       Retry
                     </Button>
                   </div>
@@ -287,7 +282,12 @@ export function MembersTable({ workspaceId }: MembersTableProps) {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Member options">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          aria-label="Member options"
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -438,7 +438,9 @@ export function MembersTable({ workspaceId }: MembersTableProps) {
                 Cancel
               </Button>
               <Button type="submit" disabled={updateMemberMutation.isPending}>
-                {updateMemberMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {updateMemberMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Save Changes
               </Button>
             </DialogFooter>

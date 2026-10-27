@@ -20,10 +20,7 @@ export default function CourseResultsPage() {
     error: enrollmentError,
   } = useEnrollment(enrollmentId);
 
-  const {
-    data: results,
-    isLoading: isResultsLoading,
-  } = useEnrollmentResults(enrollmentId);
+  const { data: results, isLoading: isResultsLoading } = useEnrollmentResults(enrollmentId);
 
   if (isEnrollmentLoading || isResultsLoading) {
     return (
@@ -64,9 +61,7 @@ export default function CourseResultsPage() {
             <span>Course Player</span>
           </Link>
           <span className="text-muted-foreground/40">|</span>
-          <span className="text-xs font-semibold text-muted-foreground">
-            {siteConfig.name}
-          </span>
+          <span className="text-xs font-semibold text-muted-foreground">{siteConfig.name}</span>
         </div>
 
         <ThemeToggle />

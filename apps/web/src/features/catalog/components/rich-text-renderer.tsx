@@ -125,10 +125,7 @@ function renderNode(node: RichTextNode, key: number | string): React.ReactNode {
       );
     case 'codeBlock':
       return (
-        <pre
-          key={key}
-          className="mb-4 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm"
-        >
+        <pre key={key} className="mb-4 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm">
           <code>{children}</code>
         </pre>
       );

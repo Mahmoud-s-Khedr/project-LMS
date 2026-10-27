@@ -170,7 +170,9 @@ export class UsersService {
     // and membership edits; re-read scope after obtaining the user lock to catch new memberships.
     const affected = await this.affectedWorkspaces(tx, userId);
     for (const workspace of affected)
-      await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Workspace" WHERE "id" = ${workspace.id}::uuid FOR UPDATE`);
+      await tx.$queryRaw(
+        Prisma.sql`SELECT "id" FROM "Workspace" WHERE "id" = ${workspace.id}::uuid FOR UPDATE`,
+      );
     await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "User" WHERE "id" = ${userId}::uuid FOR UPDATE`);
     const lockedIds = new Set(affected.map((w) => w.id));
     if ((await this.affectedWorkspaces(tx, userId)).some((w) => !lockedIds.has(w.id)))
@@ -181,10 +183,14 @@ export class UsersService {
   }
   private affectedWorkspaces(tx: Transaction, userId: string) {
     return tx.workspace.findMany({
-      where: { status: 'ACTIVE', deletedAt: null, OR: [
-        { ownerId: userId },
-        { members: { some: { userId, role: 'ADMIN', status: 'ACTIVE', deletedAt: null } } },
-      ] },
+      where: {
+        status: 'ACTIVE',
+        deletedAt: null,
+        OR: [
+          { ownerId: userId },
+          { members: { some: { userId, role: 'ADMIN', status: 'ACTIVE', deletedAt: null } } },
+        ],
+      },
       orderBy: { id: 'asc' },
       select: { id: true, ownerId: true },
     });
@@ -192,12 +198,21 @@ export class UsersService {
   private async protectWorkspaceAdministration(tx: Transaction, userId: string) {
     for (const workspace of await this.affectedWorkspaces(tx, userId)) {
       if (workspace.ownerId === userId)
-        throw new ConflictException('Transfer workspace ownership before suspending or deleting this user');
-      const remaining = await tx.workspaceMember.count({ where: {
-        workspaceId: workspace.id, role: 'ADMIN', status: 'ACTIVE', deletedAt: null,
-        userId: { not: userId }, user: { status: 'ACTIVE', deletedAt: null },
-      } });
-      if (!remaining) throw new ConflictException('At least one active workspace administrator must remain');
+        throw new ConflictException(
+          'Transfer workspace ownership before suspending or deleting this user',
+        );
+      const remaining = await tx.workspaceMember.count({
+        where: {
+          workspaceId: workspace.id,
+          role: 'ADMIN',
+          status: 'ACTIVE',
+          deletedAt: null,
+          userId: { not: userId },
+          user: { status: 'ACTIVE', deletedAt: null },
+        },
+      });
+      if (!remaining)
+        throw new ConflictException('At least one active workspace administrator must remain');
     }
   }
   async update(
@@ -239,8 +254,12 @@ export class UsersService {
           data: { revokedAt: new Date() },
         });
       await this.audit.append(tx, {
-        action: 'admin.user_updated', resourceType: 'User', resourceId: userId,
-        actorId: actor.id, workspaceId: null, requestId,
+        action: 'admin.user_updated',
+        resourceType: 'User',
+        resourceId: userId,
+        actorId: actor.id,
+        workspaceId: null,
+        requestId,
         changes: { reason: input.reason, status: input.status, platformRole: input.platformRole },
       });
       return updated;
@@ -293,7 +312,15 @@ export class UsersService {
         where: { userId, consumedAt: null },
         data: { consumedAt: new Date() },
       });
-      await this.audit.append(tx, { action: 'admin.user_deleted', resourceType: 'User', resourceId: userId, actorId: actor.id, workspaceId: null, requestId, changes: { reason } });
+      await this.audit.append(tx, {
+        action: 'admin.user_deleted',
+        resourceType: 'User',
+        resourceId: userId,
+        actorId: actor.id,
+        workspaceId: null,
+        requestId,
+        changes: { reason },
+      });
     });
     await this.events.emit('admin.user_deleted', { actorId: actor.id, userId, reason });
   }

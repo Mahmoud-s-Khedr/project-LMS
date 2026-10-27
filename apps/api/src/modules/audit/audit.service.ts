@@ -47,7 +47,9 @@ export class AuditService {
   ) {
     const secret = options?.ipHashSecret ?? process.env.AUDIT_IP_HASH_SECRET ?? null;
     if (!secret && (options?.nodeEnv ?? process.env.NODE_ENV) === 'production') {
-      throw new Error('AUDIT_IP_HASH_SECRET is required in production to pseudonymize audit IP addresses');
+      throw new Error(
+        'AUDIT_IP_HASH_SECRET is required in production to pseudonymize audit IP addresses',
+      );
     }
     this.ipKey = secret && secret.length > 0 ? secret : null;
   }

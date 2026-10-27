@@ -5,7 +5,6 @@ import type { Me } from '@lms/shared';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  Bell,
   BookOpen,
   Compass,
   LogOut,
@@ -53,31 +52,8 @@ import { WorkspaceSwitcher } from '@/features/workspaces';
 import { DashboardBreadcrumbs } from './breadcrumbs';
 import { NavIcon } from './nav-icon';
 import { DashboardSessionGuard } from './dashboard-session-guard';
+import { NotificationBell } from './notification-bell';
 import { siteConfig } from '@/features/marketing/site-config';
-
-const PLACEHOLDER_NOTIFICATIONS = [
-  {
-    id: 'notif_1',
-    title: 'Cohort #11 Module 2 Unlocked',
-    detail: 'Transactional Outbox & BullMQ Workers is now available.',
-    timeAgo: '14m ago',
-    unread: true,
-  },
-  {
-    id: 'notif_2',
-    title: 'Rubric Feedback Posted',
-    detail: 'Elena Rostova graded your Idempotent Webhook lab (96/100).',
-    timeAgo: '3h ago',
-    unread: true,
-  },
-  {
-    id: 'notif_3',
-    title: 'Certificate Ready',
-    detail: 'Product Discovery & Outcome Roadmaps credential issued.',
-    timeAgo: '2d ago',
-    unread: false,
-  },
-] as const;
 
 export interface DashboardShellProps {
   children: React.ReactNode;
@@ -418,44 +394,7 @@ function DashboardShellContent({ children, extraNavItems, me }: DashboardShellPr
               />
             </form>
 
-            {/* Notifications Bell Placeholder */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Notifications (2 unread)"
-                  className="relative rounded-full"
-                >
-                  <Bell className="size-4" aria-hidden="true" />
-                  <span
-                    className="absolute top-1.5 right-1.5 size-2 rounded-full bg-primary"
-                    aria-hidden="true"
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2">
-                <DropdownMenuLabel className="flex items-center justify-between px-2 py-1.5">
-                  <span className="text-xs font-semibold text-foreground">Notifications</span>
-                  <Badge variant="secondary" className="rounded-md text-[10px]">
-                    2 Unread
-                  </Badge>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {PLACEHOLDER_NOTIFICATIONS.map((notif) => (
-                  <DropdownMenuItem
-                    key={notif.id}
-                    className="flex flex-col items-start gap-1 rounded-xl p-2.5"
-                  >
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-foreground">{notif.title}</span>
-                      <span className="text-[10px] text-muted-foreground">{notif.timeAgo}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{notif.detail}</p>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NotificationBell />
 
             <ThemeToggle />
 

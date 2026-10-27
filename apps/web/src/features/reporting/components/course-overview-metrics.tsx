@@ -1,15 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AlertCircle,
-  Award,
-  BookOpen,
-  Calendar,
-  Clock,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import { AlertCircle, Award, BookOpen, Calendar, Clock, TrendingUp, Users } from 'lucide-react';
 import type { AnalyticsQuery } from '@lms/shared';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -113,7 +105,9 @@ export function CourseOverviewMetrics({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-1 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Active Learners</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Active Learners
+            </CardTitle>
             <Users className="h-3.5 w-3.5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -135,7 +129,9 @@ export function CourseOverviewMetrics({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-1 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Completion Rate</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Completion Rate
+            </CardTitle>
             <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -146,7 +142,9 @@ export function CourseOverviewMetrics({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-1 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Learning Time</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Learning Time
+            </CardTitle>
             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
           </CardHeader>
           <CardContent>

@@ -30,8 +30,8 @@ This guide details operational procedures for provisioning, deploying, monitorin
     └─────────────────────────────────────────────────────┘
 ```
 
-- **Web Tier (`apps/web`)**: Next.js 15 App Router running standalone on port 3100. Stateless; scales horizontally.
-- **API Tier (`apps/api`)**: NestJS 11 application on port 4100. Exposes `/api/v1` routes and Swagger docs at `/api/docs`.
+- **Web Tier (`apps/web`)**: Next.js 15 App Router running on port 3100. Stateless; scales horizontally.
+- **API Tier (`apps/api`)**: NestJS 11 application on port 4100. Exposes `/api/v1` routes and optional Swagger docs at `/api/docs`.
 - **Worker Tier (`apps/api/dist/workers/main.js`)**: Background processes running BullMQ queue consumers and periodic cron tasks.
 - **Persistence**:
   - PostgreSQL 16+ with connection pooling (PgBouncer recommended).
@@ -52,17 +52,41 @@ Never commit production `.env` files. Inject secrets via Kubernetes Secrets, AWS
 | `REDIS_URL` | Redis connection string with TLS/Auth | `rediss://...` with strong password |
 | `JWT_ACCESS_SECRET` | Secret for short-lived access tokens | 256-bit cryptographically secure string (min 32 chars) |
 | `JWT_REFRESH_SECRET` | Secret for rotating refresh tokens | 256-bit cryptographically secure string (min 32 chars) |
+| `CONTENT_HOST_KEY` | Encrypts live-session host URLs | Required in production; 64 lowercase hexadecimal characters, generated securely |
 | `AUDIT_IP_HASH_SECRET` | Salt for anonymizing IP addresses in audit logs | Unique per deployment (min 32 chars) |
-| `TENANCY_MAIL_KEY` | Symmetric key for workspace invitation HMACs | Base64-encoded 32-byte key |
-| `STRIPE_SECRET_KEY` | Stripe API Secret Key | Restricted key from Stripe Dashboard |
+| `TENANCY_MAIL_KEY` | AES-256-GCM encryption key for invitation tokens in the outbox | Explicit base64-encoded 32-byte key; never use the committed development default |
+| `STRIPE_SECRET_KEY` | Stripe API Secret Key | Test or live secret/restricted key matching `STRIPE_MODE` |
 | `STRIPE_WEBHOOK_SECRET` | Stripe Webhook Endpoint Secret | `whsec_...` from Stripe Webhook settings |
 | `S3_ACCESS_KEY_ID` | S3 Access Key ID | IAM user with scoped bucket permissions |
 | `S3_SECRET_ACCESS_KEY` | S3 Secret Access Key | Stored securely |
-| `CERTIFICATE_CHROMIUM_PATH` | Path to Chrome binary for rendering | Absolute path (`/usr/bin/google-chrome`) |
+| `CERTIFICATE_CHROMIUM_PATH` | Path to Chrome binary for rendering | Absolute path (worker image: `/usr/bin/chromium`) |
 
-Startup validation will fail fast and abort boot if any mandatory secret is absent or malformed.
+Production startup requires an explicit `TENANCY_MAIL_KEY` distinct from the committed development default, an `AUDIT_IP_HASH_SECRET`, and a `CONTENT_HOST_KEY` containing 64 lowercase hexadecimal characters for live-session host URL encryption. Provide all three to production API and worker containers, including Docker Compose deployments and CI deployments targeting production. Rotate the mail key by setting a new `TENANCY_MAIL_KEY` and `TENANCY_MAIL_KEY_ID`, and retaining old keys in `TENANCY_MAIL_PREVIOUS_KEYS`, a JSON map of key ID to base64 key, until encrypted outbox entries no longer need them. Protect the previous keys like the current key.
+
+`STRIPE_MODE` defaults to `test`: keys must start with `sk_test_` or `rk_test_`. `live` is allowed only in production and requires `sk_live_` or `rk_live_`. Use the webhook signing secret for the corresponding endpoint and mode; incoming webhook events and retrieved sessions must match the configured mode. Before going live, decide the payment and payout business model, configure the live endpoint and matching secrets, verify webhook delivery and reconciliation, run a controlled live transaction and refund, and monitor failures.
+
+`TRUST_PROXY` defaults to `false`; use a known hop count (1–10) when every request traverses exactly that many trusted proxies, or a comma-separated list of trusted proxy IPs/CIDRs or `loopback`, `linklocal`, `uniquelocal`. Use `true` only when the ingress reliably overwrites forwarded headers and direct access is blocked. `THROTTLE_STORAGE` defaults to `redis`, using `REDIS_URL` and prefix `lms:throttle:`; `memory` is allowed only in development or test. `SWAGGER_ENABLED` defaults to `false` in production and `true` otherwise; set it explicitly if needed.
 
 ---
+
+## Container images
+
+Build from the repository root (pass the public API URL at build time for the web bundle):
+
+```bash
+docker build -f apps/api/Dockerfile --target api -t lms-api .
+docker build -f apps/api/Dockerfile --target worker -t lms-worker .
+docker build -f apps/web/Dockerfile --build-arg NEXT_PUBLIC_API_URL=https://example.com/api/v1 -t lms-web .
+```
+
+Run with deployment-specific environment and networking, for example `docker run --env-file production.env lms-api`, `docker run --env-file production.env lms-worker`, and `docker run --env-file production.env lms-web`. The worker image includes Chromium, ffmpeg/ffprobe, `clamscan`, and a signature database populated by `freshclam` at build time. Keep signatures current with `freshclam` on the worker host or rebuild and redeploy the image regularly; scanning uses the CLI, not a clamd daemon. The API image defaults to `node dist/main.js`; the worker target defaults to `node dist/workers/main.js`.
+
+Run migrations as a one-off from the build stage, which contains the Prisma CLI and migration files:
+
+```bash
+docker build -f apps/api/Dockerfile --target build -t lms-migrate .
+docker run --rm --env-file production.env -w /app/apps/api lms-migrate pnpm exec prisma migrate deploy
+```
 
 ## 3. Zero-Downtime Expand/Contract Migrations
 
@@ -156,7 +180,7 @@ Administrators can inspect failed events and trigger replays via:
     { "data": { "status": "ok", "database": "ok", "redis": "ok" } }
     ```
   - Returns `503 Service Unavailable` if database or Redis fails.
-- **Liveness Probe**: `GET /api/docs-json` or `/api/v1/health`
+- **Liveness Probe**: `GET /api/v1/health` (also checks dependencies)
 
 ### Key Metric Thresholds
 - **Catalog Browsing (`/api/v1/catalog/courses`)**: p95 < 50ms, throughput > 400 req/s.

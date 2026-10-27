@@ -28,13 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Users,
-  UserPlus,
-  Trash2,
-  Loader2,
-  AlertTriangle,
-} from 'lucide-react';
+import { Users, UserPlus, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import {
   useCourseStaffQuery,
   useUpsertCourseStaffMutation,
@@ -116,7 +110,8 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
           <div className="text-sm">
             <p className="font-semibold">Teaching Assistant Access (Read-Only Content)</p>
             <p className="text-xs text-amber-800 dark:text-amber-300 mt-0.5">
-              Your staff assignment does not have <code className="font-mono">canEditContent</code> enabled. You can view the curriculum, but editing sections and lessons is disabled.
+              Your staff assignment does not have <code className="font-mono">canEditContent</code>{' '}
+              enabled. You can view the curriculum, but editing sections and lessons is disabled.
             </p>
           </div>
         </div>
@@ -131,7 +126,11 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
         </div>
 
         {permissions.canEditContent && (
-          <Button onClick={handleOpenAssign} size="sm" className="flex items-center gap-1.5 self-start">
+          <Button
+            onClick={handleOpenAssign}
+            size="sm"
+            className="flex items-center gap-1.5 self-start"
+          >
             <UserPlus className="h-4 w-4" />
             Assign Staff Member
           </Button>
@@ -155,7 +154,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                 <TableHead>User / Member ID</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Capabilities</TableHead>
-                {permissions.canEditContent && <TableHead className="text-right">Actions</TableHead>}
+                {permissions.canEditContent && (
+                  <TableHead className="text-right">Actions</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -186,7 +187,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                           <Badge
                             variant={staff.canGrade ? 'outline' : 'secondary'}
                             className={`text-[10px] ${
-                              staff.canGrade ? 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400' : 'opacity-60'
+                              staff.canGrade
+                                ? 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400'
+                                : 'opacity-60'
                             }`}
                           >
                             {staff.canGrade ? '✓ Grade' : '✕ No Grade'}
@@ -194,7 +197,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                           <Badge
                             variant={staff.canManageLearners ? 'outline' : 'secondary'}
                             className={`text-[10px] ${
-                              staff.canManageLearners ? 'border-blue-500/50 text-blue-600 dark:text-blue-400' : 'opacity-60'
+                              staff.canManageLearners
+                                ? 'border-blue-500/50 text-blue-600 dark:text-blue-400'
+                                : 'opacity-60'
                             }`}
                           >
                             {staff.canManageLearners ? '✓ Roster' : '✕ No Roster'}
@@ -248,13 +253,18 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
 
             <div className="my-4 space-y-4">
               {dialogError && (
-                <div role="alert" className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive">
+                <div
+                  role="alert"
+                  className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive"
+                >
                   {dialogError}
                 </div>
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="staff-user-id" className="text-xs font-medium">User UUID</Label>
+                <Label htmlFor="staff-user-id" className="text-xs font-medium">
+                  User UUID
+                </Label>
                 <Input
                   id="staff-user-id"
                   value={selectedUserId}
@@ -265,7 +275,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="staff-role" className="text-xs font-medium">Role</Label>
+                <Label htmlFor="staff-role" className="text-xs font-medium">
+                  Role
+                </Label>
                 <Select value={role} onValueChange={(v) => setRole(v as StaffRole)}>
                   <SelectTrigger id="staff-role">
                     <SelectValue placeholder="Select course role" />
@@ -283,7 +295,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                     Teaching Assistant Capability Flags
                   </p>
                   <div className="flex items-center justify-between text-xs">
-                    <Label htmlFor="flag-edit" className="cursor-pointer">Can Edit Curriculum Content</Label>
+                    <Label htmlFor="flag-edit" className="cursor-pointer">
+                      Can Edit Curriculum Content
+                    </Label>
                     <input
                       id="flag-edit"
                       type="checkbox"
@@ -293,7 +307,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                     />
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <Label htmlFor="flag-grade" className="cursor-pointer">Can Grade Submissions</Label>
+                    <Label htmlFor="flag-grade" className="cursor-pointer">
+                      Can Grade Submissions
+                    </Label>
                     <input
                       id="flag-grade"
                       type="checkbox"
@@ -303,7 +319,9 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
                     />
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <Label htmlFor="flag-roster" className="cursor-pointer">Can Manage Learner Roster</Label>
+                    <Label htmlFor="flag-roster" className="cursor-pointer">
+                      Can Manage Learner Roster
+                    </Label>
                     <input
                       id="flag-roster"
                       type="checkbox"
@@ -320,7 +338,11 @@ export function StaffManager({ workspaceId, courseId }: StaffManagerProps) {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={upsertMutation.isPending} className="flex items-center gap-2">
+              <Button
+                type="submit"
+                disabled={upsertMutation.isPending}
+                className="flex items-center gap-2"
+              >
                 {upsertMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 Confirm Assignment
               </Button>

@@ -64,7 +64,9 @@ describe('CourseDetail component', () => {
   it('renders course title, outline, and pricing', () => {
     render(<CourseDetail course={baseDetail} />, { wrapper: createWrapper() });
 
-    expect(screen.getByRole('heading', { name: 'Reliable software', level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Reliable software', level: 1 }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Module 1: Foundations')).toBeInTheDocument();
     expect(screen.getByText('Welcome & Overview')).toBeInTheDocument();
     expect(screen.getByText('Midterm Comprehensive Exam')).toBeInTheDocument();
@@ -90,9 +92,7 @@ describe('CourseDetail component', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(
-        screen.getByText('Practice building dependable software.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Practice building dependable software.')).toBeInTheDocument();
     });
   });
 

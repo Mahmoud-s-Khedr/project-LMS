@@ -1,4 +1,9 @@
-import type { Course, SectionWithLessons, PublishValidationResult, PublishValidationIssue } from '../types';
+import type {
+  Course,
+  SectionWithLessons,
+  PublishValidationResult,
+  PublishValidationIssue,
+} from '../types';
 
 /**
  * Validates course aggregate state against publishing invariants.
@@ -91,7 +96,10 @@ export function validateCourseForPublish(
       }
 
       // Invariant: Assessment pass requires assessment lesson
-      if (lesson.completionRule === 'ASSESSMENT_PASS' && !assessmentTypes.has(lesson.payload.type)) {
+      if (
+        lesson.completionRule === 'ASSESSMENT_PASS' &&
+        !assessmentTypes.has(lesson.payload.type)
+      ) {
         errors.push({
           severity: 'ERROR',
           field: 'completionRule',
@@ -141,7 +149,8 @@ export function validateCourseForPublish(
     warnings.push({
       severity: 'WARNING',
       field: 'deliveryMode',
-      message: 'This is a cohort-based course. Ensure at least one cohort has scheduled enrollment windows.',
+      message:
+        'This is a cohort-based course. Ensure at least one cohort has scheduled enrollment windows.',
     });
   }
 

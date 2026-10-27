@@ -26,11 +26,7 @@ describe('Dashboard navigation configuration & role helpers', () => {
 
     const roles = extractEffectiveRoles({
       platformRole: 'STUDENT',
-      memberships: [
-        { role: 'INSTRUCTOR' },
-        { role: 'TEACHING_ASSISTANT' },
-        { role: 'INSTRUCTOR' },
-      ],
+      memberships: [{ role: 'INSTRUCTOR' }, { role: 'TEACHING_ASSISTANT' }, { role: 'INSTRUCTOR' }],
     });
 
     expect(roles).toEqual([Role.STUDENT, Role.INSTRUCTOR, Role.TEACHING_ASSISTANT]);
@@ -111,12 +107,8 @@ describe('Dashboard navigation configuration & role helpers', () => {
     expect(resolveDefaultDashboardPath([Role.STUDENT, Role.INSTRUCTOR])).toBe('/instructor');
     expect(resolveDefaultDashboardPath([Role.STUDENT, Role.SUPER_ADMIN])).toBe('/admin');
 
-    expect(
-      isNavItemActive('/student', { href: '/student', exactMatch: true }),
-    ).toBe(true);
-    expect(
-      isNavItemActive('/student/courses', { href: '/student', exactMatch: true }),
-    ).toBe(false);
+    expect(isNavItemActive('/student', { href: '/student', exactMatch: true })).toBe(true);
+    expect(isNavItemActive('/student/courses', { href: '/student', exactMatch: true })).toBe(false);
     expect(
       isNavItemActive('/student/courses/123', { href: '/student/courses', exactMatch: false }),
     ).toBe(true);

@@ -62,7 +62,9 @@ export function CourseCatalog({ initialFilters = {}, initialData }: CourseCatalo
     limit: filters.limit ?? 12,
   };
 
-  const { data, isLoading, isError, error, refetch } = useCatalogCoursesQuery(queryParams, { initialData });
+  const { data, isLoading, isError, error, refetch } = useCatalogCoursesQuery(queryParams, {
+    initialData,
+  });
 
   const courses = data?.data ?? [];
   const meta = data?.meta;
@@ -222,10 +224,7 @@ export function CourseCatalog({ initialFilters = {}, initialData }: CourseCatalo
         <select
           value={filters.deliveryMode}
           onChange={(e) =>
-            handleFilterChange(
-              'deliveryMode',
-              e.target.value as 'SELF_PACED' | 'COHORT' | 'ALL',
-            )
+            handleFilterChange('deliveryMode', e.target.value as 'SELF_PACED' | 'COHORT' | 'ALL')
           }
           className="rounded-md border border-border bg-card px-2.5 py-1 text-xs text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Filter by format"
@@ -361,18 +360,13 @@ export function CourseCatalog({ initialFilters = {}, initialData }: CourseCatalo
         </div>
       ) : isError ? (
         <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-12 text-center">
-          <p className="font-serif text-lg font-bold text-destructive">
-            Failed to load courses
-          </p>
+          <p className="font-serif text-lg font-bold text-destructive">Failed to load courses</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            {error instanceof Error ? error.message : 'An error occurred while fetching the course catalog.'}
+            {error instanceof Error
+              ? error.message
+              : 'An error occurred while fetching the course catalog.'}
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="mt-4 gap-1.5"
-          >
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-4 gap-1.5">
             <RotateCcw className="h-3.5 w-3.5" />
             Retry
           </Button>
@@ -420,9 +414,7 @@ export function CourseCatalog({ initialFilters = {}, initialData }: CourseCatalo
                 Previous
               </Button>
 
-              <span className="text-xs text-muted-foreground">
-                Page {cursorHistory.length + 1}
-              </span>
+              <span className="text-xs text-muted-foreground">Page {cursorHistory.length + 1}</span>
 
               <Button
                 variant="outline"

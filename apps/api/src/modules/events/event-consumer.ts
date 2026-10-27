@@ -37,7 +37,11 @@ export interface EventConsumer<T extends EventType = EventType> {
    * `PermanentEventError` for a non-retryable failure (dead-letters immediately). Re-check current state:
    * the event may be stale or redelivered after replay.
    */
-  handle(event: DeliveredEvent<T>, tx: Prisma.TransactionClient, context: EventDeliveryContext): Promise<void>;
+  handle(
+    event: DeliveredEvent<T>,
+    tx: Prisma.TransactionClient,
+    context: EventDeliveryContext,
+  ): Promise<void>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

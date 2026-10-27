@@ -65,7 +65,8 @@ export function AdminOverview() {
           {siteConfig.name} Platform Administration
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Platform governance, tenant inventory, compliance audit trails, and resilient operational pipelines.
+          Platform governance, tenant inventory, compliance audit trails, and resilient operational
+          pipelines.
         </p>
       </div>
 
@@ -118,13 +119,18 @@ export function AdminOverview() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{isLoadingOperations ? '...' : failedEventsCount}</div>
+              <div className="text-2xl font-bold">
+                {isLoadingOperations ? '...' : failedEventsCount}
+              </div>
               {failedEventsCount > 0 ? (
                 <Badge variant="destructive" className="text-[10px]">
                   Action Needed
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] text-emerald-600 border-emerald-300"
+                >
                   Healthy
                 </Badge>
               )}
@@ -147,13 +153,18 @@ export function AdminOverview() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{isLoadingWebhooks ? '...' : failedWebhooksCount}</div>
+              <div className="text-2xl font-bold">
+                {isLoadingWebhooks ? '...' : failedWebhooksCount}
+              </div>
               {failedWebhooksCount > 0 ? (
                 <Badge variant="destructive" className="text-[10px]">
                   Unresolved
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] text-emerald-600 border-emerald-300"
+                >
                   Clean
                 </Badge>
               )}
@@ -266,7 +277,9 @@ export function AdminOverview() {
           </CardHeader>
           <CardContent>
             {isLoadingAudit ? (
-              <div className="text-xs text-muted-foreground py-4 text-center">Loading audit log...</div>
+              <div className="text-xs text-muted-foreground py-4 text-center">
+                Loading audit log...
+              </div>
             ) : recentAudit?.data.length === 0 ? (
               <div className="text-xs text-muted-foreground py-4 text-center">
                 No recent audit records in this workspace.
@@ -279,7 +292,9 @@ export function AdminOverview() {
                       <Badge variant="outline" className="font-mono text-[10px]">
                         {log.action}
                       </Badge>
-                      <span className="font-medium text-foreground truncate">{log.resourceType}</span>
+                      <span className="font-medium text-foreground truncate">
+                        {log.resourceType}
+                      </span>
                       {log.changes.reason && (
                         <span className="text-muted-foreground italic truncate">
                           &quot;{log.changes.reason}&quot;

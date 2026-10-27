@@ -4,11 +4,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api } from '@/lib/api';
-import {
-  formatSecondsToDuration,
-  formatAccessReason,
-  isAccessAllowed,
-} from './types';
+import { formatSecondsToDuration, formatAccessReason, isAccessAllowed } from './types';
 import { OverviewStats } from './components/overview-stats';
 import { EnrollmentCard } from './components/enrollment-card';
 import { EnrollmentList } from './components/enrollment-list';
@@ -158,7 +154,9 @@ describe('Student Domain Helpers', () => {
 
   it('identifies access allowance', () => {
     expect(isAccessAllowed({ allowed: true, expiresAt: null })).toBe(true);
-    expect(isAccessAllowed({ allowed: false, reason: 'ACCESS_EXPIRED', unlockAt: null })).toBe(false);
+    expect(isAccessAllowed({ allowed: false, reason: 'ACCESS_EXPIRED', unlockAt: null })).toBe(
+      false,
+    );
   });
 });
 
@@ -188,7 +186,9 @@ describe('OverviewStats Component', () => {
 
 describe('EnrollmentCard Component', () => {
   it('renders active enrollment with Continue button', () => {
-    renderWithClient(<EnrollmentCard enrollment={mockActiveEnrollment} courseTitle="Distributed Systems" />);
+    renderWithClient(
+      <EnrollmentCard enrollment={mockActiveEnrollment} courseTitle="Distributed Systems" />,
+    );
 
     expect(screen.getByText('Distributed Systems')).toBeTruthy();
     expect(screen.getByText('45%')).toBeTruthy();
@@ -198,7 +198,9 @@ describe('EnrollmentCard Component', () => {
   });
 
   it('distinguishes expired access and shows View Results button', () => {
-    renderWithClient(<EnrollmentCard enrollment={mockExpiredEnrollment} courseTitle="Legacy Cloud" />);
+    renderWithClient(
+      <EnrollmentCard enrollment={mockExpiredEnrollment} courseTitle="Legacy Cloud" />,
+    );
 
     expect(screen.getByText('Legacy Cloud')).toBeTruthy();
     expect(screen.getByText('75%')).toBeTruthy();

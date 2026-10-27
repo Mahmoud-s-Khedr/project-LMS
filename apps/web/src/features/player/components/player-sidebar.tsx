@@ -158,10 +158,7 @@ export function PlayerSidebar({
                               )}
                               title={
                                 !lesson.access.allowed
-                                  ? formatLockReason(
-                                      lesson.access.reason,
-                                      lesson.access.unlockAt,
-                                    )
+                                  ? formatLockReason(lesson.access.reason, lesson.access.unlockAt)
                                   : 'Locked'
                               }
                               data-testid={`sidebar-lesson-${lesson.lessonId}-locked`}

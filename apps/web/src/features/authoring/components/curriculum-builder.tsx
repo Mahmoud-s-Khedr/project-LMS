@@ -156,10 +156,16 @@ export function CurriculumBuilder({
     } else if (newLessonType === 'TEXT') {
       payload = {
         type: 'TEXT',
-        body: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }] },
+        body: {
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }],
+        },
       };
     } else if (newLessonType === 'INTERACTIVE') {
-      payload = { type: 'INTERACTIVE', body: { embedUrl: 'https://example.com/embed', sandbox: ['allow-scripts'] } };
+      payload = {
+        type: 'INTERACTIVE',
+        body: { embedUrl: 'https://example.com/embed', sandbox: ['allow-scripts'] },
+      };
     } else if (newLessonType === 'DOCUMENT') {
       payload = { type: 'DOCUMENT', body: {} };
     } else if (newLessonType === 'QUIZ') {
@@ -251,7 +257,8 @@ export function CurriculumBuilder({
         <div>
           <h3 className="text-base font-semibold">Course Curriculum & Syllabus</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Organize modules into sections, author lectures, configure activities, and arrange lesson ordering.
+            Organize modules into sections, author lectures, configure activities, and arrange
+            lesson ordering.
           </p>
         </div>
 
@@ -418,7 +425,10 @@ export function CurriculumBuilder({
                               {lesson.isPreview && (
                                 <>
                                   <span>•</span>
-                                  <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[9px] px-1 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                                  >
                                     Preview
                                   </Badge>
                                 </>
@@ -439,7 +449,9 @@ export function CurriculumBuilder({
                               variant="ghost"
                               size="sm"
                               disabled={lIdx === 0}
-                              onClick={() => void handleMoveLesson(section.id, section.lessons, lIdx, 'UP')}
+                              onClick={() =>
+                                void handleMoveLesson(section.id, section.lessons, lIdx, 'UP')
+                              }
                               className="h-6 w-6 p-0"
                               title="Move Lesson Up"
                               aria-label="Move Lesson Up"
@@ -450,7 +462,9 @@ export function CurriculumBuilder({
                               variant="ghost"
                               size="sm"
                               disabled={lIdx === section.lessons.length - 1}
-                              onClick={() => void handleMoveLesson(section.id, section.lessons, lIdx, 'DOWN')}
+                              onClick={() =>
+                                void handleMoveLesson(section.id, section.lessons, lIdx, 'DOWN')
+                              }
                               className="h-6 w-6 p-0"
                               title="Move Lesson Down"
                               aria-label="Move Lesson Down"
@@ -503,7 +517,8 @@ export function CurriculumBuilder({
           <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/60" />
           <h4 className="mt-2 text-sm font-semibold">Curriculum Outline is Empty</h4>
           <p className="mt-1 text-xs text-muted-foreground">
-            Create your first module section to start adding video lectures, articles, and assignments.
+            Create your first module section to start adding video lectures, articles, and
+            assignments.
           </p>
           {!isReadOnly && (
             <Button
@@ -528,13 +543,13 @@ export function CurriculumBuilder({
           <form onSubmit={handleCreateSection}>
             <DialogHeader>
               <DialogTitle>Add Curriculum Section</DialogTitle>
-              <DialogDescription>
-                Create a module group for your course lessons.
-              </DialogDescription>
+              <DialogDescription>Create a module group for your course lessons.</DialogDescription>
             </DialogHeader>
 
             <div className="my-4 space-y-2">
-              <Label htmlFor="new-section-title" className="text-xs font-medium">Section Title</Label>
+              <Label htmlFor="new-section-title" className="text-xs font-medium">
+                Section Title
+              </Label>
               <Input
                 id="new-section-title"
                 value={newSectionTitle}
@@ -563,14 +578,14 @@ export function CurriculumBuilder({
           <form onSubmit={handleCreateLesson}>
             <DialogHeader>
               <DialogTitle>Add Lesson</DialogTitle>
-              <DialogDescription>
-                Select lesson format and default configuration.
-              </DialogDescription>
+              <DialogDescription>Select lesson format and default configuration.</DialogDescription>
             </DialogHeader>
 
             <div className="my-4 space-y-3.5">
               <div className="space-y-1.5">
-                <Label htmlFor="new-lesson-title" className="text-xs font-medium">Lesson Title</Label>
+                <Label htmlFor="new-lesson-title" className="text-xs font-medium">
+                  Lesson Title
+                </Label>
                 <Input
                   id="new-lesson-title"
                   value={newLessonTitle}
@@ -582,7 +597,9 @@ export function CurriculumBuilder({
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="new-lesson-type" className="text-xs font-medium">Lesson Format</Label>
+                <Label htmlFor="new-lesson-type" className="text-xs font-medium">
+                  Lesson Format
+                </Label>
                 <Select
                   value={newLessonType}
                   onValueChange={(v) => {
@@ -611,7 +628,9 @@ export function CurriculumBuilder({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="new-lesson-minutes" className="text-xs font-medium">Est. Minutes</Label>
+                  <Label htmlFor="new-lesson-minutes" className="text-xs font-medium">
+                    Est. Minutes
+                  </Label>
                   <Input
                     id="new-lesson-minutes"
                     type="number"
@@ -626,7 +645,9 @@ export function CurriculumBuilder({
                     <input
                       id="new-lesson-preview"
                       type="checkbox"
-                      disabled={['QUIZ', 'ASSIGNMENT', 'EXAM', 'LIVE_SESSION'].includes(newLessonType)}
+                      disabled={['QUIZ', 'ASSIGNMENT', 'EXAM', 'LIVE_SESSION'].includes(
+                        newLessonType,
+                      )}
                       checked={newLessonIsPreview}
                       onChange={(e) => setNewLessonIsPreview(e.target.checked)}
                       className="h-4 w-4 rounded border-gray-300"

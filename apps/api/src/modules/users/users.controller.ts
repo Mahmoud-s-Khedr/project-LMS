@@ -145,7 +145,13 @@ export class AdminUsersController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { data, etag } = await this.users.update(actor, userId, input, ifMatch, String(request.id));
+    const { data, etag } = await this.users.update(
+      actor,
+      userId,
+      input,
+      ifMatch,
+      String(request.id),
+    );
     response.setHeader('ETag', etag);
     return { data };
   }

@@ -61,13 +61,16 @@ Stop the development servers with Ctrl+C. Stop this project's infrastructure wit
 
 ```bash
 pnpm -r typecheck
-pnpm -r test
+pnpm test
+pnpm test:db
+pnpm test:security
+pnpm test:e2e --workers=1
 pnpm lint
 pnpm build
 pnpm format:check
 ```
 
-The root `typecheck`, `test`, `lint`, and `build` scripts use Turborepo to build workspace dependencies first. API tests use Jest; shared and web tests use Vitest, with Testing Library for web interactions. Generated Prisma types require `pnpm db:generate` after any schema update.
+The root `typecheck`, `test`, `lint`, and `build` scripts use Turborepo to build workspace dependencies first. Plain `pnpm test` runs workspace unit suites; database-backed API tests are skipped unless their test database URLs are set. `pnpm test:db` runs the workspace tests with isolated PostgreSQL databases and exercises SMTP and storage using the local services. `pnpm test:security` runs HTTP security tests; `pnpm test:e2e --workers=1` runs browser journeys after migrations, seed, build and Chromium installation. The HTTP suites start services on ports 4100 and 3100, so free those ports first. CI runs all four categories. API tests use Jest; shared and web tests use Vitest, with Testing Library for web interactions. Generated Prisma types require `pnpm db:generate` after any schema update.
 
 For production-style local runs, build first, then run `pnpm --filter @lms/api start:prod` and `pnpm --filter @lms/web start` in separate terminals.
 
@@ -113,8 +116,45 @@ All seeded accounts have email verification pre-stamped and Argon2id password ha
 
 ## Scanner Modes
 
-- `MEDIA_SCANNER_MODE=clamav` (Default): Production and standard development mode. Inspects uploaded media via local ClamAV daemon.
+- `MEDIA_SCANNER_MODE=clamav` (Default): Production and standard development mode. Inspects uploaded media via the `clamscan` CLI and its signature database (maintained with `freshclam`).
 - `MEDIA_SCANNER_MODE=development-bypass`: Development-only fallback when running offline without ClamAV. Bypasses virus scanning. **Strictly forbidden in production** (enforced by startup environment validation).
+
+## Web Security Headers and Content Security Policy
+
+The Next.js 15 web application enforces strict baseline security headers and a per-request nonce-based Content Security Policy (CSP).
+
+### Baseline Security Headers
+
+Configured statically in `apps/web/next.config.ts`:
+
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+- `Strict-Transport-Security: max-age=31536000; includeSubDomains` (enabled in `NODE_ENV=production`)
+
+### Strict Nonce-Based Content Security Policy
+
+CSP headers are dynamically generated per request in edge-safe middleware (`apps/web/src/middleware.ts`) via `apps/web/src/lib/security/csp.ts` using Web Crypto nonces (`crypto.getRandomValues`):
+
+- **Scripts:** `script-src 'self' 'nonce-<base64>' 'strict-dynamic'`. Production forbids `'unsafe-inline'` and `'unsafe-eval'`. `'unsafe-eval'` is permitted strictly in `NODE_ENV=development` for React developer tooling and HMR.
+- **Styles:** `style-src 'self' 'unsafe-inline'`. Retained because Next.js App Router, Tailwind CSS v4, and UI primitives (shadcn/Radix/Sonner) inject dynamic runtime styles and inline element style attributes during hydration and transitions.
+- **Narrowed Origins (No Blanket `https: http:`):**
+  - `img-src`: `'self' data: blob:` plus derived S3/CDN endpoints, and API origins.
+  - `media-src`: `'self' data: blob:` plus S3/CDN endpoints and API origins for video/audio playback.
+  - `connect-src`: `'self'`, API origin, and S3 presigned PUT upload origin. No Stripe origins: Checkout is a full-page redirect and the web app never loads Stripe.js.
+  - `frame-src`: Configured embed origins (`CONTENT_EMBED_ORIGINS`) only (`'none'` when empty).
+  - `frame-ancestors: 'none'`, `object-src: 'none'`, `base-uri: 'self'`, `form-action: 'self'`.
+  - `upgrade-insecure-requests`: Enforced in production only.
+- **Nonce Propagation:** The root layout (`apps/web/src/app/layout.tsx`) reads `headers().get('x-nonce')` and passes it to `<Providers nonce={nonce}>` (which nonces the `next-themes` theme-switch script) and inline client bootstrap scripts (`window.__zod_globalConfig = { jitless: true }`). Routes that require the nonce become dynamically server-rendered.
+
+### CSP Environment Variables
+
+- `NEXT_PUBLIC_API_URL`: Origin added to `connect-src`, `img-src`, and `media-src` (default: `http://localhost:4100/api/v1`).
+- `API_PUBLIC_ORIGIN`: Public origin for course assets and API endpoints (default: `http://localhost:4100`).
+- `S3_ENDPOINT`: Object store origin for presigned binary uploads and media streaming (default: `http://localhost:59000`).
+- `CONTENT_PUBLIC_ORIGIN`: Optional CDN or public bucket origin if media is fronted by a CDN.
+- `CONTENT_EMBED_ORIGINS`: Comma-separated list of permitted video and widget frame embed origins (default: `https://www.youtube-nocookie.com,https://player.vimeo.com,https://www.h5p.com`).
 
 ## Self-contained HTTP QA
 
@@ -156,3 +196,15 @@ pnpm check:api-paths
 ```
 
 Statically analyzes every `api.get/post/put/patch/delete` call across `apps/web/src` and checks them against the OpenAPI schema exported by `/api/docs-json`. Exits with code 0 only when there are zero mismatches and zero unresolved paths. All Phase 4 administration endpoints are fully registered and passing.
+
+### Paid checkout browser journey
+
+Create a Stripe test-mode secret key and install the Stripe CLI. Start webhook forwarding in a separate terminal:
+
+```bash
+stripe listen --forward-to localhost:4100/api/v1/webhooks/stripe
+```
+
+Set `STRIPE_SECRET_KEY` to the test key and `STRIPE_WEBHOOK_SECRET` to the `whsec_...` value printed by the listener; export both in the terminal that runs the tests. With infrastructure running, migrate and seed the database, build the workspace, and install Chromium (`pnpm exec playwright install chromium`), then run `pnpm test:e2e --workers=1`. The paid journey is skipped without a real `sk_test_...` key.
+
+To enable it in CI, configure repository secrets `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` with the test key and the signing secret for `stripe listen` for that account. CI starts a Stripe CLI listener and forwards events to the API; both secrets must match that listener.

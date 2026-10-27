@@ -15,7 +15,14 @@ import {
 import { RichTextEditor } from './rich-text-editor';
 import { AssetUploader } from './asset-uploader';
 import { Loader2, Sparkles, Image as ImageIcon } from 'lucide-react';
-import type { Course, CourseCreate, CourseUpdate, RichText, DeliveryMode, Visibility } from '../types';
+import type {
+  Course,
+  CourseCreate,
+  CourseUpdate,
+  RichText,
+  DeliveryMode,
+  Visibility,
+} from '../types';
 
 export function slugifyCourseTitle(text: string): string {
   return text
@@ -103,9 +110,10 @@ export function CourseForm({
       coverId: coverId || null,
     };
 
-    const payload = (!isCreate && initialData?.version !== undefined)
-      ? { ...basePayload, version: initialData.version }
-      : basePayload;
+    const payload =
+      !isCreate && initialData?.version !== undefined
+        ? { ...basePayload, version: initialData.version }
+        : basePayload;
 
     try {
       await onSubmit(payload as CourseCreate | CourseUpdate);
@@ -117,7 +125,10 @@ export function CourseForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {formError && (
-        <div role="alert" className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive">
+        <div
+          role="alert"
+          className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive"
+        >
           {formError}
         </div>
       )}
@@ -129,7 +140,9 @@ export function CourseForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="course-title" className="text-xs font-medium">Course Title</Label>
+            <Label htmlFor="course-title" className="text-xs font-medium">
+              Course Title
+            </Label>
             <Input
               id="course-title"
               value={title}
@@ -141,7 +154,9 @@ export function CourseForm({
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="course-slug" className="text-xs font-medium">URL Slug</Label>
+              <Label htmlFor="course-slug" className="text-xs font-medium">
+                URL Slug
+              </Label>
               <button
                 type="button"
                 onClick={() => setSlug(slugifyCourseTitle(title))}
@@ -162,7 +177,9 @@ export function CourseForm({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="course-summary" className="text-xs font-medium">Summary (Short Pitch)</Label>
+          <Label htmlFor="course-summary" className="text-xs font-medium">
+            Summary (Short Pitch)
+          </Label>
           <Textarea
             id="course-summary"
             value={summary}
@@ -191,7 +208,9 @@ export function CourseForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="delivery-mode" className="text-xs font-medium">Delivery Format</Label>
+            <Label htmlFor="delivery-mode" className="text-xs font-medium">
+              Delivery Format
+            </Label>
             <Select value={deliveryMode} onValueChange={(v) => setDeliveryMode(v as DeliveryMode)}>
               <SelectTrigger id="delivery-mode">
                 <SelectValue placeholder="Select delivery" />
@@ -204,7 +223,9 @@ export function CourseForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="course-visibility" className="text-xs font-medium">Catalog Visibility</Label>
+            <Label htmlFor="course-visibility" className="text-xs font-medium">
+              Catalog Visibility
+            </Label>
             <Select value={visibility} onValueChange={(v) => setVisibility(v as Visibility)}>
               <SelectTrigger id="course-visibility">
                 <SelectValue placeholder="Select visibility" />
@@ -218,7 +239,9 @@ export function CourseForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="course-level" className="text-xs font-medium">Experience Level</Label>
+            <Label htmlFor="course-level" className="text-xs font-medium">
+              Experience Level
+            </Label>
             <Select value={level} onValueChange={setLevel}>
               <SelectTrigger id="course-level">
                 <SelectValue placeholder="Select level" />
@@ -234,7 +257,9 @@ export function CourseForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
           <div className="space-y-1.5">
-            <Label htmlFor="course-language" className="text-xs font-medium">Language</Label>
+            <Label htmlFor="course-language" className="text-xs font-medium">
+              Language
+            </Label>
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger id="course-language">
                 <SelectValue placeholder="Select language" />
@@ -249,7 +274,9 @@ export function CourseForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="est-minutes" className="text-xs font-medium">Total Duration (Minutes)</Label>
+            <Label htmlFor="est-minutes" className="text-xs font-medium">
+              Total Duration (Minutes)
+            </Label>
             <Input
               id="est-minutes"
               type="number"
@@ -285,7 +312,8 @@ export function CourseForm({
           Course Cover Artwork
         </h3>
         <p className="text-xs text-muted-foreground">
-          Thumbnail image displayed on the public catalog and studio dashboard cards (JPG, PNG, WebP).
+          Thumbnail image displayed on the public catalog and studio dashboard cards (JPG, PNG,
+          WebP).
         </p>
 
         {coverId && (

@@ -55,7 +55,12 @@ export function getNotificationCategory(type: string): {
   if (type.startsWith('security.')) {
     return { category: 'security', label: 'Security & Account' };
   }
-  if (type.startsWith('enrollment.') || type.startsWith('course.') || type.startsWith('live.') || type.startsWith('assessment.')) {
+  if (
+    type.startsWith('enrollment.') ||
+    type.startsWith('course.') ||
+    type.startsWith('live.') ||
+    type.startsWith('assessment.')
+  ) {
     return { category: 'learning', label: 'Learning & Courses' };
   }
   if (type.startsWith('order.') || type.startsWith('subscription.')) {

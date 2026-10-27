@@ -1,22 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Download,
-  FileText,
-  Loader2,
-  X,
-  ExternalLink,
-  BookOpen,
-  MonitorPlay,
-} from 'lucide-react';
+import { Download, FileText, Loader2, X, ExternalLink, BookOpen, MonitorPlay } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  usePreviewLessonQuery,
-  usePreviewAssetDownloadMutation,
-} from '../hooks';
+import { usePreviewLessonQuery, usePreviewAssetDownloadMutation } from '../hooks';
 import type { PublicOutlineLesson } from '../types';
 import { formatDurationMinutes } from '../types';
 import { RichTextRenderer } from './rich-text-renderer';
@@ -28,19 +17,17 @@ interface PreviewLessonModalProps {
   onClose: () => void;
 }
 
-export function PreviewLessonModal({
-  courseId,
-  lesson,
-  isOpen,
-  onClose,
-}: PreviewLessonModalProps) {
+export function PreviewLessonModal({ courseId, lesson, isOpen, onClose }: PreviewLessonModalProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
-  const { data: preview, isLoading, isError, error } = usePreviewLessonQuery(
-    courseId,
-    lesson?.lessonId ?? null,
-    { enabled: isOpen && Boolean(lesson) },
-  );
+  const {
+    data: preview,
+    isLoading,
+    isError,
+    error,
+  } = usePreviewLessonQuery(courseId, lesson?.lessonId ?? null, {
+    enabled: isOpen && Boolean(lesson),
+  });
 
   const downloadMutation = usePreviewAssetDownloadMutation();
 
@@ -123,7 +110,9 @@ export function PreviewLessonModal({
             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center text-destructive">
               <p className="font-semibold">Unable to load lesson preview</p>
               <p className="mt-1 text-sm text-destructive/80">
-                {error instanceof Error ? error.message : 'Please check your connection and try again.'}
+                {error instanceof Error
+                  ? error.message
+                  : 'Please check your connection and try again.'}
               </p>
             </div>
           ) : preview ? (
@@ -157,7 +146,8 @@ export function PreviewLessonModal({
                   <FileText className="h-12 w-12 text-primary/70 mb-2" />
                   <p className="font-semibold">Lesson Document Resource</p>
                   <p className="text-sm text-muted-foreground mt-1 max-w-md">
-                    This lesson contains guided notes and reading material. Download sample materials below or enroll for the full library.
+                    This lesson contains guided notes and reading material. Download sample
+                    materials below or enroll for the full library.
                   </p>
                 </div>
               )}

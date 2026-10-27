@@ -29,9 +29,7 @@ export function ProductCatalog() {
     ? allProducts.filter(
         (p) =>
           p.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-          p.courses.some((c) =>
-            c.title.toLowerCase().includes(searchTerm.toLowerCase().trim()),
-          ),
+          p.courses.some((c) => c.title.toLowerCase().includes(searchTerm.toLowerCase().trim())),
       )
     : allProducts;
 
@@ -43,7 +41,8 @@ export function ProductCatalog() {
           Course Bundles & All-Access Plans
         </h1>
         <p className="mt-2 text-base text-muted-foreground max-w-2xl">
-          Unlock curated course tracks, masterclass bundles, and multi-course subscription passes with structured paths and lifetime privileges.
+          Unlock curated course tracks, masterclass bundles, and multi-course subscription passes
+          with structured paths and lifetime privileges.
         </p>
       </div>
 
@@ -115,18 +114,11 @@ export function ProductCatalog() {
         </div>
       ) : isError ? (
         <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-12 text-center">
-          <p className="font-serif text-lg font-bold text-destructive">
-            Failed to load products
-          </p>
+          <p className="font-serif text-lg font-bold text-destructive">Failed to load products</p>
           <p className="mt-2 text-sm text-muted-foreground">
             {error instanceof Error ? error.message : 'An error occurred while fetching products.'}
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="mt-4 gap-1.5"
-          >
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-4 gap-1.5">
             <RotateCcw className="h-3.5 w-3.5" />
             Retry
           </Button>

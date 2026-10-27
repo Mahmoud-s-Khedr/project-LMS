@@ -6,4 +6,6 @@ module.exports = {
   moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
   collectCoverageFrom: ['src/**/*.ts', '!src/main.ts', '!src/**/*.module.ts'],
   clearMocks: true,
+  // Postgres suites apply all migrations in beforeAll; 5s flakes under load.
+  testTimeout: 30000,
 };

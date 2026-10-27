@@ -15,7 +15,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 
 export default function InstructorOverviewPage() {
-
   return (
     <div className="space-y-6">
       {/* Title & Brand Intro */}
@@ -24,7 +23,8 @@ export default function InstructorOverviewPage() {
           {siteConfig.name} Instructor Studio
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Deliver transformative cohort and self-paced learning, monitor learner engagement, and maintain academic standards.
+          Deliver transformative cohort and self-paced learning, monitor learner engagement, and
+          maintain academic standards.
         </p>
       </div>
 
@@ -37,7 +37,9 @@ export default function InstructorOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Courses</div>
-            <p className="text-xs text-muted-foreground mt-1">Sections, lessons, rich video & assets</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Sections, lessons, rich video & assets
+            </p>
             <div className="mt-3">
               <Button variant="ghost" size="sm" asChild className="p-0 h-auto text-xs font-medium">
                 <Link href="/instructor/courses" className="flex items-center gap-1 text-primary">
@@ -55,7 +57,9 @@ export default function InstructorOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Learners</div>
-            <p className="text-xs text-muted-foreground mt-1">Access provenance & manual enrollment</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Access provenance & manual enrollment
+            </p>
             <div className="mt-3">
               <Button variant="ghost" size="sm" asChild className="p-0 h-auto text-xs font-medium">
                 <Link href="/instructor/learners" className="flex items-center gap-1 text-primary">
@@ -73,7 +77,9 @@ export default function InstructorOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Submissions</div>
-            <p className="text-xs text-muted-foreground mt-1">Manual rubrics & assessment evaluations</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Manual rubrics & assessment evaluations
+            </p>
             <div className="mt-3">
               <Button variant="ghost" size="sm" asChild className="p-0 h-auto text-xs font-medium">
                 <Link href="/instructor/grading" className="flex items-center gap-1 text-primary">
@@ -112,7 +118,8 @@ export default function InstructorOverviewPage() {
               Roster & Student Access Control
             </CardTitle>
             <CardDescription className="text-xs">
-              Directly manage student seats, track learning progression, and issue time-bounded scholarship grants.
+              Directly manage student seats, track learning progression, and issue time-bounded
+              scholarship grants.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
@@ -136,7 +143,8 @@ export default function InstructorOverviewPage() {
               Engagement & Performance Analytics
             </CardTitle>
             <CardDescription className="text-xs">
-              Deep telemetry on lesson completion rates, assessment pass percentages, and background export jobs.
+              Deep telemetry on lesson completion rates, assessment pass percentages, and background
+              export jobs.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">

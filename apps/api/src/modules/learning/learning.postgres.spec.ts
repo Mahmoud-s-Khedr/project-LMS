@@ -345,7 +345,7 @@ integration('Learning on isolated PostgreSQL', () => {
       await admin.query(`DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE)`);
       await admin.end();
     }
-  });
+  }, 60000);
   beforeEach(() => {
     setNow('2026-03-01T00:00:00.000Z');
     nextResult = { finalized: false, passed: false, percent: null };
@@ -549,7 +549,10 @@ integration('Learning on isolated PostgreSQL', () => {
       ).rejects.toMatchObject({
         response: { code: 'COURSE_NOT_ENTITLED' },
       });
-      await prisma.order.update({ where: { id: order.id }, data: { status: 'PENDING', paidAt: null } });
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { status: 'PENDING', paidAt: null },
+      });
       await expect(grants.grantFromCommerce({ ...base, userId: owner.id })).rejects.toMatchObject({
         response: { code: 'ORDER_NOT_FULFILLABLE' },
       });
@@ -1094,7 +1097,9 @@ integration('Learning on isolated PostgreSQL', () => {
       const a = await user();
       const b = await user();
       const { result } = await commerceGrant(a.id, c.courseId);
-      expect((await http('GET', `me/enrollments/${result.enrollmentId}/lessons/${l1.id}`, b)).status).toBe(403);
+      expect(
+        (await http('GET', `me/enrollments/${result.enrollmentId}/lessons/${l1.id}`, b)).status,
+      ).toBe(403);
       for (const p of ['', '/outline', '/results'])
         expect((await http('GET', `me/enrollments/${result.enrollmentId}${p}`, b)).status).toBe(
           404,

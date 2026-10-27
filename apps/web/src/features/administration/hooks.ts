@@ -64,8 +64,15 @@ export function useAdminUsersQuery(params?: AdminUsersQuery, options?: { enabled
 export function useUpdateAdminUserMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, input, updatedAt }: { userId: string; input: AdminUserUpdate; updatedAt: string }) =>
-      updateAdminUser(userId, input, updatedAt),
+    mutationFn: ({
+      userId,
+      input,
+      updatedAt,
+    }: {
+      userId: string;
+      input: AdminUserUpdate;
+      updatedAt: string;
+    }) => updateAdminUser(userId, input, updatedAt),
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
     },
@@ -139,13 +146,8 @@ export function useUpdateWorkspaceMemberMutation() {
 export function useRemoveWorkspaceMemberMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      workspaceId,
-      memberId,
-    }: {
-      workspaceId: string;
-      memberId: string;
-    }) => removeWorkspaceMember(workspaceId, memberId),
+    mutationFn: ({ workspaceId, memberId }: { workspaceId: string; memberId: string }) =>
+      removeWorkspaceMember(workspaceId, memberId),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
         queryKey: ['admin', 'members', variables.workspaceId],
@@ -156,7 +158,11 @@ export function useRemoveWorkspaceMemberMutation() {
 
 export function useWorkspaceInvitationsQuery(
   workspaceId: string,
-  params?: { cursor?: string; limit?: number; status?: 'PENDING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED' },
+  params?: {
+    cursor?: string;
+    limit?: number;
+    status?: 'PENDING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED';
+  },
   options?: { enabled?: boolean },
 ) {
   return useQuery<CursorResponse<WorkspaceInvitation>>({
@@ -188,13 +194,8 @@ export function useCreateWorkspaceInvitationMutation() {
 export function useRevokeWorkspaceInvitationMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      workspaceId,
-      invitationId,
-    }: {
-      workspaceId: string;
-      invitationId: string;
-    }) => revokeWorkspaceInvitation(workspaceId, invitationId),
+    mutationFn: ({ workspaceId, invitationId }: { workspaceId: string; invitationId: string }) =>
+      revokeWorkspaceInvitation(workspaceId, invitationId),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
         queryKey: ['admin', 'invitations', variables.workspaceId],
@@ -261,13 +262,8 @@ export function useWebhooksQuery(params?: WebhooksQuery, options?: { enabled?: b
 export function useReplayWebhookMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      webhookId,
-      input,
-    }: {
-      webhookId: string;
-      input?: { reason: string };
-    }) => replayWebhook(webhookId, input),
+    mutationFn: ({ webhookId, input }: { webhookId: string; input?: { reason: string } }) =>
+      replayWebhook(webhookId, input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'webhooks'] });
     },

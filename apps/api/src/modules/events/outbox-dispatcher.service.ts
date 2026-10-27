@@ -1,4 +1,9 @@
-import { Inject, Injectable, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  type OnApplicationBootstrap,
+  type OnModuleDestroy,
+} from '@nestjs/common';
 import { Prisma, type OutboxStatus } from '@prisma/client';
 import type { DomainEvent } from '@lms/shared';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';

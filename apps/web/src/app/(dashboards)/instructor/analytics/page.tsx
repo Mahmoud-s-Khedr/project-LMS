@@ -57,7 +57,9 @@ export default function InstructorAnalyticsPage() {
       <div className="p-8 text-center rounded-lg border border-dashed text-muted-foreground flex flex-col items-center gap-2">
         <ShieldAlert className="h-8 w-8 text-amber-500" />
         <p className="font-semibold text-foreground">No active workspace selected</p>
-        <p className="text-xs">Select an active workspace from the dashboard header to view analytics.</p>
+        <p className="text-xs">
+          Select an active workspace from the dashboard header to view analytics.
+        </p>
       </div>
     );
   }
@@ -71,14 +73,18 @@ export default function InstructorAnalyticsPage() {
             Course Engagement & Performance Analytics
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Authoritative enrollment completion metrics, daily telemetry trends, and assessment grading statistics.
+            Authoritative enrollment completion metrics, daily telemetry trends, and assessment
+            grading statistics.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Course Selector */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="analytics-course-select" className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+            <Label
+              htmlFor="analytics-course-select"
+              className="text-xs font-medium text-muted-foreground whitespace-nowrap"
+            >
               Course:
             </Label>
             {isLoadingCourses ? (
@@ -124,25 +130,18 @@ export default function InstructorAnalyticsPage() {
 
       {selectedCourseId ? (
         <div className="space-y-6">
-          <CourseOverviewMetrics
-            workspaceId={activeWorkspaceId}
-            courseId={selectedCourseId}
-          />
+          <CourseOverviewMetrics workspaceId={activeWorkspaceId} courseId={selectedCourseId} />
 
-          <AssessmentAnalyticsCard
-            workspaceId={activeWorkspaceId}
-            courseId={selectedCourseId}
-          />
+          <AssessmentAnalyticsCard workspaceId={activeWorkspaceId} courseId={selectedCourseId} />
 
-          <LearnerAnalyticsTable
-            workspaceId={activeWorkspaceId}
-            courseId={selectedCourseId}
-          />
+          <LearnerAnalyticsTable workspaceId={activeWorkspaceId} courseId={selectedCourseId} />
         </div>
       ) : (
         <div className="p-12 text-center rounded-lg border border-dashed text-muted-foreground">
           <p className="font-medium text-foreground">No courses found in this workspace.</p>
-          <p className="text-xs mt-1">Create a course in the Curriculum Builder to begin recording analytics.</p>
+          <p className="text-xs mt-1">
+            Create a course in the Curriculum Builder to begin recording analytics.
+          </p>
         </div>
       )}
     </div>

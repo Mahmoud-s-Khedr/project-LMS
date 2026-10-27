@@ -52,6 +52,16 @@ jobs:
       STRIPE_SECRET_KEY: sk_test_local_fixture
       STRIPE_WEBHOOK_SECRET: whsec_test_secret_for_qa_testing_only_12345
       MEDIA_SCANNER_MODE: development-bypass
+      S3_ENDPOINT: http://localhost:59000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: lms_minio
+      S3_SECRET_ACCESS_KEY: lms_minio_dev_password
+      S3_PRIVATE_BUCKET: lms-private
+      S3_PUBLIC_BUCKET: lms-public
+      S3_FORCE_PATH_STYLE: 'true'
+      SMTP_HOST: localhost
+      SMTP_PORT: 51025
+      SMTP_SECURE: 'false'
 
     steps:
       - name: Checkout repository
@@ -74,6 +84,9 @@ jobs:
       - name: Check code formatting
         run: pnpm format:check
 
+      - name: Check CI configuration
+        run: node --test scripts/test-ops.mjs
+
       - name: Run ESLint
         run: pnpm lint
 
@@ -83,11 +96,17 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm db:generate
 
+      - name: Apply Prisma migrations
+        run: pnpm --filter @lms/api exec prisma migrate deploy
+
       - name: Check Prisma migration status
         run: pnpm --filter @lms/api exec prisma migrate status
 
-      - name: Apply Prisma migrations
-        run: pnpm --filter @lms/api exec prisma migrate deploy
+      - name: Start MinIO and Mailpit
+        run: docker compose up -d --wait minio mailpit
+
+      - name: Bootstrap storage
+        run: pnpm storage:bootstrap
 
       - name: Seed database fixtures
         run: pnpm db:seed
@@ -117,3 +136,92 @@ jobs:
           if [ -n "$API_PID" ]; then
             kill $API_PID || true
           fi
+
+  e2e:
+    name: Browser journeys
+    runs-on: ubuntu-latest
+    needs: validate
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lms
+          POSTGRES_PASSWORD: lms_dev_password
+          POSTGRES_DB: lms
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 56379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://lms:lms_dev_password@localhost:55432/lms?schema=public
+      REDIS_URL: redis://localhost:56379
+      API_PORT: 4100
+      WEB_ORIGIN: http://localhost:3100
+      API_INTERNAL_ORIGIN: http://localhost:4100
+      NEXT_PUBLIC_API_URL: http://localhost:4100/api/v1
+      JWT_ACCESS_SECRET: test-jwt-access-secret-at-least-32-chars-long
+      JWT_REFRESH_SECRET: test-jwt-refresh-secret-at-least-32-chars-long
+      AUDIT_IP_HASH_SECRET: test-audit-ip-hash-secret-at-least-32-chars
+      TENANCY_MAIL_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      TENANCY_MAIL_KEY_ID: v1
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      MEDIA_SCANNER_MODE: development-bypass
+      S3_ENDPOINT: http://localhost:59000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: lms_minio
+      S3_SECRET_ACCESS_KEY: lms_minio_dev_password
+      S3_PRIVATE_BUCKET: lms-private
+      S3_PUBLIC_BUCKET: lms-public
+      S3_FORCE_PATH_STYLE: 'true'
+      SMTP_HOST: localhost
+      SMTP_PORT: 51025
+      SMTP_SECURE: 'false'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm --filter @lms/api exec prisma migrate deploy
+      - run: docker compose up -d --wait minio mailpit
+      - run: pnpm storage:bootstrap
+      - run: pnpm db:seed
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - name: Forward Stripe test webhooks
+        if: ${{ env.STRIPE_SECRET_KEY != '' && env.STRIPE_WEBHOOK_SECRET != '' }}
+        run: |
+          docker run -d --name lms-stripe-listener --add-host host.docker.internal:host-gateway \
+            stripe/stripe-cli:latest listen --api-key "$STRIPE_SECRET_KEY" \
+            --forward-to http://host.docker.internal:4100/api/v1/webhooks/stripe
+      - run: pnpm test:e2e --workers=1
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore

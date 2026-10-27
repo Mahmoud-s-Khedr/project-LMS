@@ -6,3 +6,5 @@ pnpm-lock.yaml
 .orchestration
 docs
 apps/api/prisma/schema.prisma
+
+.env.example

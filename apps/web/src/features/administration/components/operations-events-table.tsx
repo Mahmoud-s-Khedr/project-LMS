@@ -1,13 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  RefreshCw,
-  RotateCw,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, RefreshCw, RotateCw } from 'lucide-react';
 import type { OperationEvent, OutboxStatus } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -230,7 +224,8 @@ export function OperationsEventsTable({ workspaceId }: OperationsEventsTableProp
           <DialogHeader>
             <DialogTitle>Replay Outbox Event</DialogTitle>
             <DialogDescription>
-              Replay domain event &quot;{replayEvent?.type}&quot; for aggregate {replayEvent?.aggregateType} ({replayEvent?.aggregateId}).
+              Replay domain event &quot;{replayEvent?.type}&quot; for aggregate{' '}
+              {replayEvent?.aggregateType} ({replayEvent?.aggregateId}).
             </DialogDescription>
           </DialogHeader>
 

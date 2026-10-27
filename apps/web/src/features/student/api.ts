@@ -35,12 +35,16 @@ export async function fetchEnrollment(enrollmentId: string): Promise<Enrollment>
 }
 
 export async function fetchEnrollmentOutline(enrollmentId: string): Promise<LearnerOutline> {
-  const response = await api.get<{ data: LearnerOutline }>(`/me/enrollments/${enrollmentId}/outline`);
+  const response = await api.get<{ data: LearnerOutline }>(
+    `/me/enrollments/${enrollmentId}/outline`,
+  );
   return response.data;
 }
 
 export async function fetchEnrollmentResults(enrollmentId: string): Promise<ReleasedResult[]> {
-  const response = await api.get<{ data: ReleasedResult[] }>(`/me/enrollments/${enrollmentId}/results`);
+  const response = await api.get<{ data: ReleasedResult[] }>(
+    `/me/enrollments/${enrollmentId}/results`,
+  );
   return response.data;
 }
 

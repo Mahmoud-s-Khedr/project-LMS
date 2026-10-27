@@ -14,10 +14,11 @@ import {
   Req,
   BadRequestException,
   UseInterceptors,
+  UseGuards,
   type RawBodyRequest,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import type { Request } from 'express';
 import { z } from 'zod';
 import * as C from '@lms/shared';
@@ -120,9 +121,10 @@ export class CommerceController {
     @Param('workspaceId', ParseUUIDPipe) w: string,
     @Param('productId', ParseUUIDPipe) id: string,
     @Body(pipe(C.priceCreateSchema)) b: C.PriceCreate,
+    @Headers('idempotency-key') k: string | undefined,
     @Req() r: Request,
   ) {
-    return this.admin.createPrice(a, w, id, b, requestId(r));
+    return this.admin.createPrice(a, w, id, b, requestId(r), k);
   }
   @Patch('products/:productId/prices/:priceId')
   @SchemaBody(C.priceUpdateSchema)
@@ -206,6 +208,7 @@ export class CommerceController {
     return this.checkout.quote(a, w, b);
   }
   @Post('checkout/sessions')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @SchemaBody(C.checkoutSessionInputSchema)
   @SchemaResponse(C.checkoutSessionResponseSchema, 201)

@@ -401,7 +401,7 @@ integration('analytics isolated PostgreSQL security and reconciliation', () => {
       await root.query(`DROP DATABASE IF EXISTS "${database}" WITH (FORCE)`);
       await root.end();
     }
-  });
+  }, 60000);
 
   it('rejects unauthenticated requests and malformed IDs', async () => {
     const response = await fetch(base + path('overview'));

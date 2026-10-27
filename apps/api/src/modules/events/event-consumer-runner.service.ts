@@ -88,13 +88,13 @@ export class EventConsumerRunnerService {
       throw new PermanentEventError(reason);
     }
 
-    const maxAttempts =
-      input.maxAttempts ?? consumer.maxAttempts ?? this.options.consumerAttempts;
+    const maxAttempts = input.maxAttempts ?? consumer.maxAttempts ?? this.options.consumerAttempts;
     const attempt = input.attempt ?? 1;
     const jobId = input.jobId ?? buildEventJobId(row.id, consumer.name);
-    const requestId = (
-      input.requestId ?? `evt:${row.id}:${consumer.name}:${attempt}`
-    ).slice(0, 100);
+    const requestId = (input.requestId ?? `evt:${row.id}:${consumer.name}:${attempt}`).slice(
+      0,
+      100,
+    );
     const context: EventDeliveryContext = {
       consumer: consumer.name,
       attempt,
@@ -128,15 +128,13 @@ export class EventConsumerRunnerService {
           return 'processed' as const;
         },
         {
-          timeout:
-            consumer.transactionTimeoutMs ?? this.options.consumerTransactionTimeoutMs,
+          timeout: consumer.transactionTimeoutMs ?? this.options.consumerTransactionTimeoutMs,
         },
       );
       return outcome;
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : String(error);
-      const isPermanent =
-        error instanceof PermanentEventError || attempt >= maxAttempts;
+      const isPermanent = error instanceof PermanentEventError || attempt >= maxAttempts;
       const formattedError = redactString(
         isPermanent
           ? `[${consumer.name}] ${rawMessage}`

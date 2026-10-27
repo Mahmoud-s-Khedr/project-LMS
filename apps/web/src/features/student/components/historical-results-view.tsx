@@ -30,12 +30,7 @@ export function HistoricalResultsView({
   enrollmentId,
   courseTitle: _courseTitle,
 }: HistoricalResultsViewProps) {
-  const {
-    data: results,
-    isLoading,
-    isError,
-    refetch,
-  } = useEnrollmentResultsQuery(enrollmentId);
+  const { data: results, isLoading, isError, refetch } = useEnrollmentResultsQuery(enrollmentId);
 
   const [expandedAttempts, setExpandedAttempts] = React.useState<Record<string, boolean>>({});
 
@@ -96,17 +91,14 @@ export function HistoricalResultsView({
             <div className="rounded-2xl bg-muted p-4 text-muted-foreground">
               <GraduationCap className="size-8" />
             </div>
-            <h3 className="mt-4 text-base font-semibold text-foreground">
-              No released grades yet
-            </h3>
+            <h3 className="mt-4 text-base font-semibold text-foreground">No released grades yet</h3>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              You haven&apos;t taken any assessments or the instructor has not yet released the final grades for completed attempts.
+              You haven&apos;t taken any assessments or the instructor has not yet released the
+              final grades for completed attempts.
             </p>
             <div className="mt-5">
               <Button asChild size="sm" variant="outline">
-                <Link href={`/student/enrollments/${enrollmentId}`}>
-                  View Course Outline
-                </Link>
+                <Link href={`/student/enrollments/${enrollmentId}`}>View Course Outline</Link>
               </Button>
             </div>
           </CardContent>
@@ -224,7 +216,9 @@ export function HistoricalResultsView({
 
                           {answer.feedback && (
                             <div className="rounded-md bg-muted/40 p-2.5 text-muted-foreground">
-                              <p className="font-semibold text-[11px] text-foreground/80">Instructor Feedback:</p>
+                              <p className="font-semibold text-[11px] text-foreground/80">
+                                Instructor Feedback:
+                              </p>
                               <p className="mt-0.5 leading-relaxed">{answer.feedback}</p>
                             </div>
                           )}

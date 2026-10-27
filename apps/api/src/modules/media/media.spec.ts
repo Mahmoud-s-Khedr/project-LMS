@@ -43,8 +43,81 @@ describe('Media security primitives', () => {
     ).resolves.toEqual({ mode: 'SOURCE_ONLY' });
   });
   it('default malware scanner fails closed when a file cannot be scanned', async () => {
-    await expect(new ClamAvScanner().scan('/nonexistent/lms-test-file')).rejects.toBeInstanceOf(
+    await expect(new ClamAvScanner().scan('/nonexistent/lms-test-file')).rejects.not.toBeInstanceOf(
       MediaRejected,
     );
   });
+  it('retries transient scan errors and permanently rejects invalid files', async () => {
+    for (const [error, attempts, status] of [
+      [new Error('offline'), 0, undefined],
+      [new Error('offline'), 7, 'REJECTED'],
+      [new MediaRejected('MALWARE'), 0, 'REJECTED'],
+    ] as const) {
+      const asset = {
+        id: 'asset',
+        workspaceId: 'workspace',
+        updatedAt: new Date(),
+        metadata: { scanAttempts: attempts },
+        objectKey: 'key',
+        sizeBytes: 1n,
+      };
+      let lease = '';
+      const updateMany = jest.fn(async ({ data }: { data: { metadata: unknown } }) => {
+        lease = (data.metadata as { lease?: string }).lease ?? lease;
+        return { count: 1 };
+      });
+      const prisma = {
+        asset: {
+          findFirst: jest.fn().mockResolvedValue(asset),
+          findUnique: jest.fn(async () => ({ ...asset, status: 'SCANNING', metadata: { lease } })),
+          updateMany,
+        },
+      };
+      const objects = {
+        fetchVerified: jest.fn().mockRejectedValue(error),
+        storage: { deleteObject: jest.fn() },
+      };
+      await new MediaProcessingTask(prisma as never, objects as never).process(
+        'asset',
+        'workspace',
+      );
+      const final = updateMany.mock.calls[1]![0].data as {
+        status?: string;
+        metadata: Record<string, unknown>;
+      };
+      expect(final.status).toBe(status);
+      expect(final.metadata.scanAttempts).toBe(attempts + 1);
+      if (!status)
+        expect(final.metadata).toMatchObject({
+          lastErrorCode: 'SCAN_FAILED',
+          leaseUntil: expect.any(String),
+        });
+      else
+        expect(final.metadata.rejectionCode).toBe(
+          error instanceof MediaRejected ? 'MALWARE' : 'SCAN_FAILED',
+        );
+    }
+  });
+});
+
+it('honors the configured S3 addressing style', async () => {
+  const { ConfigService } = await import('@nestjs/config');
+  const { MediaStorageService } = await import('./media-storage.service');
+  for (const value of [true, false]) {
+    const config = new ConfigService({
+      S3_ENDPOINT: 'http://localhost:59000',
+      S3_REGION: 'us-east-1',
+      S3_ACCESS_KEY_ID: 'key',
+      S3_SECRET_ACCESS_KEY: 'password',
+      S3_FORCE_PATH_STYLE: value,
+    });
+    const service = new MediaStorageService(config, {} as never);
+    try {
+      const client = (service as unknown as { client: { config: { forcePathStyle: boolean } } })
+        .client;
+      expect(client.config.forcePathStyle).toBe(value);
+    } finally {
+      service.onModuleDestroy();
+    }
+  }
 });

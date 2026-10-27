@@ -127,7 +127,10 @@ export class AuditQueryService {
     if (filters.cursor) {
       const key = decodeAuditCursor(filters.cursor);
       and.push({
-        OR: [{ createdAt: { lt: key.createdAt } }, { createdAt: key.createdAt, id: { lt: key.id } }],
+        OR: [
+          { createdAt: { lt: key.createdAt } },
+          { createdAt: key.createdAt, id: { lt: key.id } },
+        ],
       });
     }
     const rows = await this.prisma.auditLog.findMany({

@@ -2,14 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  Layers,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Layers, ShieldCheck, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -37,7 +30,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumbs */}
-      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-muted-foreground">
+      <nav
+        aria-label="Breadcrumb"
+        className="mb-6 flex items-center gap-2 text-xs text-muted-foreground"
+      >
         <Link href="/" className="hover:text-foreground">
           Home
         </Link>
@@ -46,9 +42,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           Products
         </Link>
         <span>/</span>
-        <span className="truncate max-w-[250px] font-medium text-foreground">
-          {product.name}
-        </span>
+        <span className="truncate max-w-[250px] font-medium text-foreground">{product.name}</span>
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-3">
@@ -102,8 +96,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   Courses Included in this {isBundle ? 'Bundle' : 'Plan'}
                 </h2>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Enrolling grants immediate learner access to all {product.courses.length}{' '}
-                  curated courses below.
+                  Enrolling grants immediate learner access to all {product.courses.length} curated
+                  courses below.
                 </p>
               </div>
 
@@ -135,9 +129,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     )}
                   </span>
                 ) : (
-                  <span className="text-2xl font-bold text-foreground">
-                    Free Access
-                  </span>
+                  <span className="text-2xl font-bold text-foreground">Free Access</span>
                 )}
               </div>
 
@@ -221,9 +213,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               {/* Guarantee */}
               <div className="rounded-lg bg-muted/40 p-3 flex items-center gap-3 text-xs text-muted-foreground border border-border/40">
                 <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
-                <span>
-                  Backed by our 30-day money-back guarantee.
-                </span>
+                <span>Backed by our 30-day money-back guarantee.</span>
               </div>
             </CardContent>
           </Card>

@@ -17,7 +17,8 @@ export function redisConnectionFromUrl(
     throw new Error('Events Redis URL must use redis:// or rediss://');
   }
   const db = url.pathname.length > 1 ? Number(url.pathname.slice(1)) : 0;
-  if (!Number.isInteger(db) || db < 0) throw new Error('Events Redis URL has an invalid database index');
+  if (!Number.isInteger(db) || db < 0)
+    throw new Error('Events Redis URL has an invalid database index');
   return {
     host: url.hostname,
     port: Number(url.port || 6379),
@@ -52,7 +53,12 @@ export async function withTimeout<T>(promise: Promise<T>, ms: number, label: str
 }
 
 /** Exponential backoff with full jitter in [base/2, base] * 2^(attempt-1), capped. */
-export function jitteredBackoff(attempt: number, baseMs: number, maxMs: number, random: () => number = Math.random): number {
+export function jitteredBackoff(
+  attempt: number,
+  baseMs: number,
+  maxMs: number,
+  random: () => number = Math.random,
+): number {
   const exponent = Math.min(Math.max(attempt - 1, 0), 30);
   const ceiling = Math.min(maxMs, baseMs * 2 ** exponent);
   return Math.round(ceiling / 2 + random() * (ceiling / 2));

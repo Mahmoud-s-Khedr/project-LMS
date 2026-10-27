@@ -83,9 +83,7 @@ export function StudentSubscriptionsView() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            My Subscriptions
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">My Subscriptions</h1>
           <p className="text-sm text-muted-foreground">
             Manage your recurring membership plans, payment methods, and renewal dates.
           </p>
@@ -193,7 +191,8 @@ export function StudentSubscriptionsView() {
                     <div className="rounded-md border border-border/80 bg-muted/30 p-3">
                       <span className="text-muted-foreground block mb-0.5">Enrolled Courses</span>
                       <span className="font-semibold text-foreground block mt-1">
-                        {sub.courses.length} {sub.courses.length === 1 ? 'course included' : 'courses included'}
+                        {sub.courses.length}{' '}
+                        {sub.courses.length === 1 ? 'course included' : 'courses included'}
                       </span>
                     </div>
                   </div>
@@ -205,8 +204,8 @@ export function StudentSubscriptionsView() {
                       <div className="flex-1">
                         <span className="font-semibold">Cancellation scheduled</span>
                         <p className="mt-0.5 text-amber-800/80 dark:text-amber-300/80">
-                          Your subscription is set to end on {formatDate(sub.currentPeriodEnd)}.
-                          You retain full learning access until this date.
+                          Your subscription is set to end on {formatDate(sub.currentPeriodEnd)}. You
+                          retain full learning access until this date.
                         </p>
                       </div>
                       <Button
@@ -280,9 +279,7 @@ export function StudentSubscriptionsView() {
               onClick={handleConfirmCancel}
               disabled={cancelMutation.isPending}
             >
-              {cancelMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
-              ) : null}
+              {cancelMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
               Confirm Cancellation
             </Button>
           </DialogFooter>

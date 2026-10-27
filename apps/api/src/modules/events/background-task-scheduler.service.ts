@@ -1,4 +1,9 @@
-import { Inject, Injectable, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  type OnApplicationBootstrap,
+  type OnModuleDestroy,
+} from '@nestjs/common';
 import { type Job, Queue, UnrecoverableError, Worker } from 'bullmq';
 import { findSensitiveContent } from '../audit/redaction';
 import {
@@ -47,7 +52,10 @@ export class BackgroundTaskSchedulerService implements OnApplicationBootstrap, O
       if (task.everyMs !== undefined && (!Number.isInteger(task.everyMs) || task.everyMs < 50)) {
         throw new Error(`Background task "${task.name}" has invalid everyMs`);
       }
-      if (task.maxAttempts !== undefined && (!Number.isInteger(task.maxAttempts) || task.maxAttempts < 1)) {
+      if (
+        task.maxAttempts !== undefined &&
+        (!Number.isInteger(task.maxAttempts) || task.maxAttempts < 1)
+      ) {
         throw new Error(`Background task "${task.name}" has invalid maxAttempts`);
       }
       this.handlers.set(task.name, task);
@@ -119,7 +127,9 @@ export class BackgroundTaskSchedulerService implements OnApplicationBootstrap, O
 
     const serialized = JSON.stringify(validatedPayload);
     if (Buffer.byteLength(serialized, 'utf8') > MAX_EVENT_PAYLOAD_BYTES) {
-      throw new EventContractViolation(`Background task payload exceeds ${MAX_EVENT_PAYLOAD_BYTES} bytes`);
+      throw new EventContractViolation(
+        `Background task payload exceeds ${MAX_EVENT_PAYLOAD_BYTES} bytes`,
+      );
     }
     const findings = findSensitiveContent(validatedPayload);
     if (findings.length > 0) {

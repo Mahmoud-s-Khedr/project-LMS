@@ -26,10 +26,7 @@ export function DashboardBreadcrumbs({ pathname: pathnameProp }: DashboardBreadc
               />
             )}
             {crumb.isCurrent ? (
-              <span
-                aria-current="page"
-                className="truncate font-semibold text-foreground"
-              >
+              <span aria-current="page" className="truncate font-semibold text-foreground">
                 {crumb.label}
               </span>
             ) : (

@@ -4,7 +4,6 @@ import {
   COURSE_LEVELS,
   FAQ_ITEMS,
   MOCK_COURSES,
-  PRICING_PLANS,
   TESTIMONIALS,
   VALUE_PROP_GROUPS,
 } from './mock-data';
@@ -127,7 +126,7 @@ export const marketingDataAdapter: MarketingDataAdapter = {
   getCourseBySlug: (slug) => MOCK_COURSES.find((c) => c.slug === slug),
   getAllCourseSlugs: () => MOCK_COURSES.map((c) => c.slug),
   getValuePropGroups: () => VALUE_PROP_GROUPS,
-  getPricingPlans: () => PRICING_PLANS,
+  getPricingPlans: () => [],
   getTestimonials: () => TESTIMONIALS,
   getFaqItems: () => FAQ_ITEMS,
 };

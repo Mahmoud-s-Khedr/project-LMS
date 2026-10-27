@@ -69,7 +69,10 @@ describe('Incremental SHA-256 Hasher (utils/hash.ts)', () => {
       });
 
       // Compare with Web Crypto digest
-      const expectedDigest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(content));
+      const expectedDigest = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(content),
+      );
       const expectedHash = Array.from(new Uint8Array(expectedDigest))
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('');
@@ -125,9 +128,9 @@ describe('Incremental SHA-256 Hasher (utils/hash.ts)', () => {
       controller.abort(new Error('User cancelled'));
 
       const file = new File(['some content'], 'test.mp4');
-      await expect(
-        computeSha256(file, { signal: controller.signal }),
-      ).rejects.toThrow('User cancelled');
+      await expect(computeSha256(file, { signal: controller.signal })).rejects.toThrow(
+        'User cancelled',
+      );
     });
 
     it('aborts midway through chunked hashing when signal is triggered', async () => {
@@ -216,7 +219,9 @@ describe('Incremental SHA-256 Hasher (utils/hash.ts)', () => {
     it('handles string input in update()', () => {
       const hasher = new PureSha256Hasher();
       hasher.update('hello world');
-      expect(hasher.digest('hex')).toBe('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9');
+      expect(hasher.digest('hex')).toBe(
+        'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9',
+      );
     });
 
     it('exports DEFAULT_CHUNK_SIZE as 8 MiB', () => {

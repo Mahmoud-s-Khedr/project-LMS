@@ -1,4 +1,5 @@
 import { Module, type DynamicModule, type ModuleMetadata, type Provider } from '@nestjs/common';
+import { IdentitySupportModule } from '../auth/identity-support.module';
 import { PrismaModule } from '../../infrastructure/prisma/prisma.module';
 import { AuthzModule } from '../../common/authz/authz.module';
 import { AuditModule } from '../audit/audit.module';
@@ -16,7 +17,7 @@ import {
 } from './commerce.controller';
 import { CommerceCatalogService } from './commerce-catalog.service';
 @Module({
-  imports: [PrismaModule, AuthzModule, AuditModule, EventsProducerModule],
+  imports: [IdentitySupportModule, PrismaModule, AuthzModule, AuditModule, EventsProducerModule],
   providers: [
     { provide: PAYMENT_PROVIDER, useClass: StripePaymentProvider },
     CommerceAdminService,

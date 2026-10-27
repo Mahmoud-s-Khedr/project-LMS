@@ -78,6 +78,83 @@ export async function idempotent(
   });
   return response;
 }
+export type IdempotencyScope = { workspaceId: string; userId: string; route: string; key: string };
+export let idempotencyLeaseMs = 30_000;
+export function setIdempotencyLeaseForTests(ms: number) {
+  idempotencyLeaseMs = ms;
+}
+export async function beginIdempotent(
+  tx: Tx,
+  workspaceId: string,
+  userId: string,
+  route: string,
+  key: string | undefined,
+  input: unknown,
+) {
+  if (!idempotencyKeySchema.safeParse(key).success)
+    invalid('Idempotency-Key required (16..128 characters)');
+  const scope = { workspaceId, userId, route, key: key! };
+  const acquired = await tx.$queryRaw<
+    { locked: boolean }[]
+  >`SELECT pg_try_advisory_xact_lock(hashtextextended(${`idempotency:${canonical(scope)}`},0)) AS locked`;
+  if (!acquired[0]?.locked)
+    throw new ConflictException({
+      code: 'OPERATION_IN_PROGRESS',
+      message: 'Operation in progress',
+    });
+  const existing = await tx.idempotencyRecord.findUnique({
+    where: { workspaceId_userId_route_key: scope },
+  });
+  const requestHash = hash(input);
+  if (existing) {
+    if (existing.requestHash !== requestHash)
+      throw new ConflictException({
+        code: 'IDEMPOTENCY_CONFLICT',
+        message: 'Key already used for a different request',
+      });
+    if (existing.status === 'COMPLETED')
+      return { kind: 'completed' as const, response: existing.response, scope };
+    if (
+      existing.status !== 'IN_PROGRESS' ||
+      existing.updatedAt.getTime() > Date.now() - idempotencyLeaseMs
+    )
+      throw new ConflictException({
+        code: 'OPERATION_IN_PROGRESS',
+        message: 'Operation in progress',
+      });
+    await tx.idempotencyRecord.update({
+      where: { id: existing.id },
+      data: { updatedAt: new Date() },
+    });
+    return { kind: 'resume' as const, scope };
+  }
+  await tx.idempotencyRecord.create({
+    data: {
+      ...scope,
+      requestHash,
+      status: 'IN_PROGRESS',
+      expiresAt: new Date(Date.now() + 86400000),
+    },
+  });
+  return { kind: 'new' as const, scope };
+}
+export async function completeIdempotent(
+  tx: Tx,
+  scope: IdempotencyScope,
+  status: number,
+  response: unknown,
+): Promise<unknown> {
+  const result = await tx.idempotencyRecord.updateMany({
+    where: { ...scope, status: 'IN_PROGRESS' },
+    data: { status: 'COMPLETED', responseStatus: status, response: json(response) },
+  });
+  if (result.count) return response;
+  const existing = await tx.idempotencyRecord.findUniqueOrThrow({
+    where: { workspaceId_userId_route_key: scope },
+  });
+  if (existing.status !== 'COMPLETED') conflict('Operation is no longer in progress');
+  return existing.response;
+}
 /** Integer largest-remainder allocation; stable input order breaks ties. Never uses floating point money. */
 export function allocate(total: number, weights: readonly number[]): number[] {
   const sum = weights.reduce((a, b) => a + BigInt(b), 0n);

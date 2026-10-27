@@ -3,14 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Upload,
-  FileCheck,
-  AlertCircle,
-  Loader2,
-  FileText,
-  Video,
-} from 'lucide-react';
+import { Upload, FileCheck, AlertCircle, Loader2, FileText, Video } from 'lucide-react';
 import { useAssetUploader } from '../hooks';
 import type { Asset, AssetPurpose } from '../types';
 
@@ -194,7 +187,9 @@ export function AssetUploader({
                   </Badge>
                 )}
               </div>
-              <p className="mt-1 text-muted-foreground">{errorMessage || 'An error occurred during upload.'}</p>
+              <p className="mt-1 text-muted-foreground">
+                {errorMessage || 'An error occurred during upload.'}
+              </p>
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-1">

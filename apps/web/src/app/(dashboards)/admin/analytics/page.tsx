@@ -1,11 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  ExportJobsTracker,
-  ExportTriggerModal,
-  RevenueAnalyticsCard,
-} from '@/features/reporting';
+import { ExportJobsTracker, ExportTriggerModal, RevenueAnalyticsCard } from '@/features/reporting';
 import { useActiveWorkspace } from '@/features/workspaces';
 import { BarChart3, ShieldAlert } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -37,7 +33,9 @@ export default function AdminAnalyticsPage() {
       <div className="p-8 text-center rounded-lg border border-dashed text-muted-foreground flex flex-col items-center gap-2">
         <ShieldAlert className="h-8 w-8 text-amber-500" />
         <p className="font-semibold text-foreground">No active workspace selected</p>
-        <p className="text-xs">Select a workspace from the dashboard header to view revenue metrics and trigger reports.</p>
+        <p className="text-xs">
+          Select a workspace from the dashboard header to view revenue metrics and trigger reports.
+        </p>
       </div>
     );
   }
@@ -51,14 +49,12 @@ export default function AdminAnalyticsPage() {
             Financial Ledger & Analytics ({activeWorkspace?.name ?? 'Workspace'})
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Authoritative multi-currency revenue totals, refund reconciliation, and asynchronous report generation.
+            Authoritative multi-currency revenue totals, refund reconciliation, and asynchronous
+            report generation.
           </p>
         </div>
 
-        <ExportTriggerModal
-          workspaceId={activeWorkspaceId}
-          onExportStarted={handleExportStarted}
-        />
+        <ExportTriggerModal workspaceId={activeWorkspaceId} onExportStarted={handleExportStarted} />
       </div>
 
       {/* Export Jobs Poller */}

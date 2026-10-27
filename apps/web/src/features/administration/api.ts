@@ -43,7 +43,11 @@ export async function fetchAdminUsers(params?: AdminUsersQuery): Promise<AdminUs
   return api.get<AdminUsersResult>(qs ? `/admin/users?${qs}` : '/admin/users');
 }
 
-export async function updateAdminUser(userId: string, input: AdminUserUpdate, updatedAt: string): Promise<SafeUser> {
+export async function updateAdminUser(
+  userId: string,
+  input: AdminUserUpdate,
+  updatedAt: string,
+): Promise<SafeUser> {
   const response = await api.patch<{ data: SafeUser } | SafeUser>(
     `/admin/users/${encodeURIComponent(userId)}`,
     input,
@@ -108,10 +112,7 @@ export async function updateWorkspaceMember(
   return unwrapEnvelope<WorkspaceMember>(response);
 }
 
-export async function removeWorkspaceMember(
-  workspaceId: string,
-  memberId: string,
-): Promise<void> {
+export async function removeWorkspaceMember(workspaceId: string, memberId: string): Promise<void> {
   await api.delete(
     `/workspaces/${encodeURIComponent(workspaceId)}/members/${encodeURIComponent(memberId)}`,
   );
@@ -120,7 +121,11 @@ export async function removeWorkspaceMember(
 // Invitations (Admin)
 export async function fetchWorkspaceInvitations(
   workspaceId: string,
-  params?: { cursor?: string; limit?: number; status?: 'PENDING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED' },
+  params?: {
+    cursor?: string;
+    limit?: number;
+    status?: 'PENDING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED';
+  },
 ): Promise<CursorResponse<WorkspaceInvitation>> {
   const query = new URLSearchParams();
   if (params?.cursor) query.set('cursor', params.cursor);

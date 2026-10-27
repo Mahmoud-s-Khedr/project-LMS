@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AlertCircle,
-  RefreshCw,
-  RotateCw,
-  Webhook as WebhookIcon,
-} from 'lucide-react';
+import { AlertCircle, RefreshCw, RotateCw, Webhook as WebhookIcon } from 'lucide-react';
 import type { WebhookStatus } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -136,7 +131,9 @@ export function WebhooksTable() {
                 <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   <WebhookIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground/60" />
                   <p className="font-medium">No webhook events in inbox.</p>
-                  <p className="text-xs">Stripe webhook receipts and signatures will be listed here.</p>
+                  <p className="text-xs">
+                    Stripe webhook receipts and signatures will be listed here.
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (

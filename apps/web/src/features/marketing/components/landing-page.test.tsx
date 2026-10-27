@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { catalogFixture } from '@lms/shared';
 import * as catalogApi from '@/features/catalog/api';
@@ -32,9 +32,7 @@ describe('LandingPage component', () => {
 
     render(<LandingPage />, { wrapper: createWrapper() });
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      /depth for learners/i,
-    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/depth for learners/i);
     // Unverified/fabricated claims are cleanly omitted
     expect(screen.queryByText('Cohort Completion')).not.toBeInTheDocument();
     expect(screen.queryByText('24k+')).not.toBeInTheDocument();
@@ -105,28 +103,14 @@ describe('LandingPage component', () => {
     render(<LandingPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Upcoming Studio Courses in Preparation'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Upcoming Studio Courses in Preparation')).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /become an instructor/i })).toBeInTheDocument();
     });
   });
 
-  it('toggles billing frequency between annual and monthly pricing', () => {
-    vi.spyOn(catalogApi, 'fetchCatalogCourses').mockResolvedValueOnce({
-      data: [],
-      meta: { nextCursor: null, hasMore: false, limit: 4 },
-    });
-    vi.spyOn(catalogApi, 'fetchCatalogProducts').mockResolvedValueOnce({
-      data: [],
-      meta: { nextCursor: null, hasMore: false, limit: 3 },
-    });
-
+  it('does not advertise fictional platform plans', () => {
     render(<LandingPage />, { wrapper: createWrapper() });
-
-    const monthlyBtn = screen.getByRole('button', { name: /monthly billing/i });
-    fireEvent.click(monthlyBtn);
-
-    expect(monthlyBtn).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.queryByText(/learner all-access pass/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /monthly billing/i })).not.toBeInTheDocument();
   });
 });

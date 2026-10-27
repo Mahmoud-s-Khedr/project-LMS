@@ -2,20 +2,10 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  Award,
-  Check,
-  CreditCard,
-  ExternalLink,
-  GraduationCap,
-  ShieldAlert,
-} from 'lucide-react';
+import { Award, Check, CreditCard, ExternalLink, GraduationCap, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMarkNotificationReadMutation } from '../hooks';
-import {
-  formatNotificationRelativeTime,
-  getNotificationCategory,
-} from '../types';
+import { formatNotificationRelativeTime, getNotificationCategory } from '../types';
 import type { Notification } from '../types';
 
 export interface NotificationItemProps {

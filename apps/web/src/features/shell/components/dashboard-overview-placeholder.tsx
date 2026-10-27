@@ -2,13 +2,7 @@ import Link from 'next/link';
 import { ArrowUpRight, Layers, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DashboardAreaId } from '../config/nav-config';
 
@@ -61,7 +55,11 @@ const AREA_OVERVIEW_SPECS: Record<DashboardAreaId, AreaOverviewSpec> = {
       { label: 'Active Learners', value: '2,480', delta: '+142 enrolled this month' },
       { label: 'Cohort Completion Rate', value: '78.4%', delta: 'Cohort #11 Autumn Studio' },
       { label: 'Pending Grading Queue', value: '7', delta: 'Avg turnaround: 6.5 hrs' },
-      { label: 'Net Studio Revenue (30d)', value: '$18,420', delta: 'Next payout scheduled Friday' },
+      {
+        label: 'Net Studio Revenue (30d)',
+        value: '$18,420',
+        delta: 'Next payout scheduled Friday',
+      },
     ],
     skeletonSections: [
       {
@@ -85,7 +83,11 @@ const AREA_OVERVIEW_SPECS: Record<DashboardAreaId, AreaOverviewSpec> = {
     metrics: [
       { label: 'Total Platform Users', value: '24,610', delta: '99.4% active accounts' },
       { label: 'Courses Awaiting Review', value: '2', delta: 'SLA target: < 24 hours' },
-      { label: 'Gross Merchandise Volume', value: '$142.8k', delta: '0 reconciliation discrepancies' },
+      {
+        label: 'Gross Merchandise Volume',
+        value: '$142.8k',
+        delta: '0 reconciliation discrepancies',
+      },
       { label: 'Audit Trail Integrity', value: '100%', delta: 'All privileged mutations logged' },
     ],
     skeletonSections: [
@@ -134,7 +136,10 @@ export function DashboardOverviewPlaceholder({ area }: DashboardOverviewPlacehol
       </div>
 
       {/* KPI Summary Cards */}
-      <section aria-label="Workspace key metrics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section
+        aria-label="Workspace key metrics"
+        className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      >
         {spec.metrics.map((metric) => (
           <Card key={metric.label} className="rounded-2xl">
             <CardHeader className="pb-2">
@@ -151,10 +156,7 @@ export function DashboardOverviewPlaceholder({ area }: DashboardOverviewPlacehol
       </section>
 
       {/* Skeleton Placeholder Cards for Downstream Feature Packages */}
-      <section
-        aria-label="Workspace module placeholders"
-        className="grid gap-6 lg:grid-cols-2"
-      >
+      <section aria-label="Workspace module placeholders" className="grid gap-6 lg:grid-cols-2">
         {spec.skeletonSections.map((section) => (
           <Card key={section.title} className="rounded-3xl">
             <CardHeader>

@@ -7,12 +7,7 @@ import type {
 import type { z } from 'zod';
 import type { certificatesQuerySchema } from '@lms/shared';
 
-export type {
-  Certificate,
-  CertificateVerification,
-  CertificatesQuery,
-  CertificateStatus,
-};
+export type { Certificate, CertificateVerification, CertificatesQuery, CertificateStatus };
 
 export type CertificatesQueryParams = z.input<typeof certificatesQuerySchema>;
 

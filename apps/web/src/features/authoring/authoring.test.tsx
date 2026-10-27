@@ -133,11 +133,7 @@ describe('Authoring Feature Components', () => {
   describe('CourseForm', () => {
     it('automatically updates slug as title changes in create mode', () => {
       renderWithClient(
-        <CourseForm
-          workspaceId={mockCourse.workspaceId}
-          onSubmit={vi.fn()}
-          isCreate
-        />,
+        <CourseForm workspaceId={mockCourse.workspaceId} onSubmit={vi.fn()} isCreate />,
       );
 
       const titleInput = screen.getByLabelText(/course title/i);
@@ -150,11 +146,7 @@ describe('Authoring Feature Components', () => {
     it('submits valid form data', async () => {
       const submitMock = vi.fn();
       renderWithClient(
-        <CourseForm
-          workspaceId={mockCourse.workspaceId}
-          onSubmit={submitMock}
-          isCreate
-        />,
+        <CourseForm workspaceId={mockCourse.workspaceId} onSubmit={submitMock} isCreate />,
       );
 
       fireEvent.change(screen.getByLabelText(/course title/i), {
@@ -181,10 +173,7 @@ describe('Authoring Feature Components', () => {
   describe('CurriculumBuilder', () => {
     it('renders sections and lessons with type badges and reorder controls', async () => {
       renderWithClient(
-        <CurriculumBuilder
-          workspaceId={mockCourse.workspaceId}
-          courseId={mockCourse.id}
-        />,
+        <CurriculumBuilder workspaceId={mockCourse.workspaceId} courseId={mockCourse.id} />,
       );
 
       expect(await screen.findByText('Foundations of Consensus')).toBeInTheDocument();
@@ -214,10 +203,7 @@ describe('Authoring Feature Components', () => {
       });
 
       renderWithClient(
-        <CurriculumBuilder
-          workspaceId={mockCourse.workspaceId}
-          courseId={mockCourse.id}
-        />,
+        <CurriculumBuilder workspaceId={mockCourse.workspaceId} courseId={mockCourse.id} />,
       );
 
       const addBtn = await screen.findByRole('button', { name: /add first section/i });
@@ -379,10 +365,7 @@ describe('Authoring Feature Components', () => {
       });
 
       renderWithClient(
-        <StaffManager
-          workspaceId={mockCourse.workspaceId}
-          courseId={mockCourse.id}
-        />,
+        <StaffManager workspaceId={mockCourse.workspaceId} courseId={mockCourse.id} />,
       );
 
       expect(await screen.findByText('a0000000-0000-4000-8000-000000000002')).toBeInTheDocument();

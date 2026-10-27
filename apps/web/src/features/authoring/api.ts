@@ -557,10 +557,7 @@ export async function updateLiveSessionAttendance(
 // Media & Assets Upload / Scan Flow
 // ==========================================
 
-export async function requestAssetUpload(
-  workspaceId: string,
-  data: AssetUpload,
-) {
+export async function requestAssetUpload(workspaceId: string, data: AssetUpload) {
   const raw = await api.post<unknown>(
     `/workspaces/${encodeURIComponent(workspaceId)}/assets/uploads`,
     data,
@@ -609,10 +606,7 @@ export async function uploadAssetBinary(
   });
 }
 
-export async function completeAssetUpload(
-  workspaceId: string,
-  assetId: string,
-) {
+export async function completeAssetUpload(workspaceId: string, assetId: string) {
   const raw = await api.post<unknown>(
     `/workspaces/${encodeURIComponent(workspaceId)}/assets/${encodeURIComponent(assetId)}/complete`,
     {},
@@ -621,10 +615,7 @@ export async function completeAssetUpload(
   return parsed.data;
 }
 
-export async function fetchAsset(
-  workspaceId: string,
-  assetId: string,
-): Promise<Asset> {
+export async function fetchAsset(workspaceId: string, assetId: string): Promise<Asset> {
   const raw = await api.get<unknown>(
     `/workspaces/${encodeURIComponent(workspaceId)}/assets/${encodeURIComponent(assetId)}`,
   );

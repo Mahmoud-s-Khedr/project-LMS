@@ -48,7 +48,10 @@ export default async function CoursesCatalogPage({ searchParams }: CoursesPagePr
   }
   let initialData;
   try {
-    const response = await fetch(`${process.env.API_INTERNAL_ORIGIN ?? 'http://localhost:4100'}/api/v1/catalog/courses?${query}`, { cache: 'no-store' });
+    const response = await fetch(
+      `${process.env.API_INTERNAL_ORIGIN ?? 'http://localhost:4100'}/api/v1/catalog/courses?${query}`,
+      { cache: 'no-store' },
+    );
     if (response.ok) initialData = catalogCoursesResponseSchema.parse(await response.json());
   } catch {
     // The client query retains the existing retry/error UI when the API is unavailable.

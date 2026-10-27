@@ -6,10 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useActiveWorkspace } from '@/features/workspaces';
-import {
-  AssessmentVersionEditor,
-  useAssessmentDetailQuery,
-} from '@/features/assessment-authoring';
+import { AssessmentVersionEditor, useAssessmentDetailQuery } from '@/features/assessment-authoring';
 import type { Assessment } from '@lms/shared';
 
 interface AssessmentDetailPageProps {

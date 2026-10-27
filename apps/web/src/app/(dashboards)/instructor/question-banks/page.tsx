@@ -30,7 +30,8 @@ export default function QuestionBanksPage() {
         <Building2 className="mx-auto h-10 w-10 text-muted-foreground/60 mb-2" />
         <h3 className="font-semibold text-base">No Active Workspace</h3>
         <p className="text-xs text-muted-foreground mt-1">
-          Select or create an instructor workspace in the navigation sidebar to manage question banks.
+          Select or create an instructor workspace in the navigation sidebar to manage question
+          banks.
         </p>
       </Card>
     );

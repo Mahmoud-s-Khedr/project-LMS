@@ -21,13 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Calendar,
-  Plus,
-  Trash2,
-  Clock,
-  Loader2,
-} from 'lucide-react';
+import { Calendar, Plus, Trash2, Clock, Loader2 } from 'lucide-react';
 import {
   useCourseCohortsQuery,
   useCreateCohortMutation,
@@ -76,7 +70,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
     const start = new Date(now.getTime() + 7 * 86400000);
     const end = new Date(start.getTime() + 60 * 86400000);
 
-    setName(`Cohort ${cohorts.length + 1} (${start.toLocaleString('default', { month: 'short' })} ${start.getFullYear()})`);
+    setName(
+      `Cohort ${cohorts.length + 1} (${start.toLocaleString('default', { month: 'short' })} ${start.getFullYear()})`,
+    );
     setStartsAt(start.toISOString().slice(0, 16));
     setEndsAt(end.toISOString().slice(0, 16));
     setEnrollmentOpensAt(now.toISOString().slice(0, 16));
@@ -143,7 +139,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
       lessonId: overrideLessonId,
       data: {
         releaseAt: new Date(overrideReleaseAt).toISOString(),
-        availableUntil: overrideAvailableUntil ? new Date(overrideAvailableUntil).toISOString() : null,
+        availableUntil: overrideAvailableUntil
+          ? new Date(overrideAvailableUntil).toISOString()
+          : null,
       },
     });
 
@@ -156,12 +154,17 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
         <div>
           <h3 className="text-base font-semibold">Cohorts & Drip Schedules</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Organize student cohorts with dedicated enrollment dates, capacity limits, and custom lesson release overrides.
+            Organize student cohorts with dedicated enrollment dates, capacity limits, and custom
+            lesson release overrides.
           </p>
         </div>
 
         {permissions.canEditContent && (
-          <Button onClick={handleOpenCreate} size="sm" className="flex items-center gap-1.5 self-start">
+          <Button
+            onClick={handleOpenCreate}
+            size="sm"
+            className="flex items-center gap-1.5 self-start"
+          >
             <Plus className="h-4 w-4" />
             Create Cohort
           </Button>
@@ -191,10 +194,7 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                 {cohorts.map((cohort) => {
                   const isSelected = selectedCohort?.id === cohort.id;
                   return (
-                    <TableRow
-                      key={cohort.id}
-                      className={isSelected ? 'bg-muted/50' : undefined}
-                    >
+                    <TableRow key={cohort.id} className={isSelected ? 'bg-muted/50' : undefined}>
                       <TableCell className="font-medium text-sm">
                         <div className="flex items-center gap-2">
                           <Button
@@ -223,7 +223,10 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                         {cohort.capacity ? `${cohort.capacity} seats` : 'Unlimited'}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={cohort.isPublished ? 'default' : 'secondary'} className="text-[10px]">
+                        <Badge
+                          variant={cohort.isPublished ? 'default' : 'secondary'}
+                          className="text-[10px]"
+                        >
                           {cohort.isPublished ? 'PUBLISHED' : 'DRAFT'}
                         </Badge>
                       </TableCell>
@@ -267,7 +270,8 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                     Drip Release Overrides: {selectedCohort.name}
                   </h4>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Define cohort-specific release dates to unlock lessons on explicit calendar schedules.
+                    Define cohort-specific release dates to unlock lessons on explicit calendar
+                    schedules.
                   </p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setSelectedCohort(null)}>
@@ -302,7 +306,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                                   size="sm"
                                   onClick={() => {
                                     setOverrideLessonId(lesson.id);
-                                    setOverrideReleaseAt(new Date(selectedCohort.startsAt).toISOString().slice(0, 16));
+                                    setOverrideReleaseAt(
+                                      new Date(selectedCohort.startsAt).toISOString().slice(0, 16),
+                                    );
                                   }}
                                   className="h-7 text-xs"
                                 >
@@ -317,7 +323,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">Add curriculum sections first to configure drip releases.</p>
+                <p className="text-xs text-muted-foreground">
+                  Add curriculum sections first to configure drip releases.
+                </p>
               )}
             </div>
           )}
@@ -327,7 +335,8 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
           <Calendar className="mx-auto h-8 w-8 text-muted-foreground/60" />
           <h4 className="mt-2 text-sm font-semibold">No Cohorts Scheduled</h4>
           <p className="mt-1 text-xs text-muted-foreground">
-            Create your first cohort to establish scheduled enrollment windows and cohort-based release schedules.
+            Create your first cohort to establish scheduled enrollment windows and cohort-based
+            release schedules.
           </p>
           {permissions.canEditContent && (
             <Button onClick={handleOpenCreate} size="sm" variant="outline" className="mt-3">
@@ -354,13 +363,18 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
 
             <div className="my-4 space-y-3.5">
               {formError && (
-                <div role="alert" className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive">
+                <div
+                  role="alert"
+                  className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive"
+                >
                   {formError}
                 </div>
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="cohort-name" className="text-xs font-medium">Cohort Name</Label>
+                <Label htmlFor="cohort-name" className="text-xs font-medium">
+                  Cohort Name
+                </Label>
                 <Input
                   id="cohort-name"
                   value={name}
@@ -372,7 +386,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="cohort-start" className="text-xs font-medium">Cohort Starts</Label>
+                  <Label htmlFor="cohort-start" className="text-xs font-medium">
+                    Cohort Starts
+                  </Label>
                   <Input
                     id="cohort-start"
                     type="datetime-local"
@@ -382,7 +398,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="cohort-end" className="text-xs font-medium">Cohort Ends</Label>
+                  <Label htmlFor="cohort-end" className="text-xs font-medium">
+                    Cohort Ends
+                  </Label>
                   <Input
                     id="cohort-end"
                     type="datetime-local"
@@ -395,7 +413,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="enrollment-open" className="text-xs font-medium">Enrollment Opens</Label>
+                  <Label htmlFor="enrollment-open" className="text-xs font-medium">
+                    Enrollment Opens
+                  </Label>
                   <Input
                     id="enrollment-open"
                     type="datetime-local"
@@ -404,7 +424,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="enrollment-close" className="text-xs font-medium">Enrollment Closes</Label>
+                  <Label htmlFor="enrollment-close" className="text-xs font-medium">
+                    Enrollment Closes
+                  </Label>
                   <Input
                     id="enrollment-close"
                     type="datetime-local"
@@ -416,7 +438,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="cohort-capacity" className="text-xs font-medium">Capacity (Max Seats)</Label>
+                  <Label htmlFor="cohort-capacity" className="text-xs font-medium">
+                    Capacity (Max Seats)
+                  </Label>
                   <Input
                     id="cohort-capacity"
                     type="number"
@@ -427,7 +451,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="cohort-timezone" className="text-xs font-medium">Timezone</Label>
+                  <Label htmlFor="cohort-timezone" className="text-xs font-medium">
+                    Timezone
+                  </Label>
                   <Input
                     id="cohort-timezone"
                     value={timezone}
@@ -456,7 +482,11 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
               <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="flex items-center gap-2">
+              <Button
+                type="submit"
+                disabled={createMutation.isPending}
+                className="flex items-center gap-2"
+              >
                 {createMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 Save Cohort
               </Button>
@@ -479,7 +509,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
 
               <div className="my-4 space-y-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="override-release-at" className="text-xs font-medium">Release At (UTC)</Label>
+                  <Label htmlFor="override-release-at" className="text-xs font-medium">
+                    Release At (UTC)
+                  </Label>
                   <Input
                     id="override-release-at"
                     type="datetime-local"
@@ -489,7 +521,9 @@ export function CohortManager({ workspaceId, courseId }: CohortManagerProps) {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="override-available-until" className="text-xs font-medium">Available Until (Optional)</Label>
+                  <Label htmlFor="override-available-until" className="text-xs font-medium">
+                    Available Until (Optional)
+                  </Label>
                   <Input
                     id="override-available-until"
                     type="datetime-local"

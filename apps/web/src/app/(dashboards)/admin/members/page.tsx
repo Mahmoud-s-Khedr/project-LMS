@@ -24,7 +24,9 @@ export default function AdminMembersPage() {
       <div className="p-8 text-center rounded-lg border border-dashed text-muted-foreground flex flex-col items-center gap-2">
         <ShieldAlert className="h-8 w-8 text-amber-500" />
         <p className="font-semibold text-foreground">No active workspace selected</p>
-        <p className="text-xs">Select or switch to a workspace from the dashboard header to manage its staff.</p>
+        <p className="text-xs">
+          Select or switch to a workspace from the dashboard header to manage its staff.
+        </p>
       </div>
     );
   }
@@ -37,7 +39,8 @@ export default function AdminMembersPage() {
           Workspace Team & Staff ({activeWorkspace?.name ?? 'Workspace'})
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Invite instructors, teaching assistants, or co-administrators to collaborate within this tenant.
+          Invite instructors, teaching assistants, or co-administrators to collaborate within this
+          tenant.
         </p>
       </div>
 

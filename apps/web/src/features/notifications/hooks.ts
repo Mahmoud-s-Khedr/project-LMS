@@ -1,8 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type {
-  NotificationsQueryParams,
-  NotificationPreference,
-} from './types';
+import type { NotificationsQueryParams, NotificationPreference } from './types';
 import {
   fetchMyNotifications,
   markNotificationRead,
@@ -27,8 +24,7 @@ export function useMyNotificationsQuery(query?: NotificationsQueryParams) {
 export function useMarkNotificationReadMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, read }: { id: string; read: boolean }) =>
-      markNotificationRead(id, read),
+    mutationFn: ({ id, read }: { id: string; read: boolean }) => markNotificationRead(id, read),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEYS.all });
     },

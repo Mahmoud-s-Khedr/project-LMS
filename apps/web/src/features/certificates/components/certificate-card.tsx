@@ -58,9 +58,7 @@ export function CertificateCard({ certificate }: CertificateCardProps) {
       {/* Decorative Top Border */}
       <div
         className={`h-1.5 w-full ${
-          isValid
-            ? 'bg-gradient-to-r from-amber-500 via-primary to-amber-600'
-            : 'bg-destructive/80'
+          isValid ? 'bg-gradient-to-r from-amber-500 via-primary to-amber-600' : 'bg-destructive/80'
         }`}
       />
 

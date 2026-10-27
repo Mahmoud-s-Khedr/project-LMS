@@ -2,19 +2,17 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  Receipt,
-  Search,
-  Calendar,
-  Ban,
-  Loader2,
-  AlertCircle,
-  FileText,
-} from 'lucide-react';
+import { Receipt, Search, Calendar, Ban, Loader2, AlertCircle, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -172,7 +170,9 @@ export function StudentOrdersView() {
                     {formatDate(order.createdAt)}
                   </span>
                   <span>•</span>
-                  <span>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</span>
+                  <span>
+                    {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                  </span>
                 </div>
               </div>
 
@@ -215,8 +215,8 @@ export function StudentOrdersView() {
           <DialogHeader>
             <DialogTitle>Cancel Pending Order</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel order #{cancelingOrder?.number}? Any pending
-              seat reservations will be immediately released.
+              Are you sure you want to cancel order #{cancelingOrder?.number}? Any pending seat
+              reservations will be immediately released.
             </DialogDescription>
           </DialogHeader>
 
@@ -239,9 +239,7 @@ export function StudentOrdersView() {
               onClick={handleConfirmCancel}
               disabled={cancelMutation.isPending}
             >
-              {cancelMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
-              ) : null}
+              {cancelMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
               Confirm Cancellation
             </Button>
           </DialogFooter>

@@ -28,9 +28,12 @@ export function isAccessAllowed(access: EffectiveAccess | undefined | null): boo
   return access?.allowed === true;
 }
 
-export function formatSecondsToDuration(secondsStrOrNum: string | number | null | undefined): string {
+export function formatSecondsToDuration(
+  secondsStrOrNum: string | number | null | undefined,
+): string {
   if (secondsStrOrNum === null || secondsStrOrNum === undefined) return '0 min';
-  const totalSeconds = typeof secondsStrOrNum === 'string' ? Number(secondsStrOrNum) : secondsStrOrNum;
+  const totalSeconds =
+    typeof secondsStrOrNum === 'string' ? Number(secondsStrOrNum) : secondsStrOrNum;
   if (isNaN(totalSeconds) || totalSeconds <= 0) return '0 min';
 
   const hours = Math.floor(totalSeconds / 3600);

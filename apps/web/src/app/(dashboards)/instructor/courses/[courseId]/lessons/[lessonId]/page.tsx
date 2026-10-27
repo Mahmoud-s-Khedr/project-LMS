@@ -43,7 +43,10 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
 
   if (error || !lesson) {
     return (
-      <div role="alert" className="max-w-md mx-auto my-12 p-6 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-center">
+      <div
+        role="alert"
+        className="max-w-md mx-auto my-12 p-6 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-center"
+      >
         <AlertCircle className="h-8 w-8 mx-auto mb-2" />
         <h3 className="font-semibold text-base">Lesson Not Found</h3>
         <p className="text-xs text-muted-foreground mt-1">

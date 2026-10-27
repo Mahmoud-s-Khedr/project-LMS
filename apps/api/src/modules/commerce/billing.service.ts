@@ -6,7 +6,17 @@ import { AuditService } from '../audit/audit.service';
 import { CommerceAdminService } from './commerce-admin.service';
 import { PAYMENT_PROVIDER, stripeId, type PaymentProvider } from './payment-provider';
 import { CheckoutService } from './checkout.service';
-import { conflict, invalid, idempotent, lock, page, pageArgs, hash } from './commerce.core';
+import {
+  conflict,
+  invalid,
+  idempotent,
+  beginIdempotent,
+  completeIdempotent,
+  lock,
+  page,
+  pageArgs,
+  hash,
+} from './commerce.core';
 import { orderInclude, orderView, subscriptionView, refundView } from './commerce-projections';
 @Injectable()
 export class BillingService {
@@ -97,54 +107,68 @@ export class BillingService {
   ) {
     const own = await this.db.order.findFirst({ where: { id, workspaceId: w, userId: a.id } });
     if (!own) await this.admin.authorize(a, w);
+    const phase = await this.db.$transaction(
+      async (tx) => {
+        const intent = await beginIdempotent(tx, w, a.id, `orders/${id}/cancel`, key, {});
+        if (intent.kind === 'completed') return { done: true as const, response: intent.response };
+        await lock(tx, `order:${id}`);
+        const order = await tx.order.findFirst({ where: { id, workspaceId: w } });
+        if (!order) throw new NotFoundException();
+        if (order.status !== 'PENDING') conflict('Only pending orders can be canceled');
+        return {
+          done: false as const,
+          scope: intent.scope,
+          sessionId: order.stripeCheckoutSessionId,
+        };
+      },
+      { timeout: 10000 },
+    );
+    if (phase.done) return phase.response;
+    if (phase.sessionId) {
+      const remote = await this.provider.call(
+        'checkout.sessions',
+        'retrieve',
+        {},
+        undefined,
+        phase.sessionId,
+      );
+      if (remote.status === 'complete') conflict('Payment already completed');
+      if (remote.status !== 'expired')
+        await this.provider.call(
+          'checkout.sessions',
+          'expire',
+          {},
+          `cancel-${id}`,
+          phase.sessionId,
+        );
+    }
     return this.db.$transaction(
-      async (tx) =>
-        idempotent(tx, w, a.id, `orders/${id}/cancel`, key, {}, 200, async () => {
-          await lock(tx, `order:${id}`);
-          const o = await tx.order.findFirst({
-            where: { id, workspaceId: w },
-            include: orderInclude,
-          });
-          if (!o) throw new NotFoundException();
-          if (o.status !== 'PENDING') conflict('Only pending orders can be canceled');
-          if (o.stripeCheckoutSessionId) {
-            const remote = await this.provider.call(
-              'checkout.sessions',
-              'retrieve',
-              {},
-              undefined,
-              o.stripeCheckoutSessionId,
-            );
-            if (remote.status === 'complete') conflict('Payment already completed');
-            if (remote.status !== 'expired')
-              await this.provider.call(
-                'checkout.sessions',
-                'expire',
-                {},
-                `cancel-${id}`,
-                o.stripeCheckoutSessionId,
-              );
-          }
-          await tx.order.update({ where: { id }, data: { status: 'CANCELED' } });
-          await tx.couponRedemption.updateMany({
-            where: { orderId: id, redeemedAt: null },
-            data: { releasedAt: new Date(), reservedUntil: null },
-          });
-          await this.audit.append(tx, {
-            workspaceId: w,
-            actorId: a.id,
-            requestId,
-            action: 'commerce.order.canceled',
-            resourceType: 'Order',
-            resourceId: id,
-          });
-          return {
-            data: orderView(
-              await tx.order.findUniqueOrThrow({ where: { id }, include: orderInclude }),
-            ),
-          };
-        }),
-      { timeout: 60000 },
+      async (tx) => {
+        await lock(tx, `order:${id}`);
+        const updated = await tx.order.updateMany({
+          where: { id, status: 'PENDING', stripeCheckoutSessionId: phase.sessionId },
+          data: { status: 'CANCELED' },
+        });
+        if (!updated.count) conflict('Order changed during cancellation');
+        await tx.couponRedemption.updateMany({
+          where: { orderId: id, redeemedAt: null },
+          data: { releasedAt: new Date(), reservedUntil: null },
+        });
+        await this.audit.append(tx, {
+          workspaceId: w,
+          actorId: a.id,
+          requestId,
+          action: 'commerce.order.canceled',
+          resourceType: 'Order',
+          resourceId: id,
+        });
+        return completeIdempotent(tx, phase.scope, 200, {
+          data: orderView(
+            await tx.order.findUniqueOrThrow({ where: { id }, include: orderInclude }),
+          ),
+        });
+      },
+      { timeout: 10000 },
     );
   }
   async changeSubscription(
@@ -160,47 +184,53 @@ export class BillingService {
       where: { id, ...(w ? { workspaceId: w } : { userId: a.id }) },
     });
     if (!s) throw new NotFoundException();
-    return this.db.$transaction(
-      async (tx) =>
-        idempotent(
+    const phase = await this.db.$transaction(
+      async (tx) => {
+        const intent = await beginIdempotent(
           tx,
           s.workspaceId,
           a.id,
           `subscriptions/${id}/${input.resume ? 'resume' : 'cancel'}`,
           key,
           input,
-          200,
-          async () => {
-            await lock(tx, `subscription:${s.stripeSubscriptionId}`);
-            const local = await tx.subscription.findUniqueOrThrow({ where: { id } });
-            if (['CANCELED', 'EXPIRED'].includes(local.status)) conflict('Subscription has ended');
-            // Provider state is reconciled by the worker; do not claim entitlements changed from an HTTP response.
-            await this.provider.call(
-              'subscriptions',
-              input.immediate ? 'cancel' : 'update',
-              input.immediate ? {} : { cancel_at_period_end: !input.resume },
-              `subscription-${hash({ id, key, input })}`,
-              s.stripeSubscriptionId,
-            );
-            await this.audit.append(tx, {
-              workspaceId: s.workspaceId,
-              actorId: a.id,
-              requestId,
-              action: 'commerce.subscription.change_requested',
-              resourceType: 'Subscription',
-              resourceId: id,
-              changes: {
-                reason: input.reason ?? 'Self service',
-                immediate: !!input.immediate,
-                resume: !!input.resume,
-              },
-            });
-            return {
-              data: subscriptionView(await tx.subscription.findUniqueOrThrow({ where: { id } })),
-            };
+        );
+        if (intent.kind === 'completed') return { done: true as const, response: intent.response };
+        await lock(tx, `subscription:${s.stripeSubscriptionId}`);
+        const local = await tx.subscription.findUniqueOrThrow({ where: { id } });
+        if (['CANCELED', 'EXPIRED'].includes(local.status)) conflict('Subscription has ended');
+        return { done: false as const, scope: intent.scope };
+      },
+      { timeout: 10000 },
+    );
+    if (phase.done) return phase.response;
+    await this.provider.call(
+      'subscriptions',
+      input.immediate ? 'cancel' : 'update',
+      input.immediate ? {} : { cancel_at_period_end: !input.resume },
+      `subscription-${hash({ id, key, input })}`,
+      s.stripeSubscriptionId,
+    );
+    return this.db.$transaction(
+      async (tx) => {
+        await lock(tx, `subscription:${s.stripeSubscriptionId}`);
+        await this.audit.append(tx, {
+          workspaceId: s.workspaceId,
+          actorId: a.id,
+          requestId,
+          action: 'commerce.subscription.change_requested',
+          resourceType: 'Subscription',
+          resourceId: id,
+          changes: {
+            reason: input.reason ?? 'Self service',
+            immediate: !!input.immediate,
+            resume: !!input.resume,
           },
-        ),
-      { timeout: 60000 },
+        });
+        return completeIdempotent(tx, phase.scope, 200, {
+          data: subscriptionView(await tx.subscription.findUniqueOrThrow({ where: { id } })),
+        });
+      },
+      { timeout: 10000 },
     );
   }
   refund(

@@ -14,14 +14,20 @@ function getProductTypeBadge(type: string) {
   switch (type) {
     case 'BUNDLE':
       return (
-        <Badge variant="default" className="flex items-center gap-1 bg-amber-600 text-white hover:bg-amber-700">
+        <Badge
+          variant="default"
+          className="flex items-center gap-1 bg-amber-600 text-white hover:bg-amber-700"
+        >
           <Layers className="h-3 w-3" />
           Course Bundle
         </Badge>
       );
     case 'SUBSCRIPTION_PLAN':
       return (
-        <Badge variant="default" className="flex items-center gap-1 bg-purple-600 text-white hover:bg-purple-700">
+        <Badge
+          variant="default"
+          className="flex items-center gap-1 bg-purple-600 text-white hover:bg-purple-700"
+        >
           <Sparkles className="h-3 w-3" />
           All-Access Plan
         </Badge>
@@ -69,7 +75,8 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
         <div className="mt-3 text-xs text-muted-foreground">
           {product.type === 'BUNDLE' && (
             <p className="font-medium text-foreground">
-              Includes {product.courses.length} {product.courses.length === 1 ? 'course' : 'courses'}
+              Includes {product.courses.length}{' '}
+              {product.courses.length === 1 ? 'course' : 'courses'}
             </p>
           )}
         </div>

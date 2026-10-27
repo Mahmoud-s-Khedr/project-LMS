@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Bell,
-  LogOut,
-  Shield,
-  User,
-} from 'lucide-react';
+import { Bell, LogOut, Shield, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -41,7 +36,10 @@ export function AccountSettingsView() {
             <Shield className="size-4" />
             Security & Sessions
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-1.5 text-xs sm:text-sm">
+          <TabsTrigger
+            value="notifications"
+            className="flex items-center gap-1.5 text-xs sm:text-sm"
+          >
             <Bell className="size-4" />
             Notifications
           </TabsTrigger>

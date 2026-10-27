@@ -67,7 +67,9 @@ export class SharedEventContracts implements EventContracts {
     if (result.success) return { ok: true, event: result.data };
     return {
       ok: false,
-      issues: result.error.issues.map((issue) => `${issue.path.join('.') || '$'}: ${issue.message}`),
+      issues: result.error.issues.map(
+        (issue) => `${issue.path.join('.') || '$'}: ${issue.message}`,
+      ),
     };
   }
 

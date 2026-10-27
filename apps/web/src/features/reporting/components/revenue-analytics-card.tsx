@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  CheckCircle2,
-  DollarSign,
-} from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, CheckCircle2, DollarSign } from 'lucide-react';
 import type { RevenueQuery } from '@lms/shared';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,14 +36,8 @@ function formatCurrencyAmount(minor: number, currency: string): string {
   }
 }
 
-export function RevenueAnalyticsCard({
-  workspaceId,
-  queryParams,
-}: RevenueAnalyticsCardProps) {
-  const { data, isLoading, isError, refetch } = useRevenueAnalyticsQuery(
-    workspaceId,
-    queryParams,
-  );
+export function RevenueAnalyticsCard({ workspaceId, queryParams }: RevenueAnalyticsCardProps) {
+  const { data, isLoading, isError, refetch } = useRevenueAnalyticsQuery(workspaceId, queryParams);
 
   return (
     <Card>
@@ -63,7 +52,8 @@ export function RevenueAnalyticsCard({
           </span>
         </CardTitle>
         <CardDescription className="text-xs">
-          Authoritative gross receipts, issued refund deductions, and net settled revenue separated by transactional currency.
+          Authoritative gross receipts, issued refund deductions, and net settled revenue separated
+          by transactional currency.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -76,7 +66,12 @@ export function RevenueAnalyticsCard({
         ) : isError ? (
           <div className="py-6 text-center text-destructive text-xs">
             Failed to retrieve revenue metrics.{' '}
-            <Button variant="link" size="sm" onClick={() => refetch()} className="text-xs p-0 h-auto">
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => refetch()}
+              className="text-xs p-0 h-auto"
+            >
               Retry
             </Button>
           </div>

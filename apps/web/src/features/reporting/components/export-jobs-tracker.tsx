@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Clock,
-  Download,
-  FileSpreadsheet,
-  Loader2,
-} from 'lucide-react';
+import { Clock, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,10 +14,7 @@ interface ExportJobItemProps {
 }
 
 function ExportJobItem({ workspaceId, operationId, onDismiss }: ExportJobItemProps) {
-  const { data, isLoading, isError } = useExportOperationQuery(
-    workspaceId,
-    operationId,
-  );
+  const { data, isLoading, isError } = useExportOperationQuery(workspaceId, operationId);
 
   if (isLoading) {
     return (
@@ -41,7 +33,12 @@ function ExportJobItem({ workspaceId, operationId, onDismiss }: ExportJobItemPro
       <div className="flex items-center justify-between p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-xs text-destructive">
         <span>Failed to poll export {operationId.slice(0, 8)}...</span>
         {onDismiss && (
-          <Button variant="ghost" size="sm" onClick={() => onDismiss(operationId)} className="h-6 text-xs p-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDismiss(operationId)}
+            className="h-6 text-xs p-1"
+          >
             Dismiss
           </Button>
         )}
@@ -62,13 +59,7 @@ function ExportJobItem({ workspaceId, operationId, onDismiss }: ExportJobItemPro
           <span className="font-mono font-medium">{operationId}</span>
           <Badge
             variant={
-              isReady
-                ? 'outline'
-                : isFailed
-                  ? 'destructive'
-                  : isExpired
-                    ? 'secondary'
-                    : 'default'
+              isReady ? 'outline' : isFailed ? 'destructive' : isExpired ? 'secondary' : 'default'
             }
             className={`text-[10px] ${isReady ? 'text-emerald-600 border-emerald-300' : ''}`}
           >
@@ -83,7 +74,11 @@ function ExportJobItem({ workspaceId, operationId, onDismiss }: ExportJobItemPro
 
       <div className="flex items-center gap-2 self-end sm:self-center">
         {isReady && data.url && (
-          <Button size="sm" asChild className="h-7 text-xs gap-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button
+            size="sm"
+            asChild
+            className="h-7 text-xs gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
             <a href={data.url} target="_blank" rel="noopener noreferrer" download>
               <Download className="h-3.5 w-3.5" />
               Download CSV
@@ -126,7 +121,8 @@ export function ExportJobsTracker({
           Active Export Jobs
         </CardTitle>
         <CardDescription className="text-xs">
-          Asynchronous reports being rendered in the background. Artifacts automatically expire after 24 hours.
+          Asynchronous reports being rendered in the background. Artifacts automatically expire
+          after 24 hours.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">

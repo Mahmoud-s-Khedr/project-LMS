@@ -16,7 +16,8 @@ export default function AdminUsersPage() {
           Platform Users
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Search and govern user accounts, elevate platform administrators, or suspend identities with an audited reason.
+          Search and govern user accounts, elevate platform administrators, or suspend identities
+          with an audited reason.
         </p>
       </div>
 

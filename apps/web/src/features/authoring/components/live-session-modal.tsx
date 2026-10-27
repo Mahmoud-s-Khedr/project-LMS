@@ -107,13 +107,18 @@ export function LiveSessionModal({
 
           <div className="my-4 space-y-3.5">
             {validationError && (
-              <div role="alert" className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive"
+              >
                 {validationError}
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="session-title" className="text-xs font-medium">Session Title</Label>
+              <Label htmlFor="session-title" className="text-xs font-medium">
+                Session Title
+              </Label>
               <Input
                 id="session-title"
                 value={title}
@@ -124,7 +129,9 @@ export function LiveSessionModal({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="session-provider" className="text-xs font-medium">Provider</Label>
+              <Label htmlFor="session-provider" className="text-xs font-medium">
+                Provider
+              </Label>
               <Select value={provider} onValueChange={setProvider}>
                 <SelectTrigger id="session-provider">
                   <SelectValue placeholder="Select video provider" />
@@ -139,7 +146,9 @@ export function LiveSessionModal({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="session-join-url" className="text-xs font-medium">Learner Join URL (HTTPS)</Label>
+              <Label htmlFor="session-join-url" className="text-xs font-medium">
+                Learner Join URL (HTTPS)
+              </Label>
               <Input
                 id="session-join-url"
                 type="url"
@@ -165,7 +174,9 @@ export function LiveSessionModal({
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="session-starts-at" className="text-xs font-medium">Starts At</Label>
+                <Label htmlFor="session-starts-at" className="text-xs font-medium">
+                  Starts At
+                </Label>
                 <Input
                   id="session-starts-at"
                   type="datetime-local"
@@ -175,7 +186,9 @@ export function LiveSessionModal({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="session-ends-at" className="text-xs font-medium">Ends At</Label>
+                <Label htmlFor="session-ends-at" className="text-xs font-medium">
+                  Ends At
+                </Label>
                 <Input
                   id="session-ends-at"
                   type="datetime-local"

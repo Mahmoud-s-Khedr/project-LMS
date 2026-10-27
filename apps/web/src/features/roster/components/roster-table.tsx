@@ -168,7 +168,9 @@ export function RosterTable({ workspaceId, courseId }: RosterTableProps) {
                 <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   <GraduationCap className="h-8 w-8 mx-auto mb-2 text-muted-foreground/60" />
                   <p className="font-medium">No enrolled learners found.</p>
-                  <p className="text-xs">Learners enrolled via purchases or manual grants will appear here.</p>
+                  <p className="text-xs">
+                    Learners enrolled via purchases or manual grants will appear here.
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -199,7 +201,9 @@ export function RosterTable({ workspaceId, courseId }: RosterTableProps) {
                       <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
                         <div
                           className="bg-primary h-full rounded-full transition-all"
-                          style={{ width: `${Math.min(100, Number(enrollment.completionPercent))}%` }}
+                          style={{
+                            width: `${Math.min(100, Number(enrollment.completionPercent))}%`,
+                          }}
                         />
                       </div>
                       <span className="text-xs font-medium text-foreground whitespace-nowrap">
@@ -209,7 +213,10 @@ export function RosterTable({ workspaceId, courseId }: RosterTableProps) {
                   </TableCell>
                   <TableCell>
                     {enrollment.access.allowed ? (
-                      <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300 gap-1">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-emerald-600 border-emerald-300 gap-1"
+                      >
                         <Unlock className="h-2.5 w-2.5" /> Allowed
                       </Badge>
                     ) : (
@@ -224,7 +231,12 @@ export function RosterTable({ workspaceId, courseId }: RosterTableProps) {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Roster actions">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          aria-label="Roster actions"
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>

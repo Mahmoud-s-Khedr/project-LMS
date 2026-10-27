@@ -42,7 +42,9 @@ export default function InstructorLearnersPage() {
       <div className="p-8 text-center rounded-lg border border-dashed text-muted-foreground flex flex-col items-center gap-2">
         <ShieldAlert className="h-8 w-8 text-amber-500" />
         <p className="font-semibold text-foreground">No active workspace selected</p>
-        <p className="text-xs">Select an active workspace from the dashboard header to view course rosters.</p>
+        <p className="text-xs">
+          Select an active workspace from the dashboard header to view course rosters.
+        </p>
       </div>
     );
   }
@@ -56,13 +58,17 @@ export default function InstructorLearnersPage() {
             Course Roster & Enrollment Management
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Track student learning progress, verify effective access permissions, and issue manual enrollment grants.
+            Track student learning progress, verify effective access permissions, and issue manual
+            enrollment grants.
           </p>
         </div>
 
         {/* Course Selector */}
         <div className="flex items-center gap-2 min-w-[240px]">
-          <Label htmlFor="course-select" className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+          <Label
+            htmlFor="course-select"
+            className="text-xs font-medium text-muted-foreground whitespace-nowrap"
+          >
             Select Course:
           </Label>
           {isLoadingCourses ? (
@@ -97,7 +103,9 @@ export default function InstructorLearnersPage() {
       ) : (
         <div className="p-12 text-center rounded-lg border border-dashed text-muted-foreground">
           <p className="font-medium text-foreground">No courses found in this workspace.</p>
-          <p className="text-xs mt-1">Create a course in the Curriculum Builder to begin managing enrollments.</p>
+          <p className="text-xs mt-1">
+            Create a course in the Curriculum Builder to begin managing enrollments.
+          </p>
         </div>
       )}
     </div>

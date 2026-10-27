@@ -12,7 +12,13 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import type { Product } from '../types';
 import { useCreatePriceMutation } from '../hooks';
 
@@ -99,8 +105,8 @@ export function PriceDialog({
             </DialogTitle>
             <DialogDescription>
               Create an immutable pricing tier for{' '}
-              <span className="font-semibold text-foreground">{product.name}</span>. Economic
-              fields cannot be changed once transactions occur.
+              <span className="font-semibold text-foreground">{product.name}</span>. Economic fields
+              cannot be changed once transactions occur.
             </DialogDescription>
           </DialogHeader>
 
@@ -199,7 +205,10 @@ export function PriceDialog({
                 onChange={(e) => setIsActive(e.target.checked)}
                 className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
               />
-              <label htmlFor="price-active" className="text-xs font-medium text-foreground cursor-pointer">
+              <label
+                htmlFor="price-active"
+                className="text-xs font-medium text-foreground cursor-pointer"
+              >
                 Available for immediate purchase
               </label>
             </div>
@@ -225,9 +234,7 @@ export function PriceDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={createPriceMutation.isPending}>
-              {createPriceMutation.isPending && (
-                <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-              )}
+              {createPriceMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
               Create Price
             </Button>
           </DialogFooter>

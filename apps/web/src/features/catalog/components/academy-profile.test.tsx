@@ -38,7 +38,9 @@ describe('AcademyProfile component', () => {
 
     render(<AcademyProfile workspace={mockWorkspace} />, { wrapper: createWrapper() });
 
-    expect(screen.getByRole('heading', { name: 'Distributed Systems Laboratory', level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Distributed Systems Laboratory', level: 1 }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Verified Academy')).toBeInTheDocument();
     expect(screen.getByText('America/New_York')).toBeInTheDocument();
 

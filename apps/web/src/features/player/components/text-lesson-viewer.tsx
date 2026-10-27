@@ -10,7 +10,11 @@ interface TextLessonViewerProps {
 }
 
 export function TextLessonViewer({ content, className }: TextLessonViewerProps) {
-  if (!content || typeof content !== 'object' || !('content' in (content as Record<string, unknown>))) {
+  if (
+    !content ||
+    typeof content !== 'object' ||
+    !('content' in (content as Record<string, unknown>))
+  ) {
     return (
       <div className="rounded-xl border border-dashed p-8 text-center text-xs text-muted-foreground">
         No text content provided for this lesson.
@@ -32,10 +36,7 @@ export function TextLessonViewer({ content, className }: TextLessonViewerProps) 
         switch (block.type) {
           case 'heading':
             return (
-              <h2
-                key={bIdx}
-                className="mt-6 mb-3 text-xl font-bold tracking-tight text-foreground"
-              >
+              <h2 key={bIdx} className="mt-6 mb-3 text-xl font-bold tracking-tight text-foreground">
                 {block.content.map((n, nIdx) => (
                   <span key={nIdx}>{n.text}</span>
                 ))}

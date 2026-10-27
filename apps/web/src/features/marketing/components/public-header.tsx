@@ -20,7 +20,6 @@ import { siteConfig } from '../site-config';
 const PUBLIC_NAV_ITEMS = [
   { href: '/courses', label: 'Course Catalog' },
   { href: '/#value-props', label: 'For Creators & Academies' },
-  { href: '/#pricing', label: 'Pricing & Pass' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/verify', label: 'Verify Certificate' },
 ] as const;
@@ -49,19 +48,15 @@ export function PublicHeader() {
               <BookOpen className="size-5" aria-hidden="true" />
             </span>
             <span>
-              {siteConfig.name}<span className="text-primary">.</span>
+              {siteConfig.name}
+              <span className="text-primary">.</span>
             </span>
           </Link>
 
-          <nav
-            aria-label="Primary public navigation"
-            className="hidden items-center gap-1 lg:flex"
-          >
+          <nav aria-label="Primary public navigation" className="hidden items-center gap-1 lg:flex">
             {PUBLIC_NAV_ITEMS.map((item) => {
               const isActive =
-                item.href === '/courses'
-                  ? pathname.startsWith('/courses')
-                  : pathname === item.href;
+                item.href === '/courses' ? pathname.startsWith('/courses') : pathname === item.href;
               return (
                 <Link
                   key={item.href}
@@ -119,12 +114,11 @@ export function PublicHeader() {
                     <BookOpen className="size-4" aria-hidden="true" />
                   </span>
                   <span>
-                    {siteConfig.name}<span className="text-primary">.</span>
+                    {siteConfig.name}
+                    <span className="text-primary">.</span>
                   </span>
                 </SheetTitle>
-                <SheetDescription>
-                  {siteConfig.tagline}
-                </SheetDescription>
+                <SheetDescription>{siteConfig.tagline}</SheetDescription>
               </SheetHeader>
 
               <nav

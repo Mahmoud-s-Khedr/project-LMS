@@ -16,7 +16,8 @@ export default function AdminWorkspacesPage() {
           Workspace Inventory
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Monitor all creator and academy workspaces. Suspend tenants violating policies to halt all downstream access evaluation immediately.
+          Monitor all creator and academy workspaces. Suspend tenants violating policies to halt all
+          downstream access evaluation immediately.
         </p>
       </div>
 

@@ -17,7 +17,10 @@ export const globalScopeEventTypes = [
   'identity.sessions-revoked.v1',
 ] as const;
 export const eventPayloadSchemas = {
-  'content.live-session.changed.v1': z.strictObject({ courseId: uuidSchema, sessionId: uuidSchema }),
+  'content.live-session.changed.v1': z.strictObject({
+    courseId: uuidSchema,
+    sessionId: uuidSchema,
+  }),
   'identity.registered.v1': userPayloadSchema.extend({
     mailCapability: mailCapabilitySchema.optional(),
   }),

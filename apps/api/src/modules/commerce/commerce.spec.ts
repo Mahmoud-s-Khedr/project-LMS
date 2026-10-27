@@ -128,4 +128,44 @@ stripeTests('real Stripe SDK signed webhook fixtures', () => {
       else delete process.env.STRIPE_WEBHOOK_SECRET;
     }
   });
+  it('accepts live mode only when the event and embedded object agree', () => {
+    const previous = {
+      key: process.env.STRIPE_SECRET_KEY,
+      secret: process.env.STRIPE_WEBHOOK_SECRET,
+      mode: process.env.STRIPE_MODE,
+    };
+    process.env.STRIPE_SECRET_KEY = 'rk_live_fixture';
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_fixture';
+    process.env.STRIPE_MODE = 'live';
+    try {
+      const provider = new StripePaymentProvider();
+      const sdk = loadStripe('sk_test_fixture');
+      const verify = (livemode: boolean, objectMode: boolean) => {
+        const raw = JSON.stringify({
+          id: 'evt_live',
+          type: 'checkout.session.completed',
+          created: 1,
+          livemode,
+          api_version: STRIPE_API_VERSION,
+          data: { object: { id: 'cs_live', livemode: objectMode } },
+        });
+        return provider.verify(
+          Buffer.from(raw),
+          sdk.webhooks.generateTestHeaderString({ payload: raw, secret: 'whsec_fixture' }),
+        );
+      };
+      expect(verify(true, true).id).toBe('evt_live');
+      expect(() => verify(false, false)).toThrow();
+      expect(() => verify(true, false)).toThrow();
+    } finally {
+      for (const [name, value] of Object.entries({
+        STRIPE_SECRET_KEY: previous.key,
+        STRIPE_WEBHOOK_SECRET: previous.secret,
+        STRIPE_MODE: previous.mode,
+      })) {
+        if (value === undefined) delete process.env[name];
+        else process.env[name] = value;
+      }
+    }
+  });
 });

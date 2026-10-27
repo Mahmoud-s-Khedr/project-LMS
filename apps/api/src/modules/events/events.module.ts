@@ -23,9 +23,7 @@ import { OutboxReconcilerService } from './outbox-reconciler.service';
 import { OutboxService } from './outbox.service';
 
 export type ConsumerRegistration = Type<AnyEventConsumer> | AnyEventConsumer;
-export type BackgroundTaskRegistration =
-  | Type<AnyBackgroundTaskHandler>
-  | AnyBackgroundTaskHandler;
+export type BackgroundTaskRegistration = Type<AnyBackgroundTaskHandler> | AnyBackgroundTaskHandler;
 
 export interface EventsModuleForRootOptions {
   /** Feature modules that export dependencies required by consumer/task provider classes. */
@@ -61,10 +59,7 @@ const CORE_SERVICES = [
  * `EVENT_CONTRACTS` without registering workers or starting background timers.
  */
 @Module({
-  providers: [
-    { provide: EVENT_CONTRACTS, useClass: SharedEventContracts },
-    OutboxService,
-  ],
+  providers: [{ provide: EVENT_CONTRACTS, useClass: SharedEventContracts }, OutboxService],
   exports: [OutboxService, EVENT_CONTRACTS],
 })
 export class EventsProducerModule {}
@@ -88,20 +83,13 @@ export class EventsProducerModule {}
     { provide: BACKGROUND_TASKS, useValue: [] },
     ...CORE_SERVICES,
   ],
-  exports: [
-    EVENTS_OPTIONS,
-    EVENT_CONTRACTS,
-    ...CORE_SERVICES,
-  ],
+  exports: [EVENTS_OPTIONS, EVENT_CONTRACTS, ...CORE_SERVICES],
 })
 export class EventsModule {
   static forProducer(): DynamicModule {
     return {
       module: EventsProducerModule,
-      providers: [
-        { provide: EVENT_CONTRACTS, useClass: SharedEventContracts },
-        OutboxService,
-      ],
+      providers: [{ provide: EVENT_CONTRACTS, useClass: SharedEventContracts }, OutboxService],
       exports: [OutboxService, EVENT_CONTRACTS],
     };
   }

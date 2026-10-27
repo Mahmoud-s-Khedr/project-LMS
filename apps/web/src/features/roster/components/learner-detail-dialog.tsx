@@ -1,14 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AlertCircle,
-  KeyRound,
-  Loader2,
-  Lock,
-  Unlock,
-  User,
-} from 'lucide-react';
+import { AlertCircle, KeyRound, Loader2, Lock, Unlock, User } from 'lucide-react';
 import type { StaffGrant } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -108,7 +101,9 @@ export function LearnerDetailDialog({
         ) : isError ? (
           <div className="p-4 rounded-md border border-destructive/40 bg-destructive/10 text-destructive text-sm flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{error instanceof Error ? error.message : 'Failed to load enrollment details'}</span>
+            <span>
+              {error instanceof Error ? error.message : 'Failed to load enrollment details'}
+            </span>
           </div>
         ) : enrollment ? (
           <div className="space-y-6 py-2">
@@ -144,7 +139,10 @@ export function LearnerDetailDialog({
               <div>
                 <span className="text-muted-foreground block mb-0.5">Effective Access</span>
                 {enrollment.access.allowed ? (
-                  <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300 gap-1">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] text-emerald-600 border-emerald-300 gap-1"
+                  >
                     <Unlock className="h-2.5 w-2.5" /> Allowed
                   </Badge>
                 ) : (
@@ -159,13 +157,22 @@ export function LearnerDetailDialog({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-muted-foreground">
               <div>Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}</div>
               <div>
-                Started: {enrollment.startedAt ? new Date(enrollment.startedAt).toLocaleDateString() : 'Not started'}
+                Started:{' '}
+                {enrollment.startedAt
+                  ? new Date(enrollment.startedAt).toLocaleDateString()
+                  : 'Not started'}
               </div>
               <div>
-                Completed: {enrollment.completedAt ? new Date(enrollment.completedAt).toLocaleDateString() : 'In progress'}
+                Completed:{' '}
+                {enrollment.completedAt
+                  ? new Date(enrollment.completedAt).toLocaleDateString()
+                  : 'In progress'}
               </div>
               <div>
-                Last Active: {enrollment.lastActivityAt ? new Date(enrollment.lastActivityAt).toLocaleDateString() : 'Never'}
+                Last Active:{' '}
+                {enrollment.lastActivityAt
+                  ? new Date(enrollment.lastActivityAt).toLocaleDateString()
+                  : 'Never'}
               </div>
             </div>
 
@@ -205,7 +212,10 @@ export function LearnerDetailDialog({
                   <TableBody>
                     {enrollment.grantProvenance.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center py-6 text-xs text-muted-foreground">
+                        <TableCell
+                          colSpan={5}
+                          className="text-center py-6 text-xs text-muted-foreground"
+                        >
                           No grant records attached.
                         </TableCell>
                       </TableRow>
@@ -233,14 +243,20 @@ export function LearnerDetailDialog({
                                   REVOKED
                                 </Badge>
                               ) : (
-                                <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300">
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] text-emerald-600 border-emerald-300"
+                                >
                                   ACTIVE
                                 </Badge>
                               )}
                             </TableCell>
                             <TableCell className="max-w-[180px]">
                               {grant.reason && (
-                                <div className="italic text-foreground/90 truncate" title={grant.reason}>
+                                <div
+                                  className="italic text-foreground/90 truncate"
+                                  title={grant.reason}
+                                >
                                   &quot;{grant.reason}&quot;
                                 </div>
                               )}
@@ -334,11 +350,7 @@ export function LearnerDetailDialog({
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                variant="destructive"
-                disabled={revokeMutation.isPending}
-              >
+              <Button type="submit" variant="destructive" disabled={revokeMutation.isPending}>
                 {revokeMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Confirm Revocation
               </Button>

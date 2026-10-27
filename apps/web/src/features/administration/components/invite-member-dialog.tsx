@@ -114,7 +114,9 @@ export function InviteMemberDialog({ workspaceId }: InviteMemberDialogProps) {
             >
               <option value="ADMIN">ADMIN — Full workspace settings & staff control</option>
               <option value="INSTRUCTOR">INSTRUCTOR — Course authoring, cohorts & grading</option>
-              <option value="TEACHING_ASSISTANT">TEACHING_ASSISTANT — Grading & learner assistance</option>
+              <option value="TEACHING_ASSISTANT">
+                TEACHING_ASSISTANT — Grading & learner assistance
+              </option>
               <option value="STUDENT">STUDENT — Enrolled learner</option>
             </select>
           </div>

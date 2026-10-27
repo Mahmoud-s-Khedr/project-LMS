@@ -9,12 +9,9 @@ import { WorkerAppModule, type WorkerBootstrapOptions } from './worker-app.modul
 export async function createWorkerContext(
   options: WorkerBootstrapOptions = {},
 ): Promise<INestApplicationContext> {
-  const context = await NestFactory.createApplicationContext(
-    WorkerAppModule.forRoot(options),
-    {
-      logger: ['error', 'warn', 'log'],
-    },
-  );
+  const context = await NestFactory.createApplicationContext(WorkerAppModule.forRoot(options), {
+    logger: ['error', 'warn', 'log'],
+  });
   context.enableShutdownHooks();
   await context.init();
   return context;

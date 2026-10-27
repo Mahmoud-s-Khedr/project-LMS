@@ -1,10 +1,6 @@
 import { api } from '@/lib/api';
 import type { CursorMeta } from '@lms/shared';
-import type {
-  Notification,
-  NotificationsQueryParams,
-  NotificationPreference,
-} from './types';
+import type { Notification, NotificationsQueryParams, NotificationPreference } from './types';
 
 export interface PaginatedNotificationsResponse {
   data: Notification[];
@@ -30,10 +26,9 @@ export async function markNotificationRead(
   notificationId: string,
   read: boolean,
 ): Promise<Notification> {
-  const response = await api.patch<{ data: Notification }>(
-    `/me/notifications/${notificationId}`,
-    { read },
-  );
+  const response = await api.patch<{ data: Notification }>(`/me/notifications/${notificationId}`, {
+    read,
+  });
   return response.data;
 }
 

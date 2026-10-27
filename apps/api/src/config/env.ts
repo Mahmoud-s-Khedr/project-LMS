@@ -1,9 +1,45 @@
 import { z } from 'zod';
+import { isIP } from 'node:net';
+
+export function parseTrustProxy(value: string): boolean | number | string[] {
+  if (value === 'false') return false;
+  if (value === 'true') return true;
+  if (/^(?:[1-9]|10)$/.test(value)) return Number(value);
+  const entries = value.split(',').map((item) => item.trim());
+  if (
+    !entries.every((item) => {
+      if (['loopback', 'linklocal', 'uniquelocal'].includes(item)) return true;
+      const [ip, bits, ...extra] = item.split('/');
+      const family = isIP(ip ?? '');
+      return (
+        extra.length === 0 &&
+        family !== 0 &&
+        (bits === undefined || (/^\d+$/.test(bits) && Number(bits) <= (family === 4 ? 32 : 128)))
+      );
+    })
+  )
+    throw new Error('Invalid TRUST_PROXY');
+  return entries;
+}
 
 const booleanString = z.enum(['true', 'false']).transform((value) => value === 'true');
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  TRUST_PROXY: z
+    .string()
+    .default('false')
+    .transform((value, ctx) => {
+      try {
+        return parseTrustProxy(value);
+      } catch {
+        ctx.addIssue({ code: 'custom', message: 'Invalid TRUST_PROXY' });
+        return z.NEVER;
+      }
+    }),
+  THROTTLE_STORAGE: z.enum(['redis', 'memory']).default('redis'),
+  SWAGGER_ENABLED: booleanString.optional(),
+  STRIPE_MODE: z.enum(['test', 'live']).default('test'),
   API_PORT: z.coerce.number().int().min(1).max(65535).default(4100),
   WEB_ORIGIN: z.url().default('http://localhost:3100'),
   DATABASE_URL: z.url(),
@@ -31,10 +67,7 @@ export const envSchema = z.object({
   TENANCY_MAIL_KEY_ID: z.string().min(1).default('v1'),
   TENANCY_MAIL_PREVIOUS_KEYS: z.string().optional(),
   AUDIT_IP_HASH_SECRET: z.string().min(16).optional(),
-  STRIPE_SECRET_KEY: z
-    .string()
-    .regex(/^$|^sk_test_/)
-    .optional(),
+  STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z
     .string()
     .regex(/^$|^whsec_/)
@@ -70,5 +103,25 @@ export function validateEnvironment(input: Record<string, unknown>): Environment
   if (parsed.data.NODE_ENV === 'production' && parsed.data.MEDIA_SCANNER_MODE !== 'clamav') {
     throw new Error('Development scanner mode is forbidden in production');
   }
-  return parsed.data;
+  const data = parsed.data;
+  if (data.NODE_ENV === 'production') {
+    if (
+      !input.TENANCY_MAIL_KEY ||
+      data.TENANCY_MAIL_KEY === 'MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
+    )
+      throw new Error('Production requires a non-default TENANCY_MAIL_KEY');
+    if (!data.AUDIT_IP_HASH_SECRET || !data.CONTENT_HOST_KEY)
+      throw new Error('Production requires AUDIT_IP_HASH_SECRET and CONTENT_HOST_KEY');
+    if (data.THROTTLE_STORAGE === 'memory')
+      throw new Error('Memory throttle storage is forbidden in production');
+  }
+  if (data.STRIPE_MODE === 'live' && data.NODE_ENV !== 'production')
+    throw new Error('Live Stripe requires production');
+  if (
+    data.STRIPE_SECRET_KEY &&
+    !new RegExp(`^(sk|rk)_${data.STRIPE_MODE}_`).test(data.STRIPE_SECRET_KEY)
+  )
+    throw new Error('Stripe key does not match STRIPE_MODE');
+  data.SWAGGER_ENABLED ??= data.NODE_ENV !== 'production';
+  return data;
 }

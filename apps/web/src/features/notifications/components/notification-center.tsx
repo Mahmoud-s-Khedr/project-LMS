@@ -14,21 +14,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { NotificationItem } from './notification-item';
-import {
-  useMarkAllNotificationsReadMutation,
-  useMyNotificationsQuery,
-} from '../hooks';
+import { useMarkAllNotificationsReadMutation, useMyNotificationsQuery } from '../hooks';
 
 export function NotificationCenter() {
   const [tab, setTab] = React.useState<'all' | 'unread'>('all');
   const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
 
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  } = useMyNotificationsQuery(tab === 'unread' ? { unread: 'true' } : undefined);
+  const { data, isLoading, isError, refetch } = useMyNotificationsQuery(
+    tab === 'unread' ? { unread: 'true' } : undefined,
+  );
 
   const markAllMutation = useMarkAllNotificationsReadMutation();
 

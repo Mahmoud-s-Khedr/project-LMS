@@ -4,18 +4,17 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Mail,
-  Save,
-  ShieldCheck,
-  User,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Mail, Save, ShieldCheck, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -145,12 +144,18 @@ export function ProfileForm() {
               <div className="flex items-center justify-between">
                 <label className="text-xs font-medium text-foreground">Email Address</label>
                 {isEmailVerified ? (
-                  <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 text-[10px] py-0">
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 text-[10px] py-0"
+                  >
                     <ShieldCheck className="mr-1 size-3" />
                     Verified
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-600 text-[10px] py-0">
+                  <Badge
+                    variant="outline"
+                    className="border-amber-500/40 bg-amber-500/10 text-amber-600 text-[10px] py-0"
+                  >
                     Unverified
                   </Badge>
                 )}
@@ -215,7 +220,8 @@ export function ProfileForm() {
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-[11px]">
-                    Cohort live session schedules and assignment deadlines are shown in this timezone.
+                    Cohort live session schedules and assignment deadlines are shown in this
+                    timezone.
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>

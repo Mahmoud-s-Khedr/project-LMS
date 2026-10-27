@@ -96,7 +96,12 @@ export function LearnerAnalyticsTable({
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-6 text-destructive text-xs">
                   Failed to load learner analytics.{' '}
-                  <Button variant="link" size="sm" onClick={() => refetch()} className="text-xs p-0 h-auto">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => refetch()}
+                    className="text-xs p-0 h-auto"
+                  >
                     Retry
                   </Button>
                 </TableCell>
@@ -110,7 +115,10 @@ export function LearnerAnalyticsTable({
             ) : (
               data?.data.map((learner) => (
                 <TableRow key={learner.enrollmentId} className="text-xs">
-                  <TableCell className="font-mono text-muted-foreground truncate max-w-[140px]" title={learner.userId}>
+                  <TableCell
+                    className="font-mono text-muted-foreground truncate max-w-[140px]"
+                    title={learner.userId}
+                  >
                     {learner.userId}
                   </TableCell>
                   <TableCell className="font-mono text-muted-foreground">

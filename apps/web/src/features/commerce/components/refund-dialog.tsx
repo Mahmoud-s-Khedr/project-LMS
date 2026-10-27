@@ -68,7 +68,9 @@ export function RefundDialog({
     }
 
     if (parsedAmountMinor > maxRefundable) {
-      setError(`Refund amount cannot exceed payment total of ${formatMoney(maxRefundable, payment.currency)}`);
+      setError(
+        `Refund amount cannot exceed payment total of ${formatMoney(maxRefundable, payment.currency)}`,
+      );
       return;
     }
 
@@ -168,7 +170,10 @@ export function RefundDialog({
                 onChange={(e) => setRevokeAccess(e.target.checked)}
                 className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
               />
-              <label htmlFor="revoke-access" className="text-xs font-medium text-foreground cursor-pointer">
+              <label
+                htmlFor="revoke-access"
+                className="text-xs font-medium text-foreground cursor-pointer"
+              >
                 Revoke student learning access upon refund completion
               </label>
             </div>

@@ -95,11 +95,20 @@ const ANSWER_KEYS = new Set([
 ]);
 
 /** Suffixes on normalized keys that always indicate a secret (e.g. `stripeSecret`, `resetToken`). */
-const SECRET_SUFFIXES = ['password', 'passwordhash', 'secret', 'token', 'tokenhash', 'apikey', 'privatekey'];
+const SECRET_SUFFIXES = [
+  'password',
+  'passwordhash',
+  'secret',
+  'token',
+  'tokenhash',
+  'apikey',
+  'privatekey',
+];
 
 const JWT_PATTERN = /\beyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\b/g;
 const BEARER_PATTERN = /\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]{8,}/gi;
-const PROVIDER_SECRET_PATTERN = /\b(sk|rk|pk)_(live|test)_[A-Za-z0-9]{8,}\b|\bwhsec_[A-Za-z0-9]{8,}\b/g;
+const PROVIDER_SECRET_PATTERN =
+  /\b(sk|rk|pk)_(live|test)_[A-Za-z0-9]{8,}\b|\bwhsec_[A-Za-z0-9]{8,}\b/g;
 const URL_PATTERN = /\bhttps?:\/\/[^\s"'<>]+/gi;
 const SIGNED_QUERY_PATTERN =
   /[?&](x-amz-signature|x-amz-credential|x-amz-security-token|signature|sig|token|access_token|key-pair-id|policy|expires|code)=/i;
@@ -116,7 +125,10 @@ export function isSensitiveKey(key: string): boolean {
 }
 
 /** Removes signed-link query strings, bearer credentials, JWTs and provider secrets from free text. */
-export function redactString(value: string, maxLength = DEFAULT_REDACTION_LIMITS.maxStringLength): string {
+export function redactString(
+  value: string,
+  maxLength = DEFAULT_REDACTION_LIMITS.maxStringLength,
+): string {
   let result = value
     .replace(JWT_PATTERN, '[REDACTED_JWT]')
     .replace(BEARER_PATTERN, '$1 [REDACTED]')
@@ -155,7 +167,10 @@ export function looksLikeCapability(value: string): boolean {
  * Deep-redacts an arbitrary value into JSON that is safe to persist in AuditLog.changes or expose in an
  * operations projection. Never throws; non-JSON values are converted (Date → ISO, bigint → digits).
  */
-export function redact(value: unknown, limits: RedactionLimits = DEFAULT_REDACTION_LIMITS): Prisma.InputJsonValue {
+export function redact(
+  value: unknown,
+  limits: RedactionLimits = DEFAULT_REDACTION_LIMITS,
+): Prisma.InputJsonValue {
   const seen = new WeakSet<object>();
   const visit = (input: unknown, depth: number): Prisma.InputJsonValue | null => {
     if (input === null || input === undefined) return null;
@@ -173,19 +188,23 @@ export function redact(value: unknown, limits: RedactionLimits = DEFAULT_REDACTI
     try {
       if (Array.isArray(input)) {
         const items = input.slice(0, limits.maxArrayItems).map((item) => visit(item, depth + 1));
-        if (input.length > limits.maxArrayItems) items.push(`${TRUNCATED}:${input.length - limits.maxArrayItems}`);
+        if (input.length > limits.maxArrayItems)
+          items.push(`${TRUNCATED}:${input.length - limits.maxArrayItems}`);
         return items as Prisma.InputJsonArray;
       }
       if (input instanceof Map) return visit(Object.fromEntries(input), depth);
       if (input instanceof Set) return visit([...input], depth);
-      if (input instanceof Error) return { name: input.name, message: redactString(input.message, limits.maxStringLength) };
+      if (input instanceof Error)
+        return { name: input.name, message: redactString(input.message, limits.maxStringLength) };
       const output: Record<string, Prisma.InputJsonValue | null> = {};
       const entries = Object.entries(input as Record<string, unknown>);
       for (const [key, child] of entries.slice(0, limits.maxObjectKeys)) {
-        if (child === undefined || typeof child === 'function' || typeof child === 'symbol') continue;
+        if (child === undefined || typeof child === 'function' || typeof child === 'symbol')
+          continue;
         output[key] = isSensitiveKey(key) ? REDACTED : visit(child, depth + 1);
       }
-      if (entries.length > limits.maxObjectKeys) output[TRUNCATED] = entries.length - limits.maxObjectKeys;
+      if (entries.length > limits.maxObjectKeys)
+        output[TRUNCATED] = entries.length - limits.maxObjectKeys;
       return output as Prisma.InputJsonObject;
     } finally {
       seen.delete(input);
@@ -211,11 +230,14 @@ export function findSensitiveContent(
   depth = 0,
 ): SensitiveFinding[] {
   if (depth > 32) return [];
-  if (typeof value === 'string') return looksLikeCapability(value) ? [{ path, reason: 'capability-value' }] : [];
+  if (typeof value === 'string')
+    return looksLikeCapability(value) ? [{ path, reason: 'capability-value' }] : [];
   if (value === null || typeof value !== 'object') return [];
   const findings: SensitiveFinding[] = [];
   if (Array.isArray(value)) {
-    value.forEach((item, index) => findings.push(...findSensitiveContent(item, allowKeys, `${path}[${index}]`, depth + 1)));
+    value.forEach((item, index) =>
+      findings.push(...findSensitiveContent(item, allowKeys, `${path}[${index}]`, depth + 1)),
+    );
     return findings;
   }
   for (const [key, child] of Object.entries(value as Record<string, unknown>)) {

@@ -39,7 +39,10 @@ export function CouponInput({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs">
-        <label htmlFor="coupon-code" className="font-medium text-foreground flex items-center gap-1.5">
+        <label
+          htmlFor="coupon-code"
+          className="font-medium text-foreground flex items-center gap-1.5"
+        >
           <Tag className="h-3.5 w-3.5 text-muted-foreground" />
           Discount Code
         </label>
@@ -93,11 +96,7 @@ export function CouponInput({
             disabled={disabled || isLoading || !value.trim()}
             className="shrink-0"
           >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              'Apply'
-            )}
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
           </Button>
         </form>
       )}

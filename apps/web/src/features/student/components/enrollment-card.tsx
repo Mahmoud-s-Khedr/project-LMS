@@ -4,11 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import type { Enrollment } from '../types';
-import {
-  formatDateString,
-  formatAccessReason,
-  isAccessAllowed,
-} from '../types';
+import { formatDateString, formatAccessReason, isAccessAllowed } from '../types';
 
 export interface EnrollmentCardProps {
   enrollment: Enrollment;
@@ -17,7 +13,10 @@ export interface EnrollmentCardProps {
 
 export function EnrollmentCard({ enrollment, courseTitle }: EnrollmentCardProps) {
   const allowed = isAccessAllowed(enrollment.access);
-  const completionPercent = Math.min(100, Math.max(0, parseFloat(enrollment.completionPercent) || 0));
+  const completionPercent = Math.min(
+    100,
+    Math.max(0, parseFloat(enrollment.completionPercent) || 0),
+  );
   const isCompleted = Boolean(enrollment.completedAt) || completionPercent >= 100;
   const isSuspended = enrollment.status === 'SUSPENDED';
 
@@ -34,7 +33,10 @@ export function EnrollmentCard({ enrollment, courseTitle }: EnrollmentCardProps)
           {/* Status Badge */}
           <div className="flex items-center gap-1.5">
             {isCompleted ? (
-              <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <Badge
+                variant="outline"
+                className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              >
                 Completed
               </Badge>
             ) : isSuspended ? (
@@ -52,7 +54,9 @@ export function EnrollmentCard({ enrollment, courseTitle }: EnrollmentCardProps)
                 className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
               >
                 <Lock className="mr-1 size-3" />
-                {!enrollment.access.allowed ? formatAccessReason(enrollment.access.reason) : 'Restricted'}
+                {!enrollment.access.allowed
+                  ? formatAccessReason(enrollment.access.reason)
+                  : 'Restricted'}
               </Badge>
             )}
           </div>
@@ -113,7 +117,11 @@ export function EnrollmentCard({ enrollment, courseTitle }: EnrollmentCardProps)
               <ShieldAlert className="mt-0.5 size-3.5 shrink-0" />
               <div>
                 <span className="font-medium">Historical records preserved.</span> Course player is
-                restricted ({!enrollment.access.allowed ? formatAccessReason(enrollment.access.reason) : 'Restricted'}).
+                restricted (
+                {!enrollment.access.allowed
+                  ? formatAccessReason(enrollment.access.reason)
+                  : 'Restricted'}
+                ).
                 {!enrollment.access.allowed && enrollment.access.unlockAt && (
                   <span className="block mt-0.5">
                     Unlocks: {formatDateString(enrollment.access.unlockAt)}

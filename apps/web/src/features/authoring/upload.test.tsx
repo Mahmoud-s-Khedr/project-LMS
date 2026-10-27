@@ -150,12 +150,14 @@ describe('AssetUploader Component', () => {
       expiresAt: new Date(Date.now() + 3600000).toISOString(),
     });
 
-    vi.spyOn(api, 'uploadAssetBinary').mockImplementation(async (_url, _method, _headers, _file, onProgress) => {
-      if (onProgress) {
-        onProgress(50);
-        onProgress(100);
-      }
-    });
+    vi.spyOn(api, 'uploadAssetBinary').mockImplementation(
+      async (_url, _method, _headers, _file, onProgress) => {
+        if (onProgress) {
+          onProgress(50);
+          onProgress(100);
+        }
+      },
+    );
 
     vi.spyOn(api, 'completeAssetUpload').mockResolvedValueOnce({
       operationId: 'a0000000-0000-4000-8000-000000000888',

@@ -66,10 +66,12 @@ export function CourseList({ workspaceId }: CourseListProps) {
     return p;
   }, [statusFilter, debouncedSearch]);
 
-  const { data: coursesResponse, isLoading, error, refetch } = useStaffCoursesQuery(
-    workspaceId,
-    queryParams,
-  );
+  const {
+    data: coursesResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useStaffCoursesQuery(workspaceId, queryParams);
 
   const submitReviewMutation = useSubmitCourseReviewMutation(workspaceId, '');
   const publishMutation = usePublishCourseMutation(workspaceId, '');
@@ -89,7 +91,11 @@ export function CourseList({ workspaceId }: CourseListProps) {
   };
 
   const handleActionArchive = async (course: Course) => {
-    if (confirm(`Archive "${course.title}"? Existing learners retain access, but it will be unlisted from catalog.`)) {
+    if (
+      confirm(
+        `Archive "${course.title}"? Existing learners retain access, but it will be unlisted from catalog.`,
+      )
+    ) {
       await archiveMutation.mutateAsync(course.version);
       void refetch();
     }
@@ -112,7 +118,10 @@ export function CourseList({ workspaceId }: CourseListProps) {
         );
       case 'IN_REVIEW':
         return (
-          <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px]">
+          <Badge
+            variant="outline"
+            className="text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px]"
+          >
             IN REVIEW
           </Badge>
         );
@@ -139,7 +148,8 @@ export function CourseList({ workspaceId }: CourseListProps) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Course Builder & Studio</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Manage your teaching curricula, cohort dates, staff permissions, and publishing lifecycle.
+            Manage your teaching curricula, cohort dates, staff permissions, and publishing
+            lifecycle.
           </p>
         </div>
 
@@ -155,11 +165,21 @@ export function CourseList({ workspaceId }: CourseListProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full sm:w-auto">
           <TabsList className="h-9">
-            <TabsTrigger value="ALL" className="text-xs">All Courses</TabsTrigger>
-            <TabsTrigger value="DRAFT" className="text-xs">Drafts</TabsTrigger>
-            <TabsTrigger value="IN_REVIEW" className="text-xs">In Review</TabsTrigger>
-            <TabsTrigger value="PUBLISHED" className="text-xs">Published</TabsTrigger>
-            <TabsTrigger value="ARCHIVED" className="text-xs">Archived</TabsTrigger>
+            <TabsTrigger value="ALL" className="text-xs">
+              All Courses
+            </TabsTrigger>
+            <TabsTrigger value="DRAFT" className="text-xs">
+              Drafts
+            </TabsTrigger>
+            <TabsTrigger value="IN_REVIEW" className="text-xs">
+              In Review
+            </TabsTrigger>
+            <TabsTrigger value="PUBLISHED" className="text-xs">
+              Published
+            </TabsTrigger>
+            <TabsTrigger value="ARCHIVED" className="text-xs">
+              Archived
+            </TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -176,12 +196,18 @@ export function CourseList({ workspaceId }: CourseListProps) {
 
       {/* Courses List Content */}
       {isLoading ? (
-        <div role="status" className="flex flex-col items-center justify-center p-12 text-muted-foreground">
+        <div
+          role="status"
+          className="flex flex-col items-center justify-center p-12 text-muted-foreground"
+        >
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
           <p className="text-sm">Loading instructor studio courses...</p>
         </div>
       ) : error ? (
-        <div role="alert" className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive flex items-center justify-between">
+        <div
+          role="alert"
+          className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive flex items-center justify-between"
+        >
           <div className="flex items-center gap-2 text-sm">
             <AlertCircle className="h-5 w-5" />
             <span>Failed to load courses for this workspace.</span>
@@ -205,7 +231,10 @@ export function CourseList({ workspaceId }: CourseListProps) {
                       {course.deliveryMode === 'COHORT' ? 'COHORT' : 'SELF-PACED'}
                     </Badge>
                     {course.isFree && (
-                      <Badge variant="outline" className="text-[10px] text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                      >
                         FREE
                       </Badge>
                     )}
@@ -213,31 +242,48 @@ export function CourseList({ workspaceId }: CourseListProps) {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Course Actions">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        aria-label="Course Actions"
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuItem asChild>
-                        <Link href={`/instructor/courses/${course.id}`} className="flex items-center gap-2 text-xs">
+                        <Link
+                          href={`/instructor/courses/${course.id}`}
+                          className="flex items-center gap-2 text-xs"
+                        >
                           <BookOpen className="h-3.5 w-3.5" />
                           Curriculum Outline
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/instructor/courses/${course.id}?tab=cohorts`} className="flex items-center gap-2 text-xs">
+                        <Link
+                          href={`/instructor/courses/${course.id}?tab=cohorts`}
+                          className="flex items-center gap-2 text-xs"
+                        >
                           <Calendar className="h-3.5 w-3.5" />
                           Cohort Dates & Drip
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/instructor/courses/${course.id}?tab=staff`} className="flex items-center gap-2 text-xs">
+                        <Link
+                          href={`/instructor/courses/${course.id}?tab=staff`}
+                          className="flex items-center gap-2 text-xs"
+                        >
                           <Users className="h-3.5 w-3.5" />
                           Staff Permissions
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/instructor/courses/${course.id}?tab=settings`} className="flex items-center gap-2 text-xs">
+                        <Link
+                          href={`/instructor/courses/${course.id}?tab=settings`}
+                          className="flex items-center gap-2 text-xs"
+                        >
                           <Settings className="h-3.5 w-3.5" />
                           Course Settings
                         </Link>

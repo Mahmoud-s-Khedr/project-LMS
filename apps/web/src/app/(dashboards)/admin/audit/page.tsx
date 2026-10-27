@@ -24,7 +24,9 @@ export default function AdminAuditPage() {
       <div className="p-8 text-center rounded-lg border border-dashed text-muted-foreground flex flex-col items-center gap-2">
         <ShieldAlert className="h-8 w-8 text-amber-500" />
         <p className="font-semibold text-foreground">No active workspace selected</p>
-        <p className="text-xs">Select a workspace from the dashboard header to view its immutable audit logs.</p>
+        <p className="text-xs">
+          Select a workspace from the dashboard header to view its immutable audit logs.
+        </p>
       </div>
     );
   }
@@ -37,7 +39,8 @@ export default function AdminAuditPage() {
           Audit Trail ({activeWorkspace?.name ?? 'Workspace'})
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Cryptographically attributed audit entries for administrative role changes, revocations, and operational modifications.
+          Cryptographically attributed audit entries for administrative role changes, revocations,
+          and operational modifications.
         </p>
       </div>
 

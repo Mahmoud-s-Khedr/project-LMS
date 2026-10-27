@@ -1,4 +1,9 @@
-import { Inject, Injectable, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  type OnApplicationBootstrap,
+  type OnModuleDestroy,
+} from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { EventConsumerRegistry } from './consumer-registry';
 import { EVENTS_OPTIONS, type EventsOptions } from './events.options';
@@ -100,7 +105,12 @@ export class OutboxReconcilerService implements OnApplicationBootstrap, OnModule
     const candidates = await this.prisma.outboxEvent.findMany({
       where: {
         status: 'PUBLISHED',
-        type: { in: [...subscribedTypes] },
+        OR: subscribedTypes.flatMap((type) =>
+          this.registry.forType(type).map((consumer) => ({
+            type,
+            receipts: { none: { consumer: consumer.name } },
+          })),
+        ),
         publishedAt: { lte: publishedBefore },
         createdAt: { gte: createdSince },
       },

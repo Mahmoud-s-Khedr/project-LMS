@@ -48,7 +48,9 @@ describe('ProductDetail component', () => {
   it('renders bundle title, badge, duration, and included courses', () => {
     render(<ProductDetail product={mockProduct} />);
 
-    expect(screen.getByRole('heading', { name: 'Backend Systems Mastery Bundle', level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Backend Systems Mastery Bundle', level: 1 }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Course Bundle')).toBeInTheDocument();
     expect(screen.getByText('365 Days Access')).toBeInTheDocument();
     expect(screen.getByText('Reliable software')).toBeInTheDocument();

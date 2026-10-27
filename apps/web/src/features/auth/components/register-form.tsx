@@ -1,5 +1,7 @@
 'use client';
 
+import { safeRedirect } from '@/lib/safe-redirect';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -49,6 +51,8 @@ export function RegisterForm({
     },
   });
 
+  const safeTarget = safeRedirect(redirectTo);
+
   React.useEffect(() => {
     if (submittedEmail) {
       headingRef.current?.focus();
@@ -85,10 +89,7 @@ export function RegisterForm({
   }
 
   if (submittedEmail) {
-    const loginHref =
-      redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
-        ? `/login?redirect=${encodeURIComponent(redirectTo)}`
-        : '/login';
+    const loginHref = safeTarget ? `/login?redirect=${encodeURIComponent(safeTarget)}` : '/login';
 
     return (
       <div role="status" aria-live="polite" className="space-y-6">
@@ -319,11 +320,7 @@ export function RegisterForm({
       <div className="border-t border-border pt-5 text-center text-xs text-muted-foreground">
         Already have an account?{' '}
         <Link
-          href={
-            redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
-              ? `/login?redirect=${encodeURIComponent(redirectTo)}`
-              : '/login'
-          }
+          href={safeTarget ? `/login?redirect=${encodeURIComponent(safeTarget)}` : '/login'}
           className="font-semibold text-primary hover:underline"
         >
           Sign in instead

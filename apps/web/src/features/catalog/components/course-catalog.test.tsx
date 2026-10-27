@@ -27,9 +27,7 @@ describe('CourseCatalog component', () => {
 
     render(<CourseCatalog />, { wrapper: createWrapper() });
 
-    expect(
-      screen.getByPlaceholderText(/search courses, topics/i),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/search courses, topics/i)).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText('Reliable software')).toBeInTheDocument();
@@ -68,9 +66,7 @@ describe('CourseCatalog component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('No courses found')).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /reset all filters/i }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /reset all filters/i })).toBeInTheDocument();
     });
   });
 

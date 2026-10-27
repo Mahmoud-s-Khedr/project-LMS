@@ -37,14 +37,18 @@ describe('Security: Financial Ledgers and Independent Grant Provenance', () => {
     const workspaceId = randomUUID();
     const paymentId = randomUUID();
 
-    const res = await client.post(`/workspaces/${workspaceId}/payments/${paymentId}/refunds`, {
-      reason: 'Fraudulent excessive refund',
-      itemAllocations: [],
-    }, {
-      headers: {
-        'Idempotency-Key': `idemp-${randomUUID()}`,
+    const res = await client.post(
+      `/workspaces/${workspaceId}/payments/${paymentId}/refunds`,
+      {
+        reason: 'Fraudulent excessive refund',
+        itemAllocations: [],
       },
-    });
+      {
+        headers: {
+          'Idempotency-Key': `idemp-${randomUUID()}`,
+        },
+      },
+    );
 
     expect([400, 401, 403, 404, 409, 422]).toContain(res.status);
     if (res.status === 409 || res.status === 422) {

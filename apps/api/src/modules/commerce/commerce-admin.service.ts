@@ -12,12 +12,12 @@ import type {
   ProductsQuery,
   CouponsQuery,
 } from '@lms/shared';
-import { productSchema, priceSchema, couponSchema } from '@lms/shared';
+import { productSchema, priceSchema, couponSchema, idempotencyKeySchema } from '@lms/shared';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { PolicyService } from '../../common/authz/policy.service';
 import type { AuthenticatedUser } from '../../common/authz/auth.types';
 import { AuditService } from '../audit/audit.service';
-import { invalid, json, lock, page, pageArgs, type Tx } from './commerce.core';
+import { hash, invalid, json, lock, page, pageArgs, type Tx } from './commerce.core';
 
 export const productInclude = { productCourses: true } satisfies Prisma.ProductInclude;
 export type ProductRow = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
@@ -338,8 +338,21 @@ export class CommerceAdminService {
       expected,
     );
   }
-  createPrice(a: AuthenticatedUser, w: string, id: string, input: PriceCreate, r: string) {
-    return this.change(a, w, r, 'price', id, async (tx) => {
+  async createPrice(
+    a: AuthenticatedUser,
+    w: string,
+    id: string,
+    input: PriceCreate,
+    r: string,
+    key?: string,
+  ) {
+    if (key !== undefined && !idempotencyKeySchema.safeParse(key).success)
+      invalid('Idempotency-Key must be 16..128 characters');
+    const digest = hash({ w, userId: a.id, productId: id, key });
+    const priceId = key
+      ? `${digest.slice(0, 8)}-${digest.slice(8, 12)}-4${digest.slice(13, 16)}-a${digest.slice(17, 20)}-${digest.slice(20, 32)}`
+      : randomUUID();
+    const intent = await this.change(a, w, r, 'price', id, async (tx) => {
       const p = await tx.product.findFirst({ where: { id, workspaceId: w, deletedAt: null } });
       if (!p) throw new NotFoundException();
       if ((p.type === 'SUBSCRIPTION_PLAN') !== (input.interval !== null))
@@ -347,47 +360,77 @@ export class CommerceAdminService {
       if (!supportedCurrency(input.currency)) invalid('Unsupported currency');
       if (input.interval === 'YEAR' && input.intervalCount > 3)
         invalid('Billing interval exceeds three years');
-      const priceId = randomUUID();
-      let stripePriceId: string | null = null;
-      if (this.provider?.enabled) {
-        let remoteProduct = p.stripeProductId;
-        if (!remoteProduct) {
-          const remote = await this.provider.call(
-            'products',
-            'create',
-            { name: p.name },
-            `product-${p.id}`,
-          );
-          remoteProduct = remote.id;
-          await tx.product.update({
-            where: { id: p.id },
-            data: { stripeProductId: remoteProduct },
-          });
-        }
-        const remote = await this.provider.call(
-          'prices',
-          'create',
-          {
-            product: remoteProduct,
-            currency: input.currency,
-            unit_amount: input.amount,
-            ...(input.interval
-              ? {
-                  recurring: {
-                    interval: input.interval.toLowerCase(),
-                    interval_count: input.intervalCount,
-                  },
-                }
-              : {}),
-          },
-          `price-${priceId}`,
-        );
-        stripePriceId = remote.id;
+      const existing = await tx.price.findUnique({ where: { id: priceId } });
+      if (existing) {
+        if (
+          existing.productId !== id ||
+          existing.workspaceId !== w ||
+          existing.currency !== input.currency ||
+          existing.amount !== input.amount ||
+          existing.interval !== input.interval ||
+          existing.intervalCount !== input.intervalCount ||
+          existing.trialDays !== input.trialDays
+        )
+          throw new ConflictException('Idempotency key already used for a different price');
+        return { price: existing, product: p };
       }
+      const price = await tx.price.create({
+        data: {
+          id: priceId,
+          ...input,
+          isActive: this.provider?.enabled ? false : input.isActive,
+          workspaceId: w,
+          productId: id,
+        },
+      });
+      return { price, product: p };
+    });
+    if (!this.provider?.enabled || intent.price.stripePriceId)
+      return { data: priceProjection(intent.price) };
+    const remoteProduct =
+      intent.product.stripeProductId ??
+      (
+        await this.provider.call(
+          'products',
+          'create',
+          { name: intent.product.name },
+          `product-${id}`,
+        )
+      ).id;
+    await this.change(a, w, r, 'product', id, async (tx) => {
+      await tx.product.updateMany({
+        where: { id, workspaceId: w, stripeProductId: null },
+        data: { stripeProductId: remoteProduct },
+      });
+    });
+    const remote = await this.provider.call(
+      'prices',
+      'create',
+      {
+        product: remoteProduct,
+        currency: input.currency,
+        unit_amount: input.amount,
+        ...(input.interval
+          ? {
+              recurring: {
+                interval: input.interval.toLowerCase(),
+                interval_count: input.intervalCount,
+              },
+            }
+          : {}),
+      },
+      `price-${priceId}`,
+    );
+    return this.change(a, w, r, 'price', priceId, async (tx) => {
+      const price = await tx.price.findFirstOrThrow({
+        where: { id: priceId, workspaceId: w, productId: id },
+      });
+      if (price.stripePriceId) return { data: priceProjection(price) };
       return {
         data: priceProjection(
-          await tx.price.create({
-            data: { id: priceId, ...input, workspaceId: w, productId: id, stripePriceId },
+          await tx.price.update({
+            where: { id: priceId },
+            data: { stripePriceId: remote.id, isActive: input.isActive },
           }),
         ),
       };

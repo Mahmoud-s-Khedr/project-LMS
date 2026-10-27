@@ -63,9 +63,7 @@ describe('ProductCatalog component', () => {
     const bundleFilterBtn = screen.getByRole('button', { name: /course bundles/i });
     fireEvent.click(bundleFilterBtn);
 
-    expect(fetchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'BUNDLE' }),
-    );
+    expect(fetchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'BUNDLE' }));
   });
 
   it('renders empty state when no products match', async () => {

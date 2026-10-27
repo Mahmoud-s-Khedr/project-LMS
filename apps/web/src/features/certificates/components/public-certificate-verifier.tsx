@@ -60,8 +60,8 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
           Verify Certificate Authenticity
         </h1>
         <p className="mx-auto max-w-lg text-sm text-muted-foreground">
-          Enter a certificate verification code issued by {siteConfig.name} to confirm its integrity,
-          completion status, and issuer credentials.
+          Enter a certificate verification code issued by {siteConfig.name} to confirm its
+          integrity, completion status, and issuer credentials.
         </p>
 
         {/* Search Bar */}
@@ -78,11 +78,7 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
             />
           </div>
           <Button type="submit" disabled={isLoading || !codeInput.trim()}>
-            {isLoading ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              'Verify'
-            )}
+            {isLoading ? <Loader2 className="size-4 animate-spin" /> : 'Verify'}
           </Button>
         </form>
       </div>
@@ -105,12 +101,11 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
             <div className="rounded-2xl bg-destructive/10 p-3 text-destructive">
               <ShieldAlert className="size-8" />
             </div>
-            <h3 className="text-base font-semibold text-destructive">
-              Certificate Not Verified
-            </h3>
+            <h3 className="text-base font-semibold text-destructive">Certificate Not Verified</h3>
             <p className="max-w-md text-xs sm:text-sm text-muted-foreground">
               We could not locate a valid certificate with verification code{' '}
-              <code className="font-mono font-medium text-foreground">{activeCode}</code>. Please double-check the code or contact the issuer.
+              <code className="font-mono font-medium text-foreground">{activeCode}</code>. Please
+              double-check the code or contact the issuer.
             </p>
           </CardContent>
         </Card>
@@ -158,7 +153,8 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
                 {verification.courseTitle}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Issued by <span className="font-medium text-foreground">{verification.issuerName}</span>
+                Issued by{' '}
+                <span className="font-medium text-foreground">{verification.issuerName}</span>
               </p>
             </div>
           </CardHeader>
@@ -190,9 +186,7 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
                   <Lock className="size-4" />
                   Verification Code
                 </span>
-                <span className="font-mono text-xs text-foreground/80">
-                  {activeCode}
-                </span>
+                <span className="font-mono text-xs text-foreground/80">{activeCode}</span>
               </div>
             </div>
 
@@ -202,8 +196,9 @@ export function PublicCertificateVerifier({ initialCode = '' }: PublicCertificat
                 Privacy & Cryptographic Integrity Notice
               </p>
               <p className="mt-1 leading-relaxed">
-                To protect student data rights, recipient personal names are privacy-masked in public verification.
-                This verification record is cryptographically guaranteed by {siteConfig.name}.
+                To protect student data rights, recipient personal names are privacy-masked in
+                public verification. This verification record is cryptographically guaranteed by{' '}
+                {siteConfig.name}.
               </p>
             </div>
           </CardContent>

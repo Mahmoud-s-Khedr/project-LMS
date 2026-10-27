@@ -50,7 +50,15 @@ export const AUTHORING_QUERY_KEYS = {
   cohortEnrollments: (workspaceId: string, courseId: string, cohortId: string) =>
     ['authoring', workspaceId, 'course', courseId, 'cohort', cohortId, 'enrollments'] as const,
   liveAttendance: (workspaceId: string, courseId: string, sessionId: string) =>
-    ['authoring', workspaceId, 'course', courseId, 'live-session', sessionId, 'attendance'] as const,
+    [
+      'authoring',
+      workspaceId,
+      'course',
+      courseId,
+      'live-session',
+      sessionId,
+      'attendance',
+    ] as const,
 };
 
 // ==========================================
@@ -302,7 +310,10 @@ export function useReorderSectionsMutation(workspaceId: string, courseId: string
   return useMutation({
     mutationFn: (ids: string[]) => api.reorderSections(workspaceId, courseId, ids),
     onSuccess: (updatedSections) => {
-      queryClient.setQueryData(AUTHORING_QUERY_KEYS.sections(workspaceId, courseId), updatedSections);
+      queryClient.setQueryData(
+        AUTHORING_QUERY_KEYS.sections(workspaceId, courseId),
+        updatedSections,
+      );
     },
   });
 }
@@ -316,7 +327,8 @@ export function useLessonQuery(
   return useQuery<Lesson>({
     queryKey: AUTHORING_QUERY_KEYS.lesson(workspaceId, courseId, lessonId),
     queryFn: () => api.fetchLesson(workspaceId, courseId, lessonId),
-    enabled: (options?.enabled ?? true) && Boolean(workspaceId) && Boolean(courseId) && Boolean(lessonId),
+    enabled:
+      (options?.enabled ?? true) && Boolean(workspaceId) && Boolean(courseId) && Boolean(lessonId),
   });
 }
 
@@ -537,10 +549,7 @@ export function useDeleteCohortReleaseMutation(workspaceId: string, courseId: st
 // Staff Permissions Hook
 // ==========================================
 
-export function useCoursePermissions(
-  workspaceId: string,
-  courseId: string,
-): StaffCapabilities {
+export function useCoursePermissions(workspaceId: string, courseId: string): StaffCapabilities {
   const { data: me } = useMeQuery();
   const { data: staffList } = useCourseStaffQuery(workspaceId, courseId, {
     enabled: Boolean(courseId) && Boolean(workspaceId),

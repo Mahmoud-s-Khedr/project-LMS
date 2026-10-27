@@ -47,7 +47,11 @@ export function computeStripeSignature(
   secret: string = 'whsec_test_secret_for_qa_testing_only_12345',
   timestamp: number = Math.floor(Date.now() / 1000),
 ): string {
-  return new Stripe('sk_test_local_fixture').webhooks.generateTestHeaderString({ payload: rawBody, secret, timestamp });
+  return new Stripe('sk_test_local_fixture').webhooks.generateTestHeaderString({
+    payload: rawBody,
+    secret,
+    timestamp,
+  });
 }
 
 /**

@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { EventType } from '@lms/shared';
-import { CONSUMER_NAME_MAX, CONSUMER_NAME_PATTERN, EVENT_CONSUMERS, EVENT_CONTRACTS } from './events.options';
+import {
+  CONSUMER_NAME_MAX,
+  CONSUMER_NAME_PATTERN,
+  EVENT_CONSUMERS,
+  EVENT_CONTRACTS,
+} from './events.options';
 import type { EventContracts } from './event-contracts';
 import type { AnyEventConsumer, EventConsumer } from './event-consumer';
 
@@ -24,13 +29,18 @@ export class EventConsumerRegistry {
         throw new Error(`Invalid event consumer name "${name}"`);
       }
       if (this.byName.has(name)) throw new Error(`Duplicate event consumer name "${name}"`);
-      if (consumer.eventTypes.length === 0) throw new Error(`Event consumer "${name}" subscribes to no types`);
-      if (consumer.maxAttempts !== undefined && (!Number.isInteger(consumer.maxAttempts) || consumer.maxAttempts < 1)) {
+      if (consumer.eventTypes.length === 0)
+        throw new Error(`Event consumer "${name}" subscribes to no types`);
+      if (
+        consumer.maxAttempts !== undefined &&
+        (!Number.isInteger(consumer.maxAttempts) || consumer.maxAttempts < 1)
+      ) {
         throw new Error(`Event consumer "${name}" has invalid maxAttempts`);
       }
       const types = new Set<string>(consumer.eventTypes);
       for (const type of types) {
-        if (!contracts.isKnownType(type)) throw new Error(`Event consumer "${name}" subscribes to unknown type ${type}`);
+        if (!contracts.isKnownType(type))
+          throw new Error(`Event consumer "${name}" subscribes to unknown type ${type}`);
         const list = this.byType.get(type) ?? [];
         list.push(consumer);
         this.byType.set(type, list);

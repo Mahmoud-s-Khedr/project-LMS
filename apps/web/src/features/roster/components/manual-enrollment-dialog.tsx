@@ -22,10 +22,7 @@ interface ManualEnrollmentDialogProps {
   courseId: string;
 }
 
-export function ManualEnrollmentDialog({
-  workspaceId,
-  courseId,
-}: ManualEnrollmentDialogProps) {
+export function ManualEnrollmentDialog({ workspaceId, courseId }: ManualEnrollmentDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [userId, setUserId] = React.useState('');
   const [cohortId, setCohortId] = React.useState('');

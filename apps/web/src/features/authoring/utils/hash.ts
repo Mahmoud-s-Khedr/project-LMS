@@ -62,8 +62,7 @@ export interface ComputeSha256Options {
 // ============================================================================
 
 const INITIAL_H = new Uint32Array([
-  0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-  0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+  0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
 ]);
 
 const K = new Uint32Array([
@@ -346,7 +345,9 @@ function runWorkerSha256(
 
     const onAbort = () => {
       cleanup();
-      reject(options?.signal?.reason ?? new DOMException('The operation was aborted', 'AbortError'));
+      reject(
+        options?.signal?.reason ?? new DOMException('The operation was aborted', 'AbortError'),
+      );
     };
 
     if (options?.signal?.aborted) {
@@ -416,7 +417,8 @@ export async function computeSha256(
     throw options.signal.reason ?? new DOMException('The operation was aborted', 'AbortError');
   }
 
-  const chunkSize = options?.chunkSize && options.chunkSize > 0 ? options.chunkSize : DEFAULT_CHUNK_SIZE;
+  const chunkSize =
+    options?.chunkSize && options.chunkSize > 0 ? options.chunkSize : DEFAULT_CHUNK_SIZE;
 
   // Attempt Web Worker off-thread hashing if practical (Blob/File in browser with Worker support, and no custom hasher factory override)
   const isBlobOrFile = typeof Blob !== 'undefined' && data instanceof Blob;
@@ -447,8 +449,7 @@ export async function computeSha256(
 
   // Check if data is ArrayBuffer (safe across realms/jsdom/workers)
   const isArrayBuffer =
-    data instanceof ArrayBuffer ||
-    Object.prototype.toString.call(data) === '[object ArrayBuffer]';
+    data instanceof ArrayBuffer || Object.prototype.toString.call(data) === '[object ArrayBuffer]';
 
   if (isArrayBuffer) {
     const totalBytes = (data as ArrayBuffer).byteLength;

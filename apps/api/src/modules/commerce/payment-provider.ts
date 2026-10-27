@@ -52,8 +52,9 @@ export class StripePaymentProvider implements PaymentProvider {
   private readonly sdk: StripeSdk | null;
   constructor() {
     const key = process.env.STRIPE_SECRET_KEY;
-    // This deployment deliberately supports test keys only.
-    this.enabled = !!key?.startsWith('sk_test_') && !!process.env.STRIPE_WEBHOOK_SECRET;
+    const mode = process.env.STRIPE_MODE ?? 'test';
+    this.enabled =
+      !!key && new RegExp(`^(sk|rk)_${mode}_`).test(key) && !!process.env.STRIPE_WEBHOOK_SECRET;
     this.sdk = this.enabled ? loadStripe(key!) : null;
   }
   verify(raw: Buffer, signature: string): ProviderEvent {
@@ -62,7 +63,12 @@ export class StripePaymentProvider implements PaymentProvider {
       const event = stripeEvent.parse(
         this.sdk.webhooks.constructEvent(raw, signature, process.env.STRIPE_WEBHOOK_SECRET!),
       );
-      if (event.livemode || event.api_version !== STRIPE_API_VERSION)
+      if (
+        event.livemode !== (process.env.STRIPE_MODE === 'live') ||
+        (typeof event.data.object.livemode === 'boolean' &&
+          event.data.object.livemode !== event.livemode) ||
+        event.api_version !== STRIPE_API_VERSION
+      )
         throw new Error('Unsupported event');
       return event;
     } catch {
@@ -94,6 +100,11 @@ export class StripePaymentProvider implements PaymentProvider {
         throw new BadRequestException('Payment provider rejected operation');
       throw new ServiceUnavailableException('Payment provider unavailable');
     }
+    if (
+      typeof (result as Record<string, unknown>)?.livemode === 'boolean' &&
+      (result as Record<string, unknown>).livemode !== (process.env.STRIPE_MODE === 'live')
+    )
+      throw new BadRequestException('Payment mode mismatch');
     return action === 'list'
       ? stripeObject.parse({ id: 'list', ...(result as Record<string, unknown>) })
       : stripeObject.parse(result);

@@ -1,7 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { AlertCircle, ChevronLeft, ChevronRight, Loader2, Search, ShieldAlert, UserCog } from 'lucide-react';
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Search,
+  ShieldAlert,
+  UserCog,
+} from 'lucide-react';
 import type { SafeUser } from '@lms/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,7 +59,10 @@ export function UsersTable() {
       pageSize,
       search: debouncedSearch.trim() || undefined,
       platformRole: roleFilter !== 'ALL' ? (roleFilter as 'STUDENT' | 'SUPER_ADMIN') : undefined,
-      status: statusFilter !== 'ALL' ? (statusFilter as 'ACTIVE' | 'SUSPENDED' | 'ANONYMIZED') : undefined,
+      status:
+        statusFilter !== 'ALL'
+          ? (statusFilter as 'ACTIVE' | 'SUSPENDED' | 'ANONYMIZED')
+          : undefined,
     };
   }, [page, pageSize, debouncedSearch, roleFilter, statusFilter]);
 
@@ -89,7 +100,10 @@ export function UsersTable() {
     }
 
     // Self-lockout check
-    if (me?.id === selectedUser.id && (targetStatus === 'SUSPENDED' || targetRole !== 'SUPER_ADMIN')) {
+    if (
+      me?.id === selectedUser.id &&
+      (targetStatus === 'SUSPENDED' || targetRole !== 'SUPER_ADMIN')
+    ) {
       const confirmed = window.confirm(
         'Warning: You are modifying your own platform privileges. This could lock you out of admin controls. Proceed?',
       );
@@ -279,8 +293,8 @@ export function UsersTable() {
       {data && data.meta.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground px-1">
           <div>
-            Showing {(page - 1) * pageSize + 1} to{' '}
-            {Math.min(page * pageSize, data.meta.total)} of {data.meta.total} users
+            Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, data.meta.total)} of{' '}
+            {data.meta.total} users
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -316,7 +330,8 @@ export function UsersTable() {
           <DialogHeader>
             <DialogTitle>Manage Platform User</DialogTitle>
             <DialogDescription>
-              Update platform role and account status for {selectedUser?.name} ({selectedUser?.email}).
+              Update platform role and account status for {selectedUser?.name} (
+              {selectedUser?.email}).
             </DialogDescription>
           </DialogHeader>
 
@@ -361,7 +376,8 @@ export function UsersTable() {
               <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
                 <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>
-                  Suspending a user invalidates all their active authentication sessions immediately.
+                  Suspending a user invalidates all their active authentication sessions
+                  immediately.
                 </span>
               </div>
             )}
@@ -382,7 +398,12 @@ export function UsersTable() {
             </div>
 
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={handleCloseEdit} disabled={updateMutation.isPending}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCloseEdit}
+                disabled={updateMutation.isPending}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>

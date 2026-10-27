@@ -124,7 +124,9 @@ describe('validateCourseForPublish', () => {
     const result = validateCourseForPublish(baseCourse, invalidPreviewSections);
     expect(result.isValid).toBe(false);
     expect(result.errors.some((e) => e.field === 'isPreview')).toBe(true);
-    expect(result.errors[0]?.message).toContain('protected QUIZ and cannot be marked as a free preview');
+    expect(result.errors[0]?.message).toContain(
+      'protected QUIZ and cannot be marked as a free preview',
+    );
   });
 
   it('enforces completion rule constraints (WATCH_PERCENT requires video, ASSESSMENT_PASS requires assessment)', () => {

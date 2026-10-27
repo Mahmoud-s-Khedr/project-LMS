@@ -4,13 +4,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Heading,
-  Quote,
-  Code,
-  Eye,
-  Edit3,
-} from 'lucide-react';
+import { Heading, Quote, Code, Eye, Edit3 } from 'lucide-react';
 import {
   plainTextToRichText,
   richTextToPlainText,
@@ -135,7 +129,9 @@ export function RichTextEditor({
           className={`border-0 rounded-none resize-y focus-visible:ring-0 focus-visible:ring-offset-0 p-3 font-sans text-sm ${minHeight}`}
         />
       ) : (
-        <div className={`p-4 prose prose-sm max-w-none dark:prose-invert overflow-y-auto ${minHeight}`}>
+        <div
+          className={`p-4 prose prose-sm max-w-none dark:prose-invert overflow-y-auto ${minHeight}`}
+        >
           {value?.content && value.content.length > 0 ? (
             value.content.map((block, idx) => {
               const text = block.content.map((n) => n.text).join('');
@@ -158,7 +154,10 @@ export function RichTextEditor({
               }
               if (block.type === 'codeBlock') {
                 return (
-                  <pre key={idx} className="bg-muted rounded p-3 text-xs font-mono my-2 overflow-x-auto">
+                  <pre
+                    key={idx}
+                    className="bg-muted rounded p-3 text-xs font-mono my-2 overflow-x-auto"
+                  >
                     <code>{text}</code>
                   </pre>
                 );

@@ -24,6 +24,7 @@ import { useLoginMutation } from '../hooks';
 import { fetchCurrentUser } from '../api';
 import { loginFormSchema, type AuthSessionData, type LoginFormValues } from '../schemas';
 import { AuthErrorBanner } from './auth-error-banner';
+import { safeRedirect } from '@/lib/safe-redirect';
 import { siteConfig } from '@/features/marketing/site-config';
 
 export interface LoginFormProps {
@@ -54,9 +55,9 @@ export function LoginForm({ redirectTo, onSuccess }: LoginFormProps) {
 
       // Honour ?redirect parameter if safe relative path
       const redirectQuery = searchParams?.get('redirect') ?? undefined;
-      const targetRedirect = redirectTo ?? redirectQuery;
+      const targetRedirect = safeRedirect(redirectTo ?? redirectQuery);
 
-      if (targetRedirect && targetRedirect.startsWith('/') && !targetRedirect.startsWith('//')) {
+      if (targetRedirect) {
         if (onSuccess) {
           onSuccess(session);
         }

@@ -107,7 +107,10 @@ export function decodeOperationsCursor(cursor: string): CursorKey {
   return { createdAt, id };
 }
 
-export function deriveOperationErrorCode(status: OutboxStatus, lastError: string | null): string | null {
+export function deriveOperationErrorCode(
+  status: OutboxStatus,
+  lastError: string | null,
+): string | null {
   if (!lastError) return status === 'DEAD' ? 'EVENT_DEAD' : null;
   if (lastError.startsWith('Envelope validation failed:')) return 'CONTRACT_VIOLATION';
   if (lastError.startsWith('Dispatch failed:')) return 'DISPATCH_FAILED';
@@ -143,10 +146,16 @@ export class EventReplayService {
     return this.options.workspaceReplayableTypes.includes(type);
   }
 
-  async list(scope: OperationsScope, input: OperationsListFilters = {}): Promise<OperationsEventsPage> {
+  async list(
+    scope: OperationsScope,
+    input: OperationsListFilters = {},
+  ): Promise<OperationsEventsPage> {
     const filters = operationsListFiltersSchema.parse(input);
     if (filters.type && !this.contracts.isKnownType(filters.type)) {
-      throw new BadRequestException({ code: 'VALIDATION_FAILED', message: `Unknown event type ${filters.type}` });
+      throw new BadRequestException({
+        code: 'VALIDATION_FAILED',
+        message: `Unknown event type ${filters.type}`,
+      });
     }
     const and: Prisma.OutboxEventWhereInput[] = [];
     if (scope.kind === 'workspace') and.push({ workspaceId: scope.workspaceId });
@@ -156,7 +165,10 @@ export class EventReplayService {
     if (filters.cursor) {
       const key = decodeOperationsCursor(filters.cursor);
       and.push({
-        OR: [{ createdAt: { lt: key.createdAt } }, { createdAt: key.createdAt, id: { lt: key.id } }],
+        OR: [
+          { createdAt: { lt: key.createdAt } },
+          { createdAt: key.createdAt, id: { lt: key.id } },
+        ],
       });
     }
 

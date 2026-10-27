@@ -55,7 +55,12 @@ export function AssessmentAnalyticsCard({
         ) : isError ? (
           <div className="py-6 text-center text-destructive text-xs">
             Failed to load assessment statistics.{' '}
-            <Button variant="link" size="sm" onClick={() => refetch()} className="text-xs p-0 h-auto">
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => refetch()}
+              className="text-xs p-0 h-auto"
+            >
               Retry
             </Button>
           </div>
@@ -81,16 +86,20 @@ export function AssessmentAnalyticsCard({
                   const attempts = Number(item.attempts);
                   const passed = Number(item.passed);
                   const awaiting = Number(item.awaitingManualGrading);
-                  const passRate =
-                    attempts > 0 ? ((passed / attempts) * 100).toFixed(1) : '—';
+                  const passRate = attempts > 0 ? ((passed / attempts) * 100).toFixed(1) : '—';
 
                   return (
                     <TableRow key={item.assessmentId} className="text-xs">
-                      <TableCell className="font-mono text-muted-foreground truncate max-w-[140px]" title={item.assessmentId}>
+                      <TableCell
+                        className="font-mono text-muted-foreground truncate max-w-[140px]"
+                        title={item.assessmentId}
+                      >
                         {item.assessmentId}
                       </TableCell>
                       <TableCell className="text-right font-medium">{attempts}</TableCell>
-                      <TableCell className="text-right text-emerald-600 font-medium">{passed}</TableCell>
+                      <TableCell className="text-right text-emerald-600 font-medium">
+                        {passed}
+                      </TableCell>
                       <TableCell className="text-right font-mono">
                         {passRate !== '—' ? `${passRate}%` : '—'}
                       </TableCell>
@@ -104,7 +113,10 @@ export function AssessmentAnalyticsCard({
                             {awaiting} Pending
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] text-emerald-600 border-emerald-300"
+                          >
                             Clear
                           </Badge>
                         )}

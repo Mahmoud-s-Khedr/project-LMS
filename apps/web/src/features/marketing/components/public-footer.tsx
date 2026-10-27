@@ -17,7 +17,8 @@ export function PublicFooter() {
                 <BookOpen className="size-5" aria-hidden="true" />
               </span>
               <span>
-                {siteConfig.name}<span className="text-primary">.</span>
+                {siteConfig.name}
+                <span className="text-primary">.</span>
               </span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -63,8 +64,8 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/#pricing" className="transition-colors hover:text-foreground">
-                  All-Access Learner Pass
+                <Link href="/products" className="transition-colors hover:text-foreground">
+                  Browse Products
                 </Link>
               </li>
               <li>
@@ -137,7 +138,10 @@ export function PublicFooter() {
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} {siteConfig.footerLegalName}. Crafted for deliberate learning.</p>
+          <p>
+            © {new Date().getFullYear()} {siteConfig.footerLegalName}. Crafted for deliberate
+            learning.
+          </p>
           <div className="flex flex-wrap gap-6">
             <span>WCAG 2.2 AA Accessible</span>
             <span>Privacy & GDPR Ready</span>

@@ -11,7 +11,7 @@ import { ContentModule } from './content.module';
 import { MediaModule } from '../media/media.module';
 import { Pool } from 'pg';
 import { randomUUID, createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { execFile } from 'node:child_process';
@@ -131,7 +131,11 @@ integration('Content isolated PostgreSQL + object storage', () => {
     } finally {
       await bootstrap.end();
     }
-    const env = parse(readFileSync(resolve('../../.env')));
+    const envFile = resolve('../../.env');
+    const env: Record<string, string | undefined> = {
+      ...(existsSync(envFile) ? parse(readFileSync(envFile)) : {}),
+      ...process.env,
+    };
     config = new ConfigService({
       ...env,
       DATABASE_URL: url.toString(),

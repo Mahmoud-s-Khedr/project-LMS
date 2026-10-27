@@ -90,11 +90,11 @@ jobs:
       - name: Run ESLint
         run: pnpm lint
 
-      - name: Run TypeScript typecheck
-        run: pnpm -r typecheck
-
       - name: Generate Prisma Client
         run: pnpm db:generate
+
+      - name: Run TypeScript typecheck
+        run: pnpm -r typecheck
 
       - name: Apply Prisma migrations
         run: pnpm --filter @lms/api exec prisma migrate deploy

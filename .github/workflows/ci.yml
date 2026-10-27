@@ -114,6 +114,9 @@ jobs:
       - name: Build monorepo packages & applications
         run: pnpm build
 
+      - name: Install ffmpeg for media transcoding tests
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
       - name: Run Unit & Isolated PostgreSQL test suites
         run: node scripts/test-postgres.mjs
 

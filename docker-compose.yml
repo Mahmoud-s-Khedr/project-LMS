@@ -1,0 +1,85 @@
+name: lms
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lms_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-lms}
+    ports: ['127.0.0.1:55432:5432']
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    ports: ['127.0.0.1:56379:6379']
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    # The original minio/minio and minio/mc repositories are no longer public.
+    # This maintained image contains both binaries; pin its verified digest.
+    image: cgr.dev/chainguard/minio@sha256:268d68a2a3b6fc65f905a61f84d7eab6345ce6bff14f551e2b028ec31e6a1341
+    user: '0:0'
+    restart: unless-stopped
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:-lms_minio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:-lms_minio_dev_password}
+    ports: ['127.0.0.1:59000:9000', '127.0.0.1:59001:9001']
+    volumes: [minio_data:/data]
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mc --config-dir /tmp/mc-health alias set health http://localhost:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" >/dev/null && mc --config-dir /tmp/mc-health ready health',
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  bucket-init:
+    image: cgr.dev/chainguard/minio@sha256:268d68a2a3b6fc65f905a61f84d7eab6345ce6bff14f551e2b028ec31e6a1341
+    depends_on:
+      minio: { condition: service_healthy }
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:-lms_minio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:-lms_minio_dev_password}
+    entrypoint: ['/bin/sh', '-ec']
+    command:
+      - |
+        mc --config-dir /tmp/mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"
+        mc --config-dir /tmp/mc mb --ignore-existing local/lms-private local/lms-public
+        mc --config-dir /tmp/mc anonymous set none local/lms-private
+        mc --config-dir /tmp/mc anonymous set download local/lms-public
+
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    restart: unless-stopped
+    ports: ['127.0.0.1:58025:8025', '127.0.0.1:51025:1025']
+    volumes: [mailpit_data:/data]
+    environment:
+      MP_DATABASE: /data/mailpit.db
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  mailpit_data:

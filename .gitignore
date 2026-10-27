@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example
+!.env.*.example
+.DS_Store
+apps/api/prisma/_bootstrap.prisma
+
+# Browser regression artifacts
+playwright-report/
+test-results/

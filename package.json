@@ -1,0 +1,44 @@
+{
+  "name": "lms",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.12.0 <23",
+    "pnpm": ">=10 <11"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:migrate": "pnpm --filter @lms/api db:migrate",
+    "db:generate": "pnpm --filter @lms/api db:generate",
+    "db:seed": "pnpm --filter @lms/api db:seed",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "postinstall": "pnpm --filter @lms/shared build",
+    "test:security": "node scripts/test-http.mjs security",
+    "test:e2e": "node scripts/test-http.mjs e2e",
+    "test:load": "node tests/load/autocannon-benchmarks.js",
+    "storage:bootstrap": "bash scripts/bootstrap-storage.sh",
+    "check:api-paths": "node scripts/check-api-paths.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@next/eslint-plugin-next": "15.5.28",
+    "@playwright/test": "1.64.1",
+    "@types/node": "22.20.5",
+    "autocannon": "8.0.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.9.10",
+    "turbo": "2.11.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.0"
+  }
+}

@@ -1,0 +1,22 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Nest CLI pins an older webpack while schema-utils requires this stable patch line.
+overrides:
+  webpack: 5.112.2
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - esbuild
+  - prisma
+  - sharp
+  - unrs-resolver
+  - argon2
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+  - msgpackr-extract

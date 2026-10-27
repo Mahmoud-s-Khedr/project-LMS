@@ -1,0 +1,4838 @@
+{
+  "revision": "p1-c.v1",
+  "importPath": "@lms/shared",
+  "canonicalRoutes": 198,
+  "requestedExtensions": 6,
+  "versionedEvents": 21,
+  "serialization": {
+    "uuid": "UUID string",
+    "timestamp": "RFC3339 UTC with Z",
+    "date": "YYYY-MM-DD calendar date",
+    "decimal": "base-10 string; <=3 fractional digits; percent <=2",
+    "bigint": "canonical unsigned digit string; max signed PostgreSQL bigint",
+    "money": "nonnegative PostgreSQL Int minor units; lowercase ISO currency code syntax",
+    "timezone": "IANA timezone via Intl; authored scheduling localized by course/cohort timezone",
+    "pagination": "opaque base64url cursor; limits 1..100; from inclusive/to exclusive",
+    "patch": "omitted preserved; explicit null only for nullable fields; no create defaults injected",
+    "idempotency": "16..128 printable key characters; tenant/user/route/body-hash checked server-side"
+  },
+  "files": [
+    {
+      "path": "packages/shared/src/administration/index.ts",
+      "owner": "P1-C",
+      "sha256": "121f15542468052939d8af977659d88637fbba223a2e2ce0452a10eca164c710"
+    },
+    {
+      "path": "packages/shared/src/analytics/index.ts",
+      "owner": "P1-C",
+      "sha256": "36948d85c5f0b7acb3929de12579b5d72cf3bb2b60edb53b5619a1cd55fb2a4e"
+    },
+    {
+      "path": "packages/shared/src/assessments/index.ts",
+      "owner": "P1-C",
+      "sha256": "350e782d8b3f5ea774fd7488678f931dd28723972d3641eb05eac29c9d348473"
+    },
+    {
+      "path": "packages/shared/src/auth/index.ts",
+      "owner": "P1-BE-IDENTITY",
+      "sha256": "a0ba35dbd3c15a6f5c5451cd845744a8c138bc2784803807deae74d933a2b2c3"
+    },
+    {
+      "path": "packages/shared/src/catalog/index.ts",
+      "owner": "P1-C",
+      "sha256": "f489674e127d12b5a7fa4bec53d44fd4ae522829be233cd07fd0137ba95db155"
+    },
+    {
+      "path": "packages/shared/src/commerce/index.ts",
+      "owner": "P1-C",
+      "sha256": "08a448b515b46a8a19c7856e67e4a2ab028ddbc96146a0e018969c415a9f1d74"
+    },
+    {
+      "path": "packages/shared/src/content/index.ts",
+      "owner": "P1-C",
+      "sha256": "4482a863eedc780b827d0214a6935d6af125ec24667bd93dabffe9ae63da791c"
+    },
+    {
+      "path": "packages/shared/src/endpoints.ts",
+      "owner": "P1-C",
+      "sha256": "ac2f633e9cb9b8a801439d1ae3a4f81c9db8f65197e742379112220392535602"
+    },
+    {
+      "path": "packages/shared/src/engagement/index.ts",
+      "owner": "P1-C",
+      "sha256": "7c89c626f8086adbd9f0d9e58d4417a9fe82fa82621c6bbd5f651aa036f7e0fe"
+    },
+    {
+      "path": "packages/shared/src/enums.ts",
+      "owner": "P1-C",
+      "sha256": "58f761cdbadb168da4938b2927d7a2434edbfd18c1e5dc22b27dd193ab694b94"
+    },
+    {
+      "path": "packages/shared/src/errors.ts",
+      "owner": "P1-C",
+      "sha256": "e46b65c73643efd64e35e737c63c9b356ec044740a8fe8b5a336069cae0cc76c"
+    },
+    {
+      "path": "packages/shared/src/events/index.ts",
+      "owner": "P1-C",
+      "sha256": "e8edf79a58cc7afbd2ff72b226f3a810113d379e238b665044ba69a90437b47f"
+    },
+    {
+      "path": "packages/shared/src/fixtures/index.ts",
+      "owner": "P1-C",
+      "sha256": "06eadcdd0f84d488a5bc6c74db5e3e70bbf1ee68b58c3452ea7bc4343b2e5fb8"
+    },
+    {
+      "path": "packages/shared/src/learning/index.ts",
+      "owner": "P1-C",
+      "sha256": "ed4e4ae33f6dda7bc18f8fb8c08e740aa82a101a61729312039f6a89bd09b0ba"
+    },
+    {
+      "path": "packages/shared/src/media/index.ts",
+      "owner": "P1-C",
+      "sha256": "2219f3e622c45cb424e12cade718d188b54f37ce9db736dc18a60e53a726e2ef"
+    },
+    {
+      "path": "packages/shared/src/pagination.ts",
+      "owner": "P1-C",
+      "sha256": "45d311b179223d1043fcda60c987a326b5ff76f46325adabe6388b2ecd528aca"
+    },
+    {
+      "path": "packages/shared/src/primitives.ts",
+      "owner": "P1-C",
+      "sha256": "80fc0b08444e34a1b434cdad0f315a0b074fdcb6b4f9f7ea667d9226bd3a287f"
+    },
+    {
+      "path": "packages/shared/src/roles.ts",
+      "owner": "P1-C",
+      "sha256": "a6d5d249d166a4b463ead40144fe02ef852b111696dc12be348a012048242524"
+    },
+    {
+      "path": "packages/shared/src/schema-types.ts",
+      "owner": "P1-C",
+      "sha256": "6a242207154cf2435a3563d9b893f088a641dc03f157c220628b3939e81a763f"
+    },
+    {
+      "path": "packages/shared/src/tenancy/index.ts",
+      "owner": "P1-C",
+      "sha256": "126f61e8b0a21fb9959135f4f914c52281934b137fc9fb302b150f28170fd8d3"
+    },
+    {
+      "path": "packages/shared/src/users/index.ts",
+      "owner": "P1-BE-IDENTITY",
+      "sha256": "74cc32cc51310a0fe4b992f11a3acd884ee6d45096cc927c844aae6d290ab298"
+    }
+  ],
+  "symbols": [
+    {
+      "symbol": "AcceptedResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AccessPolicy",
+      "kind": "interface",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "AccessReason",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Accommodation",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AccommodationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AccommodationUpsert",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "ActivityBatch",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "ActivityBatchResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AdminSubscriptionCancel",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "AdminUserCreate",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "AdminUserDelete",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AdminUserUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "AdminUsersQuery",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "AdminUsersResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AdminWorkspace",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AdminWorkspaceResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AdminWorkspaceUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "AdminWorkspacesQuery",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "AdminWorkspacesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AnalyticsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "AnswerSave",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AnswerSaveResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ApiError",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ApiErrorDetail",
+      "kind": "type",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "ApiErrorEnvelope",
+      "kind": "type",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "ApplicationPath",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Assessment",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentAnalytics",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentAnalyticsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentCreate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AssessmentKind",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssessmentKind",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssessmentPoolsReplace",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AssessmentQuestionsReplace",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AssessmentResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentResultReader",
+      "kind": "interface",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "AssessmentStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssessmentStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssessmentVersion",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentVersionConfig",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AssessmentVersionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssessmentVersionUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "Asset",
+      "kind": "type",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "AssetComplete",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssetCompleteResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssetPurpose",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssetResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssetStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssetStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssetUpload",
+      "kind": "type",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "AssetUploadResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AssetVisibility",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AssetVisibility",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AttemptStart",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AttemptStartResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttemptState",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttemptStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AttemptStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AttemptSubmitResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttemptsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AttemptsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Attendance",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttendanceListResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttendanceResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AttendanceStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AttendanceStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "AttendanceUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "AuditLog",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "AuditLogsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "AuditLogsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AuthResponse",
+      "kind": "type",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "AuthorQuestion",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AuthorQuestionPayload",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "AuthorQuestionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AuthorQuestionVersion",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AuthorQuestionsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AvatarComplete",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "AvatarUpload",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "AvatarUploadResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "BillingInterval",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "BillingInterval",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "BillingPortalInput",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "BillingPortalResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "BusinessNotificationType",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CONTRACT_REVISION",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "CapabilityUrl",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CatalogCourseResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CatalogCoursesQuery",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CatalogCoursesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CatalogPrice",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CatalogProductsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CategoriesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Category",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CategoryCreate",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CategoryResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CategoryUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "Certificate",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "CertificateIssue",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateIssueResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateLayout",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateRevoke",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CertificateStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CertificateTemplate",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateTemplateCreate",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "CertificateTemplateResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateTemplateUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "CertificateTemplatesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificateVerification",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "CertificateVerificationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CertificatesQuery",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "CertificatesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ChangePassword",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ChangePasswordInput",
+      "kind": "type",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "CheckoutQuote",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CheckoutQuoteInput",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CheckoutQuoteResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CheckoutSession",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CheckoutSessionInput",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CheckoutSessionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ClientActivityEvent",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "Cohort",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "CohortCreate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "CohortReleaseUpsert",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "CohortResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CohortUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "CohortsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CohortsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CompletionRule",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CompletionRule",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Coupon",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CouponCode",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CouponCreate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CouponKind",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CouponKind",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CouponProductsReplace",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CouponResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CouponUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CouponsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "CouponsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Course",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CourseAnalyticsOverview",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "CourseAnalyticsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CourseCategories",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CourseCreate",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CoursePrerequisite",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CoursePrerequisites",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CourseResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CourseStaff",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CourseStaffListResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CourseStaffResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CourseStaffUpsert",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CourseStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CourseStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "CourseUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CoursesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CsrfResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Currency",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Cursor",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CursorMeta",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CursorPayload",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "CursorQuery",
+      "kind": "type",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "CursorResponse",
+      "kind": "interface",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "DailyCourseMetric",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Date",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Decimal",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "DeliveryMode",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "DeliveryMode",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "DeliveryStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "DeliveryStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "DigitString",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "DomainEvent",
+      "kind": "type",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "DownloadCapability",
+      "kind": "type",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "DownloadResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EditHeaders",
+      "kind": "type",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "EffectiveAccess",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "EffectiveAssessmentResult",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "Email",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EmailRequest",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EmptyInput",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EndpointContract",
+      "kind": "type",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "EndpointInput",
+      "kind": "type",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "EndpointQuery",
+      "kind": "type",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "EndpointResponse",
+      "kind": "type",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "Enrollment",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "EnrollmentResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EnrollmentResultsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EnrollmentStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "EnrollmentStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "EnrollmentUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "EnrollmentsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "EnrollmentsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EntitlementCourse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ErrorCode",
+      "kind": "const",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "EventHeader",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "EventPayload",
+      "kind": "type",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "EventType",
+      "kind": "type",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "ExportAcceptedResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ExportOperation",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "ExportOperationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ExportRequest",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "ExportStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ExportStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "FeedbackPolicy",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "FeedbackPolicy",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "FreeEnrollment",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "GradeEvent",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "GradeEventResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "GradePolicy",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "GradePolicy",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "GradingInput",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "GrantResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "GrantRevoke",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "GrantSource",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "GrantSource",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "GrantSummary",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "HealthLiveResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "HealthResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "HttpsUrl",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "IdempotencyHeaders",
+      "kind": "type",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "IdempotencyKey",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "IdempotencyStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "IdempotencyStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "IfMatch",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "InstructorInvitation",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "InvitationAccept",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "InvitationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "InvitationsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "InvitationsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "JoinSessionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerAnalytics",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerAnalyticsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "LearnerAnalyticsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerAssessment",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerAssessmentResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerAttempt",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "LearnerAttemptResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerLesson",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "LearnerLessonResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerOutline",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "LearnerOutlineLesson",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerOutlineResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LearnerQuestion",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "Lesson",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LessonAsset",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonAssetAttach",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonAssetPurpose",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonAssetResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonCreate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LessonPayload",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LessonPrerequisites",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonProgress",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonRelease",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LessonResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LessonType",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "LessonType",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "LessonUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LiveSession",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LiveSessionCreate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "LiveSessionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LiveSessionStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "LiveSessionStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "LiveSessionUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "Locale",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LockDetail",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Login",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "LoginInput",
+      "kind": "type",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "MailCapability",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ManualEnrollment",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "ManualGrant",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "Me",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "MeResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "MemberUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "MembersQuery",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "MembersResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Membership",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "MembershipStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "MembershipStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Money",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "MyWorkspace",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "MyWorkspacesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Name",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Notification",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "NotificationChannel",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "NotificationChannel",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "NotificationPreference",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "NotificationPreferencesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "NotificationPreferencesUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "NotificationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "NotificationType",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "NotificationUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "NotificationsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "NotificationsReadAll",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "NotificationsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OperationEvent",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "OperationsEventsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "OperationsEventsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OptionKey",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OptionalBooleanQuery",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Order",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "OrderItem",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OrderResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OrderStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "OrderStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "OrderTotals",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OrdersQuery",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "OrdersResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "OutboxStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "OutboxStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "PageMeta",
+      "kind": "type",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "PageQuery",
+      "kind": "type",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "PaginatedResponse",
+      "kind": "interface",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "Password",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Payment",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PaymentStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "PaymentStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Percent",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PlatformRole",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Points",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Position",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PreviewLesson",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PreviewLessonResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Price",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PriceCreate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "PriceResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PriceUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "Product",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ProductCoursesReplace",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ProductCreate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ProductResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ProductStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ProductStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ProductType",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ProductType",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ProductUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ProductsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ProductsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ProfileUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "ProgressResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ProgressUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "PublicCohort",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicCohortsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicCourse",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "PublicCourseDetail",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicOutlineLesson",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicProduct",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicProductResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicProductsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicWorkspace",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "PublicWorkspaceResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionBank",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionBankCreate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionBankResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionBankUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionBanksQuery",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionBanksResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionCreate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionOption",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionType",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "QuestionType",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "QuestionUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuestionVersionCreate",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionVersionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionVersionsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "QuestionsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "QuoteLine",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Reason",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReasonInput",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Refund",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "RefundAcceptedResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RefundInput",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "RefundResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RefundStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "RefundStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Register",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RegisterInput",
+      "kind": "type",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "Regrade",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReleaseType",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ReleaseType",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ReleasedAnswerResult",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReleasedResult",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "ReleasedResultResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Reorder",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReorderInput",
+      "kind": "type",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "ReplayAcceptedResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReplayInput",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ReportParameters",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ResetPassword",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ResetPasswordInput",
+      "kind": "type",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "RevenueMetric",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RevenueQuery",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "RevenueResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RichText",
+      "kind": "type",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "Role",
+      "kind": "enum",
+      "source": "packages/shared/src/roles.ts"
+    },
+    {
+      "symbol": "RoleValue",
+      "kind": "type",
+      "source": "packages/shared/src/roles.ts"
+    },
+    {
+      "symbol": "RosterQuery",
+      "kind": "type",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "Rubric",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "RubricScores",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SafeUser",
+      "kind": "type",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "SavedAnswer",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Search",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Section",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "SectionCreate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "SectionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SectionUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "SectionsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SecurityNotificationType",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Session",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SessionsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Slug",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "StaffAttempt",
+      "kind": "type",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "StaffAttemptResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "StaffAttemptSummary",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "StaffCoursesQuery",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "StaffEnrollmentResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "StaffGrant",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "StaffRole",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "StaffRole",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "StudentAnalytics",
+      "kind": "type",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "StudentAnalyticsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SubmissionMime",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Subscription",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "SubscriptionCancel",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SubscriptionResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "SubscriptionStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "SubscriptionStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "SubscriptionsQuery",
+      "kind": "type",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "SubscriptionsResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Tags",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Timestamp",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Timezone",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Title",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "TokenPurpose",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "TokenPurpose",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "TokenRequest",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "TransferOwnership",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "UniqueIds",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "UploadMime",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "User",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "UserResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "UserStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "UserStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Uuid",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "ValidationDetail",
+      "kind": "type",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "VerificationCode",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Version",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "VersionInput",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Visibility",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "Visibility",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "VoidAttempt",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Webhook",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "WebhookStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WebhookStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WebhooksQuery",
+      "kind": "type",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "WebhooksResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "Workspace",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspaceCreate",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspaceInvitation",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspaceInvitationCreate",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspaceInvitationResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspaceKind",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WorkspaceKind",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WorkspaceMember",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspaceMemberResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspacePermission",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspaceResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspaceRole",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspaceSettings",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "WorkspaceStatus",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WorkspaceStatus",
+      "kind": "type",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "WorkspaceUpdate",
+      "kind": "type",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "WorkspacesResponse",
+      "kind": "type",
+      "source": "packages/shared/src/schema-types.ts"
+    },
+    {
+      "symbol": "acceptedResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "accessErrorFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "accessReasonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "accommodationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "accommodationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "accommodationUpsertSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "activityBatchResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "activityBatchSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "adminSubscriptionCancelSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "adminUserCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "adminUserDeleteSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "adminUserUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "adminUsersQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "adminUsersResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "adminWorkspaceResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "adminWorkspaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "adminWorkspaceUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "adminWorkspacesQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "adminWorkspacesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "analyticsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "answerSaveResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "answerSaveSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "apiErrorSchema",
+      "kind": "const",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "applicationPathSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "assessmentAnalyticsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "assessmentAnalyticsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "assessmentCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentKindSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "assessmentPoolsReplaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentQuestionsReplaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "assessmentVersionConfigSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentVersionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentVersionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentVersionUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assetCompleteResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetCompleteSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetPurposeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "assetUploadResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetUploadSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assetVisibilitySchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "attemptStartResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attemptStartSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attemptStateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attemptStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "attemptSubmitResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attemptsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attemptsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "attendanceListResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "attendanceResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "attendanceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "attendanceStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "attendanceUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "auditLogSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "auditLogsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "auditLogsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "authResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "authorQuestionPayloadSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "authorQuestionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "authorQuestionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "authorQuestionVersionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "authorQuestionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "avatarCompleteSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "avatarUploadResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "avatarUploadSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "billingIntervalSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "billingPortalInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "billingPortalResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "businessEventFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "businessNotificationTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "capabilityUrlSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "catalogCourseResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "catalogCoursesQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "catalogCoursesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "catalogDetailFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "catalogFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "catalogPriceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "catalogProductsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "categoriesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "categoryCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "categoryResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "categorySchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "categoryUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "certificateIssueResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateIssueSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateLayoutSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateRevokeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "certificateTemplateCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateTemplateResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateTemplateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateTemplateUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateTemplatesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateVerificationFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "certificateVerificationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificateVerificationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificatesQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "certificatesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "changePasswordSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "checkoutFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "checkoutQuoteFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "checkoutQuoteInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "checkoutQuoteResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "checkoutQuoteSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "checkoutSessionInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "checkoutSessionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "checkoutSessionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "clientActivityEventSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "cohortCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortReleaseUpsertSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "cohortsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "completionRuleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "couponCodeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponKindSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "couponProductsReplaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "couponsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "courseAnalyticsOverviewSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "courseAnalyticsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "courseCategoriesSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseDashboardFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "coursePrerequisiteSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "coursePrerequisitesSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseStaffListResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseStaffResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseStaffSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseStaffUpsertSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "courseStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "courseUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "coursesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "csrfResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "currencySchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "cursorMetaSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "cursorPayloadSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "cursorQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "cursorResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "cursorSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "dailyCourseMetricSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "dateRangeShape",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "dateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "decimalSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "decimalUnits",
+      "kind": "function",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "deliveryModeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "deliveryStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "digitStringSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "domainEventSchema",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "downloadCapabilitySchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "downloadResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "editHeadersSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "effectiveAccessSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "effectiveAssessmentResultSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "emailRequestSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "emailSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "emptyInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "endpointContracts",
+      "kind": "const",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "enrollmentFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "enrollmentResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "enrollmentResultsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "enrollmentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "enrollmentStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "enrollmentUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "enrollmentsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "enrollmentsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "entitlementCourseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "entityShape",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "errorCodeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "eventHeaderSchema",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "eventPayloadSchemas",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "eventTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "exportAcceptedResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "exportFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "exportOperationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "exportOperationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "exportRequestSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "exportStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "extensionEndpointContracts",
+      "kind": "const",
+      "source": "packages/shared/src/endpoints.ts"
+    },
+    {
+      "symbol": "feedbackPolicySchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "fixtureDocument",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "fixtureIds",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "fixtureTimestamp",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "freeCheckoutFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "freeEnrollmentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "globalScopeEventTypes",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "gradeEventResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "gradeEventSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "gradePolicySchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "gradingFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "gradingInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "grantResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "grantRevokeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "grantSourceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "grantSummarySchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "healthLiveResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "healthResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "httpFixtures",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "httpsUrlSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "idempotencyHeadersSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "idempotencyKeySchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "idempotencyStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "ifMatchSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "instructorInvitationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "invitationAcceptSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "invitationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "invitationsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "invitationsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "isGlobalScopeEventType",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "joinSessionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "learnerAnalyticsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "learnerAnalyticsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "learnerAnalyticsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "learnerAssessmentResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "learnerAssessmentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "learnerAttemptResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "learnerAttemptSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "learnerLessonResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "learnerLessonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "learnerOutlineLessonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "learnerOutlineResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "learnerOutlineSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "learnerQuestionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "lessonAssetAttachSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonAssetPurposeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonAssetResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonAssetSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonPayloadSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonPrerequisitesSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonProgressSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "lessonReleaseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "lessonTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "lessonUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "liveSessionCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "liveSessionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "liveSessionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "liveSessionStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "liveSessionUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "localeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "lockDetailSchema",
+      "kind": "const",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "lockedOutlineFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "loginSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "mailCapabilitySchema",
+      "kind": "const",
+      "source": "packages/shared/src/events/index.ts"
+    },
+    {
+      "symbol": "mandatoryEmailNotificationTypes",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "manualAssessmentFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "manualEnrollmentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "manualGrantSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "meResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "meSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "memberUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "membersQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "membersResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "membershipSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "membershipStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "moneySchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "myWorkspaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "myWorkspacesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "nameSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "nonemptyPatch",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "notificationChannelSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "notificationFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "notificationPreferenceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationPreferencesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationPreferencesUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationsReadAllSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "notificationsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "operationEventSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "operationsEventsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "operationsEventsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "optionKeySchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "optionalBooleanQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "orderItemSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "orderResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "orderSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "orderStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "orderTotalsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ordersQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "ordersResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "outboxStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "pageMetaSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "pageQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "paginatedResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/pagination.ts"
+    },
+    {
+      "symbol": "partialObject",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "passwordSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "paymentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "paymentStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "percentSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "platformRoleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "pointsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "positionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "previewLessonResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "previewLessonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "priceCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "priceResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "priceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "priceUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productCoursesReplaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "productTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "productUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "productsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "profileUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "progressResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "progressUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "publicCohortSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "publicCohortsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "publicCourseDetailSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "publicCourseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "publicOutlineLessonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "publicProductResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "publicProductSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "publicProductsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "publicWorkspaceResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "publicWorkspaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "questionBankCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionBankResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionBankSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionBankUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionBanksQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionBanksResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionOptionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "questionUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionVersionCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionVersionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionVersionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "questionsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "quoteLineSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "reasonInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "reasonSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "refundAcceptedResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "refundInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "refundResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "refundSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "refundStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "registerSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "regradeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "releaseTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "releasedAnswerResultSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "releasedResultFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "releasedResultResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "releasedResultSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "reorderSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "replayAcceptedResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "replayInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "reportParametersSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "resetPasswordSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "responseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "revenueDashboardFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "revenueMetricSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "revenueQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "revenueResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "richTextSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "roleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/roles.ts"
+    },
+    {
+      "symbol": "rosterQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "rubricSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "rubricScoresSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "savedAnswerSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "searchSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "sectionCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "sectionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "sectionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "sectionUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "sectionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/content/index.ts"
+    },
+    {
+      "symbol": "securityEventFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "securityNotificationTypeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "sessionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "sessionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "slugSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "staffAttemptResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "staffAttemptSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "staffAttemptSummarySchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "staffCoursesQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "staffEnrollmentResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "staffGrantSchema",
+      "kind": "const",
+      "source": "packages/shared/src/learning/index.ts"
+    },
+    {
+      "symbol": "staffRoleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "studentAnalyticsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "studentAnalyticsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/analytics/index.ts"
+    },
+    {
+      "symbol": "studentDashboardFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "submissionMimeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "subscriptionCancelSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "subscriptionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "subscriptionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "subscriptionStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "subscriptionsQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "subscriptionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/commerce/index.ts"
+    },
+    {
+      "symbol": "tagsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "timedAssessmentFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "timestampSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "timezoneSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "titleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "tokenPurposeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "tokenRequestSchema",
+      "kind": "const",
+      "source": "packages/shared/src/auth/index.ts"
+    },
+    {
+      "symbol": "transferOwnershipSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "uniqueIdsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "uploadMimeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "userResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "userSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "userStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/users/index.ts"
+    },
+    {
+      "symbol": "uuidSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "validDateRange",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "validationDetailSchema",
+      "kind": "const",
+      "source": "packages/shared/src/errors.ts"
+    },
+    {
+      "symbol": "validationErrorFixture",
+      "kind": "const",
+      "source": "packages/shared/src/fixtures/index.ts"
+    },
+    {
+      "symbol": "verificationCodeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    },
+    {
+      "symbol": "versionInputSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "versionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/primitives.ts"
+    },
+    {
+      "symbol": "visibilitySchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "voidAttemptSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "webhookSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "webhookStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "webhooksQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "webhooksResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/administration/index.ts"
+    },
+    {
+      "symbol": "workspaceCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceInvitationCreateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceInvitationResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceInvitationSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceKindSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "workspaceMemberResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceMemberSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspacePermissionSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceRoleSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceSettingsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspaceStatusSchema",
+      "kind": "const",
+      "source": "packages/shared/src/enums.ts"
+    },
+    {
+      "symbol": "workspaceUpdateSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "workspacesResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/tenancy/index.ts"
+    },
+    {
+      "symbol": "z",
+      "kind": "namespace",
+      "source": "zod (root re-export)"
+    },
+    {
+      "symbol": "multipartPartsSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "multipartSignSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "multipartModeSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "multipartUploadResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "uploadStartResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/media/index.ts"
+    },
+    {
+      "symbol": "assessmentVersionsResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentQuestionSelectionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "assessmentPoolSelectionResponseSchema",
+      "kind": "const",
+      "source": "packages/shared/src/assessments/index.ts"
+    },
+    {
+      "symbol": "catalogCourseBySlugQuerySchema",
+      "kind": "const",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "CatalogCourseBySlugQuery",
+      "kind": "type",
+      "source": "packages/shared/src/catalog/index.ts"
+    },
+    {
+      "symbol": "certificateRenderRequestSchema",
+      "kind": "const",
+      "source": "packages/shared/src/engagement/index.ts"
+    }
+  ]
+}

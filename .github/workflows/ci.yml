@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate:
+    name: Lint, Typecheck, Test & Verify
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lms
+          POSTGRES_PASSWORD: lms_dev_password
+          POSTGRES_DB: lms
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 56379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://lms:lms_dev_password@localhost:55432/lms?schema=public
+      REDIS_URL: redis://localhost:56379
+      API_PORT: 4100
+      WEB_ORIGIN: http://localhost:3100
+      API_INTERNAL_ORIGIN: http://localhost:4100
+      NEXT_PUBLIC_API_URL: http://localhost:4100/api/v1
+      JWT_ACCESS_SECRET: test-jwt-access-secret-at-least-32-chars-long
+      JWT_REFRESH_SECRET: test-jwt-refresh-secret-at-least-32-chars-long
+      AUDIT_IP_HASH_SECRET: test-audit-ip-hash-secret-at-least-32-chars
+      TENANCY_MAIL_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      TENANCY_MAIL_KEY_ID: v1
+      STRIPE_SECRET_KEY: sk_test_local_fixture
+      STRIPE_WEBHOOK_SECRET: whsec_test_secret_for_qa_testing_only_12345
+      MEDIA_SCANNER_MODE: development-bypass
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check code formatting
+        run: pnpm format:check
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Run TypeScript typecheck
+        run: pnpm -r typecheck
+
+      - name: Generate Prisma Client
+        run: pnpm db:generate
+
+      - name: Check Prisma migration status
+        run: pnpm --filter @lms/api exec prisma migrate status
+
+      - name: Apply Prisma migrations
+        run: pnpm --filter @lms/api exec prisma migrate deploy
+
+      - name: Seed database fixtures
+        run: pnpm db:seed
+
+      - name: Build monorepo packages & applications
+        run: pnpm build
+
+      - name: Run Unit & Isolated PostgreSQL test suites
+        run: node scripts/test-postgres.mjs
+
+      - name: Run Security Suite
+        run: pnpm test:security
+
+      - name: Start API server for API path parity check
+        run: |
+          node apps/api/dist/main.js &
+          API_PID=$!
+          echo "API_PID=$API_PID" >> $GITHUB_ENV
+          npx wait-on http://localhost:4100/api/v1/health --timeout 30000
+
+      - name: Verify API path parity (zero drift check)
+        run: pnpm check:api-paths
+
+      - name: Shutdown API server
+        if: always()
+        run: |
+          if [ -n "$API_PID" ]; then
+            kill $API_PID || true
+          fi

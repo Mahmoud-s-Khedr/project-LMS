@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #fafaf6;
+  --foreground: #252d25;
+  --card: #ffffff;
+  --card-foreground: #252d25;
+  --popover: #ffffff;
+  --popover-foreground: #252d25;
+  --primary: #466840;
+  --primary-foreground: #ffffff;
+  --secondary: #ecefe6;
+  --secondary-foreground: #31462c;
+  --muted: #f0f0e9;
+  --muted-foreground: #73786c;
+  --accent: #e8eee2;
+  --accent-foreground: #31462c;
+  --destructive: #b33d36;
+  --border: #e3e6dc;
+  --input: #d9ded2;
+  --ring: #6d8b61;
+}
+
+.dark {
+  --background: #161c17;
+  --foreground: #edf1e8;
+  --card: #1d251e;
+  --card-foreground: #edf1e8;
+  --popover: #1d251e;
+  --popover-foreground: #edf1e8;
+  --primary: #a0bc8d;
+  --primary-foreground: #1d2b18;
+  --secondary: #2b352a;
+  --secondary-foreground: #e3eddb;
+  --muted: #252e25;
+  --muted-foreground: #a3ae9c;
+  --accent: #303d2e;
+  --accent-foreground: #e3eddb;
+  --destructive: #eb8179;
+  --border: #344032;
+  --input: #3c4939;
+  --ring: #a0bc8d;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
